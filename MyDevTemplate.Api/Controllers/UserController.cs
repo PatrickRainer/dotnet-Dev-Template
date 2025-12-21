@@ -30,6 +30,10 @@ public class UserController : ControllerBase
 
             return Ok("User added successfully");
         }
+        catch (Exception e) when (e.Message.Contains("duplicate key value violates unique constraint"))
+        {
+            return Conflict("User already exists");
+        }
         catch (Exception e)
         {
             _logger?.LogError(e, "Error adding user");

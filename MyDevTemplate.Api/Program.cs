@@ -24,7 +24,7 @@ try
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
     builder.Services.AddControllers();
-    builder.Services.AddUserService();
+    builder.Services.AddApplicationServices();
 
 // Add Db Context from the Persistence project
     builder.Services.AddDbContext<AppDbContext>(options =>
