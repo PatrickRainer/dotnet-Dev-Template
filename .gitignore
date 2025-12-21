@@ -493,4 +493,7 @@ fabric.properties
 # Ignore specific Idea Files
 **/db-forest-config.xml
 
+# Ignore HTTP-Client Configuration File
+**/http-client.private.env.json
+
 
