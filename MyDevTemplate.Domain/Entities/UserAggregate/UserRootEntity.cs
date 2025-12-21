@@ -6,10 +6,17 @@ namespace MyDevTemplate.Domain.Entities.UserAggregate;
 public class UserRootEntity : EntityBase
 {
     // For Ef Core
-    UserRootEntity()
+    private UserRootEntity()
     {
         LastName = string.Empty;
         FirstName = string.Empty;
+    }
+
+    public UserRootEntity(EmailAddress email, string firstName, string lastName)
+    {
+        Email = email;
+        FirstName = firstName;
+        LastName = lastName;
     }
 
     public EmailAddress Email { get; set; } = null!;

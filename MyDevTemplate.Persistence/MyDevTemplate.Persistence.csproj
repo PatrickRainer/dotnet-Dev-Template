@@ -12,10 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ModelConfigurations\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\MyDevTemplate.Domain\MyDevTemplate.Domain.csproj" />
     </ItemGroup>
 
