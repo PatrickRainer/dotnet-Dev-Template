@@ -40,6 +40,10 @@ public class UserController : ControllerBase
 
             return Ok(user);
         }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
+        }
         catch (Exception e)
         {
             _logger?.LogError(e, "Error getting user");
@@ -73,6 +77,10 @@ public class UserController : ControllerBase
 
             return Ok("User added successfully");
         }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
+        }
         catch (ArgumentException e)
         {
             return BadRequest(e.Message);
@@ -98,6 +106,10 @@ public class UserController : ControllerBase
         {
             await _userService.RemoveUserAsync(email, cancellationToken);
             return Ok("User removed successfully");
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
         }
         catch (KeyNotFoundException)
         {

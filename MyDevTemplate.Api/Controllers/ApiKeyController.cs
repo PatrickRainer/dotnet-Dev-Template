@@ -39,6 +39,10 @@ public class ApiKeyController : ControllerBase
             var apiKeys = await _apiKeyService.GetApiKeysAsync(tenantGuid, cancellationToken);
             return Ok(apiKeys);
         }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
+        }
         catch (Exception e)
         {
             _logger?.LogError(e, "Error getting API keys");
@@ -68,6 +72,10 @@ public class ApiKeyController : ControllerBase
 
             return Ok(apiKey.Id);
         }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
+        }
         catch (ArgumentException e)
         {
             return BadRequest(e.Message);
@@ -93,6 +101,10 @@ public class ApiKeyController : ControllerBase
         {
             await _apiKeyService.RemoveApiKeyAsync(id, cancellationToken);
             return Ok("API key removed successfully");
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
         }
         catch (KeyNotFoundException)
         {
