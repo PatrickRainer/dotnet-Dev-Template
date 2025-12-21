@@ -490,3 +490,7 @@ fabric.properties
 # Ignore all appsettings files in all projects
 **/appsettings*.json
 
+# Ignore specific Idea Files
+**/db-forest-config.xml
+
+
