@@ -18,5 +18,21 @@ public class UserRootEntity : EntityBase
     public string FirstName { get; set; }
     public string FullName => $"{FirstName} {LastName}";
 
+    // Navigation Properties
+    readonly List<Guid> _roles = new List<Guid>();
+    public IReadOnlyCollection<Guid> Roles => _roles.AsReadOnly();
+    
+    public void AddRole(Guid roleId)
+    {
+        if (!_roles.Contains(roleId))
+        {
+            _roles.Add(roleId);
+        }
+    }
+    
+    public void RemoveRole(Guid roleId)
+    {
+        _roles.Remove(roleId);
+    }
 
 }
