@@ -1,0 +1,5 @@
+### Get Weather Forecast
+GET {{Host}}/weatherforecast/
+Accept: application/json
+
+###
