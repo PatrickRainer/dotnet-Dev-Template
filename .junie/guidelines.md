@@ -11,7 +11,8 @@
 ### Testing Information
 - **Testing Framework**: xUnit is recommended for unit and integration testing.
 - **Integration Testing**: Use the Api for integration testing, create for that for each endpoint a http file in the `MyDevTemplate.IntegrationTests` folder.
-- **Running Tests**: Use `dotnet test` to execute all tests in the solution.
+- **Running Unit Tests**: Use `dotnet test` to execute all tests in the solution.
+- **Running Integration Tests**: Use the http files in the `MyDevTemplate.Api.IntegrationTests` folder.
 - **Adding Tests**:
     - Use the existing xUnit project (e.g., `MyDevTemplate.Domain.Tests`), For Domain Tests.
     - Add a reference to the project being tested: `dotnet add <TestProject> reference <ProjectUnderTest>`.
@@ -54,6 +55,8 @@
 - **Domain-Driven Design (DDD)**: The project uses Aggregate Roots (e.g., `UserRootEntity`, `RoleRootEntity`) and Value Objects (e.g., `EmailAddress`).
 - **Base Entity**: All entities should inherit from `EntityBase` which provides `Id` (Guid), `CreatedAtUtc`, and `TenantId`.
 - **UI Framework**: `MudBlazor` is used for the Blazor Server UI components.
+- **TDD**: Test-Driven Development is encouraged for new features and bug fixes. Write unit tests for services and integration tests for API endpoints.
+- **API Versioning**: Use the `Microsoft.AspNetCore.Mvc.Versioning` package for API versioning. Versioning should be applied to controllers and actions. Use semantic versioning (e.g., v1, v2) for major changes and v1.1, v1.2 for minor changes.
 - **Code Style**:
     - Use file-scoped namespaces.
     - Follow standard .NET naming conventions (PascalCase for classes/methods, camelCase for private fields).
