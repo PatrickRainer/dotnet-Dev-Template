@@ -14,8 +14,6 @@ public class UserService
     {
         _dbContext = dbContext;
         _logger = logger;
-        
-        _logger?.LogInformation( "UserService created");
     }
 
     public async Task AddUserAsync(UserRootEntity user, CancellationToken cancellationToken = default)
@@ -29,6 +27,24 @@ public class UserService
         catch (Exception e)
         {
             _logger?.LogError(e, "Error adding user");
+            throw;
+        }
+    }
+
+    public async Task RemoveUserAsync(string email, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var user = _dbContext.Users.SingleOrDefault(u => u.Email.Value == email);
+            if (user == null) throw new KeyNotFoundException($"User with email {email} not found");
+            
+            _dbContext.Users.Remove(user);
+            
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error removing user");
             throw;
         }
     }

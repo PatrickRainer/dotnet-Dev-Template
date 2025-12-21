@@ -1,5 +1,5 @@
 ### Add User
-POST {{Host}}/api/User
+POST {{Host}}/api/v1/User
 Accept: application/json
 Content-Type: application/json
 
@@ -9,5 +9,10 @@ Content-Type: application/json
   "email": "john.doe@example.com",
   "tenantId": "tenant-123"
 }
+
+### Remove User
+DELETE {{Host}}/api/v1.0/User/john.doe@example.com
+Accept: application/json
+
 
 ###

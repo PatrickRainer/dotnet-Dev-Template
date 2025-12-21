@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using MyDevTemplate.Application.UserServices;
 using MyDevTemplate.Persistence;
@@ -21,8 +22,28 @@ try
 
 
 // Add services to the container.
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+    }).AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true;
+    });
+    
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-    builder.Services.AddOpenApi();
+    builder.Services.AddOpenApi(options =>
+    {
+        options.AddDocumentTransformer((document, context, cancellationToken) =>
+        {
+            document.Info.Title = "Your API Name here";
+            document.Info.Version = context.DocumentName;
+            document.Info.Description = $"Description of for {context.DocumentName} your API.";
+            return Task.CompletedTask;
+        });
+    });
     builder.Services.AddControllers();
     builder.Services.AddApplicationServices();
 
@@ -49,6 +70,11 @@ try
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/openapi/v1.json", "v1");
+            // options.SwaggerEndpoint("/openapi/v2.json", "v2"); // When you add v2
+        });
     }
 
     app.UseHttpsRedirection();
