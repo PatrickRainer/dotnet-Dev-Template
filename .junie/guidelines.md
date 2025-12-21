@@ -13,10 +13,11 @@
   - Default database provider is SQL Server.
 
 ### Testing Information
-- **Testing Framework**: xUnit is used for unit and integration testing.
+- **Testing Framework for Unit Test**: xUnit is used for unit and integration testing.
 - **Unit Testing**:
     - Located in `01_Core` solution folder (e.g., `MyDevTemplate.Domain.Tests`).
     - Run using `dotnet test`.
+- **Running Integration Tests**: Use the http files in the  MyDevTemplate.Api/IntegrationTests, run curl commands from the terminal to execute the tests.
 - **Integration Testing**:
     - API endpoints are tested using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
     - These files can be executed directly in IDEs like JetBrains Rider or VS Code with the REST Client extension.
