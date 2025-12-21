@@ -9,5 +9,15 @@
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="8.*" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyDevTemplate.Application\MyDevTemplate.Application.csproj" />
   </ItemGroup>
 </Project>
