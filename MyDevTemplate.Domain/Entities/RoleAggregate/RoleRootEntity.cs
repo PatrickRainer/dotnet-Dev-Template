@@ -13,6 +13,7 @@ public class RoleRootEntity : EntityBase
     public RoleRootEntity(string title, string description = "")
     {
         Title = title;
+        Description = description;
     }
 
     public string Title { get; set; }
