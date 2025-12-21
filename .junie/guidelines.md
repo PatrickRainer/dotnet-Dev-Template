@@ -6,15 +6,22 @@
 - **Build**: Use `dotnet build` from the solution root.
 - **Run API**: `dotnet run --project MyDevTemplate.Api`
 - **Run Blazor Server**: `dotnet run --project MyDevTemplate.Blazor.Server`
-- **Persistence**: `AppDbContext` is located in `MyDevTemplate.Persistence`. Currently, connection strings are not configured in `appsettings.json`. Entity Framework Core is used for data access, and configurations are applied from the assembly.
+- **Persistence**: `AppDbContext` is located in `MyDevTemplate.Persistence`.
+  - Connection strings are configured in `appsettings.Development.json` for local development.
+  - Entity Framework Core is used for data access.
+  - Configurations are applied from the assembly using `modelBuilder.ApplyConfigurationsFromAssembly`.
+  - Default database provider is SQL Server.
 
 ### Testing Information
-- **Testing Framework**: xUnit is recommended for unit and integration testing.
-- **Integration Testing**: Use the Api for integration testing, create for that for each endpoint a http file in the `MyDevTemplate.IntegrationTests` folder.
-- **Running Unit Tests**: Use `dotnet test` to execute all tests in the solution.
-- **Running Integration Tests**: Use the http files in the `MyDevTemplate.Api.IntegrationTests` folder.
+- **Testing Framework**: xUnit is used for unit and integration testing.
+- **Unit Testing**:
+    - Located in `01_Core` solution folder (e.g., `MyDevTemplate.Domain.Tests`).
+    - Run using `dotnet test`.
+- **Integration Testing**:
+    - API endpoints are tested using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
+    - These files can be executed directly in IDEs like JetBrains Rider or VS Code with the REST Client extension.
 - **Adding Tests**:
-    - Use the existing xUnit project (e.g., `MyDevTemplate.Domain.Tests`), For Domain Tests.
+    - Use the existing xUnit project (e.g., `MyDevTemplate.Domain.Tests`) for Domain Tests.
     - Add a reference to the project being tested: `dotnet add <TestProject> reference <ProjectUnderTest>`.
     - Create test classes following the naming convention `<Entity/Service>Tests.cs`.
 - **Test Example**:
@@ -38,38 +45,35 @@
 
             // Assert
             Assert.Equal(title, role.Title);
+            Assert.Equal(description, role.Description);
         }
     }
     ```
 
 ### Architecture Information
 - **Clean Architecture**:
-  - The different layers are visible by solution folders.
-    - The 'View' Layer contains Blazor Server UI and the API Project.
-    - The `Application`layer contains all Services by the application. 
-    - The `Infrastructure` layer contains infrastructure services (e.g. the Persistance Project, or any Helper Libraries).
-    - The `Domain` layer contains domain entities and value objects and Contracts
-  - The Dependencies must be in the rigt direction. So View -> Service -> Infrastructure -> Domain.
+  - The solution is organized into numbered folders:
+    - `01_Core`: Domain entities, value objects, contracts, and their tests.
+    - `02_Infrastructure`: Persistence (EF Core), external service implementations.
+    - `03_ApplicationLayer`: Application services and business logic.
+    - `04_ViewLayer`: Blazor Server UI and ASP.NET Core Web API.
+  - **Dependency Direction**: View -> Application -> Infrastructure -> Domain.
 
 ### Additional Development Information
 - **Domain-Driven Design (DDD)**: The project uses Aggregate Roots (e.g., `UserRootEntity`, `RoleRootEntity`) and Value Objects (e.g., `EmailAddress`).
 - **Base Entity**: All entities should inherit from `EntityBase` which provides `Id` (Guid), `CreatedAtUtc`, and `TenantId`.
 - **UI Framework**: `MudBlazor` is used for the Blazor Server UI components.
-- **TDD**: Test-Driven Development is encouraged for new features and bug fixes. Write unit tests for services and integration tests for API endpoints.
-- **API Versioning**: Use the `Microsoft.AspNetCore.Mvc.Versioning` package for API versioning. Versioning should be applied to controllers and actions. Use semantic versioning (e.g., v1, v2) for major changes and v1.1, v1.2 for minor changes.
+- **Authentication**: API uses API Key authentication.
+  - Header: `X-Api-Key`
+  - Configuration: `Authentication:ApiKey` in `appsettings.json`.
+- **API Versioning**: Uses `Asp.Versioning.Http`. Versioning is applied to controllers and actions (e.g., `/api/v1/Resource`).
+- **Logging**: Serilog is used for logging, configured in `appsettings.json`. It supports Console and SQL Server sinks.
 - **Code Style**:
     - Use file-scoped namespaces.
     - Follow standard .NET naming conventions (PascalCase for classes/methods, camelCase for private fields).
-    - Prefer `readonly` for fields that are not intended to be modified after initialization.
-    - Entities need to have a private constructor for EF Core and public constructors for domain usage.
-    - Service and Persistance Projects should contain an Additional File `ServiceCollectionExtensions.cs` for registering dependencies.
-    - Use `record` for value objects when possible.
-    - Use `async` and `await` whenever possible.
-    - Use `nameof` for string literals.
-    - Domain Entities should be configured with EF Core Configuration which will be applied to the `AppDbContext`
-      - The Files should be stored in the `Persistence` Project in the folder 'ModelConfigurations'
-    - Use `ILogger<T>` for logging, do inject the `ILogger<T>` into the constructor where possible.
-    - Use Serilog for Logging
-      - Use appsettings.json for configuring Serilog
+    - Entities must have a private constructor for EF Core and public constructors for domain usage.
+    - Use `ServiceCollectionExtensions.cs` in each layer for registering dependencies.
+    - Domain Entities should have EF Core Configuration files in `MyDevTemplate.Persistence/ModelConfigurations`.
+    - Use `ILogger<T>` for logging, injected via constructor.
     
 
