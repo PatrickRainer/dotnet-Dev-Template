@@ -2,6 +2,8 @@
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using MyDevTemplate.Application.ApiKeyServices;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MyDevTemplate.Api.Authentication;
 
@@ -19,29 +21,50 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
         _configuration = configuration;
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         if (!Request.Headers.TryGetValue(ApiKeyConstants.HeaderName, out var extractedApiKey))
         {
-            return Task.FromResult(AuthenticateResult.NoResult());
+            return AuthenticateResult.NoResult();
         }
 
         var expectedApiKey = _configuration.GetValue<string>("Authentication:ApiKey");
 
-        if (string.IsNullOrEmpty(expectedApiKey) || extractedApiKey != expectedApiKey)
+        // Check if it's the master key
+        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey)
         {
-            return Task.FromResult(AuthenticateResult.Fail("Invalid API Key"));
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, "MasterKeyUser")
+            };
+
+            return Success(claims);
         }
 
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.Name, "ApiKeyUser")
-        };
+        // Check database for dynamic keys
+        var apiKeyService = Context.RequestServices.GetRequiredService<ApiKeyService>();
+        var apiKeyEntity = await apiKeyService.GetApiKeyByValueAsync(extractedApiKey!);
 
+        if (apiKeyEntity != null && apiKeyEntity.IsValid)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, apiKeyEntity.Label),
+                new Claim("TenantId", apiKeyEntity.TenantId.ToString())
+            };
+
+            return Success(claims);
+        }
+
+        return AuthenticateResult.Fail("Invalid API Key");
+    }
+
+    private AuthenticateResult Success(Claim[] claims)
+    {
         var identity = new ClaimsIdentity(claims, ApiKeyConstants.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
         var ticket = new AuthenticationTicket(principal, ApiKeyConstants.AuthenticationScheme);
 
-        return Task.FromResult(AuthenticateResult.Success(ticket));
+        return AuthenticateResult.Success(ticket);
     }
 }

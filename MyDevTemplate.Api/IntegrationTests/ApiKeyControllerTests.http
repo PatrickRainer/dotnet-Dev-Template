@@ -1,0 +1,52 @@
+﻿### Add API Key
+POST {{Host}}/api/v1/ApiKey
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: SecretApiKey123
+
+{
+  "key": "test-key-789",
+  "label": "Demo Key",
+  "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "expiresAtUtc": "2025-12-31T23:59:59Z"
+}
+
+> {%
+    client.global.set("createdApiKeyId", response.body);
+    client.test("API key should be created successfully", function () {
+        client.assert(response.status === 200, "Expected 201 Created but got " + response.status);
+    });
+%}
+
+### Get API Keys for Tenant (using the newly created key)
+GET {{Host}}/api/v1/ApiKey/tenant/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+X-Api-Key: test-key-789
+
+> {%
+    client.test("Get API keys for tenant with tenant key should succeed", function () {
+        client.assert(response.status === 200, "Expected 200 OK but got " + response.status);
+    });
+%}
+
+### Get API Keys for Tenant (using master key)
+GET {{Host}}/api/v1/ApiKey/tenant/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+X-Api-Key: SecretApiKey123
+
+> {%
+    client.test("Get API keys for tenant with master key should succeed", function () {
+        client.assert(response.status === 200, "Expected 200 OK but got " + response.status);
+    });
+%}
+
+### Remove API Key
+DELETE {{Host}}/api/v1/ApiKey/{{createdApiKeyId}}
+Accept: application/json
+X-Api-Key: SecretApiKey123
+
+> {%
+    client.test("API key should be deleted successfully", function () {
+        client.assert(response.status === 200 || response.status === 204, "Expected 200 OK or 204 No Content but got " + response.status);
+    });
+%}
