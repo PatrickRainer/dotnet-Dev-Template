@@ -10,6 +10,7 @@
 
 ### Testing Information
 - **Testing Framework**: xUnit is recommended for unit and integration testing.
+- **Integration Testing**: Use the Api for integration testing, create for that for each endpoint a http file in the `MyDevTemplate.IntegrationTests` folder.
 - **Running Tests**: Use `dotnet test` to execute all tests in the solution.
 - **Adding Tests**:
     - Use the existing xUnit project (e.g., `MyDevTemplate.Domain.Tests`), For Domain Tests.
