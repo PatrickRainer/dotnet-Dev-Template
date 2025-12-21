@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Contracts\Abstractions\" />
-      <Folder Include="Entities\Abstractions\" />
     </ItemGroup>
 
 </Project>
