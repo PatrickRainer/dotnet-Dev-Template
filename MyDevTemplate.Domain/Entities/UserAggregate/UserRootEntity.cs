@@ -10,13 +10,15 @@ public class UserRootEntity : EntityBase
     {
         LastName = string.Empty;
         FirstName = string.Empty;
+        IdentityProviderId = string.Empty;
     }
 
-    public UserRootEntity(EmailAddress email, string firstName, string lastName)
+    public UserRootEntity(EmailAddress email, string firstName, string lastName, string identityProviderId)
     {
         Email = email;
         FirstName = firstName;
         LastName = lastName;
+        IdentityProviderId = identityProviderId;
     }
 
     public EmailAddress Email { get; set; } = null!;
@@ -24,6 +26,8 @@ public class UserRootEntity : EntityBase
     public string LastName { get; set; }
     public string FirstName { get; set; }
     public string FullName => $"{FirstName} {LastName}";
+    public string IdentityProviderId { get; set; }
+    public DateTime? LastLoginAtUtc { get; set; }
 
     // Navigation Properties
     readonly List<Guid> _roles = new List<Guid>();

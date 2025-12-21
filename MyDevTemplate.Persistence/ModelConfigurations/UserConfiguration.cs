@@ -39,6 +39,13 @@ public class UserConfiguration : IEntityTypeConfiguration<UserRootEntity>
 
         builder.Property(u => u.TenantId)
             .IsRequired();
+        
+        builder.Property(u => u.IdentityProviderId)
+            .IsRequired()
+            .HasMaxLength(100);
+        
+        builder.Property(u => u.LastLoginAtUtc)
+            .IsRequired(false);
 
         builder.Ignore(u => u.Username);
         builder.Ignore(u => u.FullName);
@@ -52,6 +59,6 @@ public class UserConfiguration : IEntityTypeConfiguration<UserRootEntity>
             .Metadata.SetValueComparer(new ValueComparer<IReadOnlyCollection<Guid>>(
                 (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => (IReadOnlyCollection<Guid>)c.ToList()));
+                c => c.ToList()));
     }
 }

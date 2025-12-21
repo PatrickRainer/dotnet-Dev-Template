@@ -14,9 +14,10 @@ public class UserRootEntityTests
         var firstName = "John";
         var lastName = "Doe";
         var email = new EmailAddress(emailStr);
+        var identiyProviderId = Guid.NewGuid().ToString();
 
         // Act
-        var user = new UserRootEntity(email, firstName, lastName);
+        var user = new UserRootEntity(email, firstName, lastName, identiyProviderId);
 
         // Assert
         Assert.Equal(email, user.Email);
@@ -32,7 +33,7 @@ public class UserRootEntityTests
     public void AddRole_Should_Add_Role_To_Collection()
     {
         // Arrange
-        var user = new UserRootEntity(new EmailAddress("test@example.com"), "John", "Doe");
+        var user = new UserRootEntity(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
         var roleId = Guid.NewGuid();
 
         // Act
@@ -46,7 +47,7 @@ public class UserRootEntityTests
     public void RemoveRole_Should_Remove_Role_From_Collection()
     {
         // Arrange
-        var user = new UserRootEntity(new EmailAddress("test@example.com"), "John", "Doe");
+        var user = new UserRootEntity(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
         var roleId = Guid.NewGuid();
         user.AddRole(roleId);
 
