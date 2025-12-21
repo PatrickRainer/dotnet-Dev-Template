@@ -1,0 +1,13 @@
+### Add User
+POST {{Host}}/api/User
+Accept: application/json
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "tenantId": "tenant-123"
+}
+
+###
