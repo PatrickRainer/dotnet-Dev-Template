@@ -1,0 +1,30 @@
+﻿### Test Without API Key
+GET {{Host}}/api/v1/User/test@example.com
+
+> {%
+    client.test("Request without API key should be unauthorized", function() {
+        client.assert(response.status === 401, "Expected 401 Unauthorized but got " + response.status);
+    });
+%}
+
+### Test With Invalid API Key
+GET {{Host}}/api/v1/User/test@example.com
+X-Api-Key: InvalidKey
+
+> {%
+    client.test("Request with invalid API key should be unauthorized", function() {
+        client.assert(response.status === 401, "Expected 401 Unauthorized but got " + response.status);
+    });
+%}
+
+### Test With Valid API Key
+# Note: This will likely fail with 404 if the user doesn't exist, 
+# but it should NOT be 401.
+GET {{Host}}/api/v1/User/test@example.com
+X-Api-Key: SecretApiKey123
+
+> {%
+    client.test("Request with valid API key should not be unauthorized", function() {
+        client.assert(response.status !== 401, "Expected not 401 Unauthorized but got " + response.status);
+    });
+%}

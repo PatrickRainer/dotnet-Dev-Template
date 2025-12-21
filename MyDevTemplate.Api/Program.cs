@@ -1,5 +1,8 @@
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using MyDevTemplate.Api.Authentication;
 using MyDevTemplate.Application.UserServices;
 using MyDevTemplate.Persistence;
 using Serilog;
@@ -41,10 +44,38 @@ try
             document.Info.Title = "Your API Name here";
             document.Info.Version = context.DocumentName;
             document.Info.Description = $"Description of for {context.DocumentName} your API.";
+
+            document.Components ??= new OpenApiComponents();
+            document.Components.SecuritySchemes.Add(ApiKeyConstants.AuthenticationScheme, new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.ApiKey,
+                Name = ApiKeyConstants.HeaderName,
+                In = ParameterLocation.Header,
+                Scheme = ApiKeyConstants.AuthenticationScheme
+            });
+
+            document.SecurityRequirements.Add(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = ApiKeyConstants.AuthenticationScheme
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+
             return Task.CompletedTask;
         });
     });
     builder.Services.AddControllers();
+    
+    builder.Services.AddApiKeyAuthentication();
+    
     builder.Services.AddApplicationServices();
 
 // Add Db Context from the Persistence project
@@ -78,6 +109,10 @@ try
     }
 
     app.UseHttpsRedirection();
+    
+    app.UseAuthentication();
+    app.UseAuthorization();
+    
     app.MapControllers();
 
     Log.Information("Application starting");

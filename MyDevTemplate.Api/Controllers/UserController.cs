@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.UserServices;
 using MyDevTemplate.Domain.Entities.Common;
@@ -7,6 +8,7 @@ using MyDevTemplate.Domain.Entities.UserAggregate;
 
 namespace MyDevTemplate.Api.Controllers;
 
+[Authorize]
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
@@ -22,20 +24,58 @@ public class UserController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
+    [HttpGet("{email}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRootEntity))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<string>> AddUser([FromBody] AddUserDto addUserDto)
+    public async Task<ActionResult<UserRootEntity>> GetUser([FromRoute] string email, CancellationToken cancellationToken)
     {
         try
         {
-            await _userService.AddUserAsync(
-                new UserRootEntity(new EmailAddress(addUserDto.Email), addUserDto.FirstName, addUserDto.LastName,
-                    addUserDto.TenantId),
-                CancellationToken.None);
+            var user = await _userService.GetUserByEmailAsync(email, cancellationToken);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error getting user");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<string>> AddUser([FromBody] AddUserDto addUserDto, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var user = new UserRootEntity(
+                new EmailAddress(addUserDto.Email),
+                addUserDto.FirstName,
+                addUserDto.LastName,
+                addUserDto.IdentityProviderId);
+
+            if (!Guid.TryParse(addUserDto.TenantId, out var tenantId))
+            {
+                return BadRequest("Invalid TenantId format. Must be a Guid.");
+            }
+
+            user.TenantId = tenantId;
+
+            await _userService.AddUserAsync(user, cancellationToken);
 
             return Ok("User added successfully");
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
         }
         catch (Exception e) when (e.Message.Contains("duplicate key value violates unique constraint"))
         {
@@ -52,11 +92,11 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<string>> RemoveUser([FromRoute] string email)
+    public async Task<ActionResult<string>> RemoveUser([FromRoute] string email, CancellationToken cancellationToken)
     {
         try
         {
-            await _userService.RemoveUserAsync(email, CancellationToken.None);
+            await _userService.RemoveUserAsync(email, cancellationToken);
             return Ok("User removed successfully");
         }
         catch (KeyNotFoundException)
@@ -75,4 +115,5 @@ public record AddUserDto(
     [Required] string FirstName,
     [Required] string LastName,
     [Required] string Email,
+    [Required] string IdentityProviderId,
     [Required] string TenantId);

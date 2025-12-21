@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MyDevTemplate.Domain.Entities.UserAggregate;
 using MyDevTemplate.Persistence;
 
@@ -14,6 +15,19 @@ public class UserService
     {
         _dbContext = dbContext;
         _logger = logger;
+    }
+
+    public async Task<UserRootEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await _dbContext.Users.SingleOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error getting user by email {Email}", email);
+            throw;
+        }
     }
 
     public async Task AddUserAsync(UserRootEntity user, CancellationToken cancellationToken = default)
@@ -35,7 +49,7 @@ public class UserService
     {
         try
         {
-            var user = _dbContext.Users.SingleOrDefault(u => u.Email.Value == email);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Email.Value == email, cancellationToken);
             if (user == null) throw new KeyNotFoundException($"User with email {email} not found");
             
             _dbContext.Users.Remove(user);
