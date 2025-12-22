@@ -95,7 +95,13 @@ dotnet test
 - Use `WebApplicationFactory` to test the API in-memory.
 - Base class `IntegrationTestBase.cs` handles common setup (config, headers, sequential execution).
 - Configuration is managed via `appsettings.json` in the test project.
+- **Coverage**: Includes CRUD operations for Users, Roles, ApiKeys, Tenants, and comprehensive Authentication/Authorization scenarios.
 - **Note**: `Program.cs` in the API project must have `public partial class Program { }` to be accessible by the test project.
+
+### Manual API Execution
+- Located in `MyDevTemplate.Api/IntegrationTests`.
+- `.http` files for manual debugging and endpoint exploration.
+- Use `http-client.private.env.json` for environment-specific variables like `MasterApiKey`.
 
 ### Adding New Tests
 - Use the existing xUnit project `MyDevTemplate.Domain.Tests` for Domain tests.

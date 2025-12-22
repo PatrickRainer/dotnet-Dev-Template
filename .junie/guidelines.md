@@ -24,10 +24,17 @@
         - Configuration (API Key, TenantId) loading from `appsettings.json`.
         - `HttpClient` initialization with necessary headers.
         - `[Collection("IntegrationTests")]` for sequential execution.
+    - Test Coverage:
+        - `UserControllerTests`: User CRUD operations.
+        - `RoleControllerTests`: Role CRUD operations.
+        - `ApiKeyControllerTests`: API Key lifecycle.
+        - `TenantControllerTests`: Tenant management (requires Master API Key).
+        - `AuthenticationTests`: Missing/invalid keys, tenant ID validation, and policy checks.
     - Run using `dotnet test`.
     - To allow testing, `Program.cs` in `MyDevTemplate.Api` must have `public partial class Program { }`.
-- **Integration Testing (HTTP Files - Manual/Lightweight)**:
-    - API endpoints can also be tested using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
+- **Integration Testing (HTTP Files - Manual/Lightweight Debugging)**:
+    - API endpoints can also be manually executed using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
+    - These files are primarily for manual debugging and do not contain automated tests.
     - These files can be executed directly in IDEs like JetBrains Rider or VS Code with the REST Client extension.
 - **Adding Tests**:
     - Use the existing xUnit projects (e.g., `MyDevTemplate.Domain.Tests` or `MyDevTemplate.Api.IntegrationTests`).
