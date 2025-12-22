@@ -8,30 +8,24 @@ public class ApiKeyRootEntity : EntityBase
     private ApiKeyRootEntity()
     {
         Key = string.Empty;
-        ClientId = string.Empty;
         Label = string.Empty;
     }
 
-    public ApiKeyRootEntity(string key, string clientId, string label, DateTime? expiresAtUtc = null)
+    public ApiKeyRootEntity(string key, string label, DateTime? expiresAtUtc = null)
     {
         if (string.IsNullOrWhiteSpace(key))
             throw new ArgumentException("Key cannot be null or whitespace", nameof(key));
-        
-        if (string.IsNullOrWhiteSpace(clientId))
-            throw new ArgumentException("ClientId cannot be null or whitespace", nameof(clientId));
         
         if (string.IsNullOrWhiteSpace(label))
             throw new ArgumentException("Label cannot be null or whitespace", nameof(label));
 
         Key = key;
-        ClientId = clientId;
         Label = label;
         ExpiresAtUtc = expiresAtUtc;
         IsActive = true;
     }
 
     public string Key { get; private set; }
-    public string ClientId { get; private set; }
     public string Label { get; set; }
     public bool IsActive { get; set; }
     public DateTime? ExpiresAtUtc { get; set; }

@@ -3,7 +3,7 @@ POST {{Host}}/api/v1/User
 Accept: application/json
 Content-Type: application/json
 X-Api-Key: SecretApiKey123
-X-Client-Id: MasterClient
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 {
   "firstName": "John",
@@ -23,7 +23,7 @@ X-Client-Id: MasterClient
 GET {{Host}}/api/v1/User/john.doe@example.com
 Accept: application/json
 X-Api-Key: SecretApiKey123
-X-Client-Id: MasterClient
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 > {%
     client.test("Get User should return success status", function () {
@@ -35,7 +35,7 @@ X-Client-Id: MasterClient
 DELETE {{Host}}/api/v1.0/User/john.doe@example.com
 Accept: application/json
 X-Api-Key: SecretApiKey123
-X-Client-Id: MasterClient
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 > {%
     client.test("Remove User should return success status", function () {

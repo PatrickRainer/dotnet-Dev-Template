@@ -29,15 +29,15 @@ public class ApiKeyService
         }
     }
 
-    public async Task<ApiKeyRootEntity?> ValidateApiKeyAsync(string clientId, string key, CancellationToken cancellationToken = default)
+    public async Task<ApiKeyRootEntity?> ValidateApiKeyAsync(Guid tenantId, string key, CancellationToken cancellationToken = default)
     {
         try
         {
-            return await _dbContext.ApiKeys.SingleOrDefaultAsync(a => a.ClientId == clientId && a.Key == key, cancellationToken);
+            return await _dbContext.ApiKeys.SingleOrDefaultAsync(a => a.TenantId == tenantId && a.Key == key, cancellationToken);
         }
         catch (Exception e)
         {
-            _logger?.LogError(e, "Error validating API key for client {ClientId}", clientId);
+            _logger?.LogError(e, "Error validating API key for tenant {TenantId}", tenantId);
             throw;
         }
     }

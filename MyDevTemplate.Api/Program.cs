@@ -53,12 +53,12 @@ try
                 Scheme = ApiKeyConstants.AuthenticationScheme,
                 Description = "Enter your API Key"
             });
-            document.Components.SecuritySchemes.Add("ClientId", new OpenApiSecurityScheme
+            document.Components.SecuritySchemes.Add("TenantId", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.ApiKey,
-                Name = ApiKeyConstants.ClientIdHeaderName,
+                Name = ApiKeyConstants.TenantIdHeaderName,
                 In = ParameterLocation.Header,
-                Description = "Enter your Client ID"
+                Description = "Enter your Tenant ID"
             });
 
             document.SecurityRequirements.Add(new OpenApiSecurityRequirement
@@ -80,7 +80,7 @@ try
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "ClientId"
+                            Id = "TenantId"
                         }
                     },
                     Array.Empty<string>()

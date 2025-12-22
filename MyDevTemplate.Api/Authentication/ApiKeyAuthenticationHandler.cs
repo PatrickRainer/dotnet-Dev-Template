@@ -27,20 +27,26 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
         {
             return AuthenticateResult.NoResult();
         }
-        if (!Request.Headers.TryGetValue(ApiKeyConstants.ClientIdHeaderName, out var extractedClientId))
+        if (!Request.Headers.TryGetValue(ApiKeyConstants.TenantIdHeaderName, out var extractedTenantId))
         {
-            return AuthenticateResult.Fail("Client ID is missing");
+            return AuthenticateResult.Fail("Tenant ID is missing");
+        }
+
+        if (!Guid.TryParse(extractedTenantId, out var tenantId))
+        {
+            return AuthenticateResult.Fail("Invalid Tenant ID format");
         }
 
         var expectedApiKey = _configuration.GetValue<string>("Authentication:ApiKey");
-        var expectedClientId = _configuration.GetValue<string>("Authentication:ClientId") ?? "MasterClient";
+        var expectedTenantId = _configuration.GetValue<string>("Authentication:TenantId");
 
         // Check if it's the master key
-        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey && extractedClientId == expectedClientId)
+        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey && extractedTenantId == expectedTenantId)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, "MasterKeyUser")
+                new Claim(ClaimTypes.Name, "MasterKeyUser"),
+                new Claim("TenantId", extractedTenantId.ToString())
             };
 
             return Success(claims);
@@ -48,7 +54,7 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
 
         // Check database for dynamic keys
         var apiKeyService = Context.RequestServices.GetRequiredService<ApiKeyService>();
-        var apiKeyEntity = await apiKeyService.ValidateApiKeyAsync(extractedClientId!, extractedApiKey!);
+        var apiKeyEntity = await apiKeyService.ValidateApiKeyAsync(tenantId, extractedApiKey!);
 
         if (apiKeyEntity != null && apiKeyEntity.IsValid)
         {

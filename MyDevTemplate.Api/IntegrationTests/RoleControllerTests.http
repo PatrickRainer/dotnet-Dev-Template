@@ -3,6 +3,7 @@ POST {{Host}}/api/v1/Role
 Accept: application/json
 Content-Type: application/json
 X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 {
   "title": "Test Role",
@@ -21,6 +22,7 @@ X-Api-Key: SecretApiKey123
 GET {{Host}}/api/v1/Role
 Accept: application/json
 X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 > {%
     client.test("Get Roles should return success status", function () {
@@ -32,6 +34,8 @@ X-Api-Key: SecretApiKey123
 GET {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
 X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
 
 > {%
     client.test("Get Role by ID should return success status", function () {
@@ -44,6 +48,8 @@ PUT {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
 Content-Type: application/json
 X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
 
 {
   "title": "Updated Test Role",
@@ -60,6 +66,8 @@ X-Api-Key: SecretApiKey123
 DELETE {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
 X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
 
 > {%
     client.test("Remove Role should return success status", function () {
@@ -71,6 +79,8 @@ X-Api-Key: SecretApiKey123
 GET {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
 X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
 
 > {%
     client.test("Get Removed Role should return 404", function () {

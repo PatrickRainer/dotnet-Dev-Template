@@ -3,11 +3,10 @@ POST {{Host}}/api/v1/ApiKey
 Accept: application/json
 Content-Type: application/json
 X-Api-Key: SecretApiKey123
-X-Client-Id: MasterClient
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 {
   "key": "test-key-789",
-  "clientId": "test-client-789",
   "label": "Demo Key",
   "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
   "expiresAtUtc": "2025-12-31T23:59:59Z"
@@ -24,7 +23,7 @@ X-Client-Id: MasterClient
 GET {{Host}}/api/v1/ApiKey/tenant/3fa85f64-5717-4562-b3fc-2c963f66afa6
 Accept: application/json
 X-Api-Key: test-key-789
-X-Client-Id: test-client-789
+X-Tenant-Id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
 
 > {%
     client.test("Get API keys for tenant with tenant key should succeed", function () {
@@ -36,7 +35,7 @@ X-Client-Id: test-client-789
 GET {{Host}}/api/v1/ApiKey/tenant/3fa85f64-5717-4562-b3fc-2c963f66afa6
 Accept: application/json
 X-Api-Key: SecretApiKey123
-X-Client-Id: MasterClient
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 > {%
     client.test("Get API keys for tenant with master key should succeed", function () {
@@ -48,7 +47,7 @@ X-Client-Id: MasterClient
 DELETE {{Host}}/api/v1/ApiKey/{{createdApiKeyId}}
 Accept: application/json
 X-Api-Key: SecretApiKey123
-X-Client-Id: MasterClient
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 > {%
     client.test("API key should be deleted successfully", function () {
