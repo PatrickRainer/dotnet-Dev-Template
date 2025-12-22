@@ -146,7 +146,7 @@ try
     app.MapControllers();
 
     Log.Information("Application starting");
-    app.Run();
+    await app.RunAsync();
 }
 catch (Exception e)
 {

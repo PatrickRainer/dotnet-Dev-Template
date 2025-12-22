@@ -93,6 +93,7 @@ dotnet test
 ### Integration Tests
 - Located in `MyDevTemplate.Api.IntegrationTests`.
 - Use `WebApplicationFactory` to test the API in-memory.
+- Base class `IntegrationTestBase.cs` handles common setup (config, headers, sequential execution).
 - Configuration is managed via `appsettings.json` in the test project.
 - **Note**: `Program.cs` in the API project must have `public partial class Program { }` to be accessible by the test project.
 

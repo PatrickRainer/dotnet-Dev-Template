@@ -20,7 +20,10 @@
 - **Integration Testing (C# - Recommended)**:
     - Located in `MyDevTemplate.Api.IntegrationTests`.
     - Uses `Microsoft.AspNetCore.Mvc.Testing` and `WebApplicationFactory<Program>`.
-    - Configuration (API Key, TenantId) is managed in `appsettings.json` within the test project.
+    - Base class `IntegrationTestBase.cs` provides common logic:
+        - Configuration (API Key, TenantId) loading from `appsettings.json`.
+        - `HttpClient` initialization with necessary headers.
+        - `[Collection("IntegrationTests")]` for sequential execution.
     - Run using `dotnet test`.
     - To allow testing, `Program.cs` in `MyDevTemplate.Api` must have `public partial class Program { }`.
 - **Integration Testing (HTTP Files - Manual/Lightweight)**:
@@ -57,15 +60,10 @@
     ```
 - **Integration Test Example**:
     ```csharp
-    public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    public class UserControllerTests : IntegrationTestBase
     {
-        private readonly HttpClient _client;
-        public UserControllerTests(WebApplicationFactory<Program> factory)
+        public UserControllerTests(WebApplicationFactory<Program> factory) : base(factory)
         {
-            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-            _client = factory.CreateClient();
-            _client.DefaultRequestHeaders.Add("X-Api-Key", configuration["IntegrationTests:ApiKey"]);
-            _client.DefaultRequestHeaders.Add("X-Tenant-Id", configuration["IntegrationTests:TenantId"]);
         }
         // [Fact] ...
     }
