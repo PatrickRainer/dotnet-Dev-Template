@@ -101,5 +101,6 @@
     - Use `ServiceCollectionExtensions.cs` in each layer for registering dependencies.
     - Domain Entities should have EF Core Configuration files in `MyDevTemplate.Persistence/ModelConfigurations`.
     - Use `ILogger<T>` for logging, injected via constructor.
+    - Don't use redundant modifiers (e.g., `private` on constructors, properties and methods when they are already private by default).
     
 
