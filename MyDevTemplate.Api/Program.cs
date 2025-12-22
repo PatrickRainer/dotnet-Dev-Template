@@ -95,6 +95,9 @@ try
     
     builder.Services.AddApiKeyAuthentication();
     
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<MyDevTemplate.Domain.Contracts.Abstractions.ITenantProvider, MyDevTemplate.Api.Providers.HttpTenantProvider>();
+    
     builder.Services.AddAuthorization(options =>
     {
         options.AddPolicy("MasterTenant", policy => 

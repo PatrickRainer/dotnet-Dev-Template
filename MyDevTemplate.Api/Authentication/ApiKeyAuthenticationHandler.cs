@@ -38,10 +38,9 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
         }
 
         var expectedApiKey = _configuration.GetValue<string>("Authentication:ApiKey");
-        var expectedTenantId = _configuration.GetValue<string>("Authentication:TenantId");
 
         // Check if it's the master key
-        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey && extractedTenantId == expectedTenantId)
+        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey)
         {
             var claims = new[]
             {

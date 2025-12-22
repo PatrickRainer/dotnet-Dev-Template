@@ -21,8 +21,7 @@ public class UserControllerTests : IntegrationTestBase
             FirstName: "John",
             LastName: "Doe",
             Email: userEmail,
-            IdentityProviderId: "auth0|integration-test",
-            TenantId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            IdentityProviderId: "auth0|integration-test"
         );
 
         // Act & Assert: 1. Add User

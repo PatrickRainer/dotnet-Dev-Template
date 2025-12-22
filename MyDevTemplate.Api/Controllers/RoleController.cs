@@ -81,13 +81,6 @@ public class RoleController : ControllerBase
         {
             var role = new RoleRootEntity(addRoleDto.Title, addRoleDto.Description);
 
-            if (!Guid.TryParse(addRoleDto.TenantId, out var tenantId))
-            {
-                return BadRequest("Invalid TenantId format. Must be a Guid.");
-            }
-
-            role.TenantId = tenantId;
-
             await _roleService.AddRoleAsync(role, cancellationToken);
 
             return Ok(role.Id);
@@ -173,8 +166,7 @@ public class RoleController : ControllerBase
 
 public record AddRoleDto(
     [Required] string Title,
-    string Description,
-    [Required] string TenantId);
+    string Description);
 
 public record UpdateRoleDto(
     [Required] string Title,

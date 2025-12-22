@@ -66,13 +66,6 @@ public class UserController : ControllerBase
                 addUserDto.LastName,
                 addUserDto.IdentityProviderId);
 
-            if (!Guid.TryParse(addUserDto.TenantId, out var tenantId))
-            {
-                return BadRequest("Invalid TenantId format. Must be a Guid.");
-            }
-
-            user.TenantId = tenantId;
-
             await _userService.AddUserAsync(user, cancellationToken);
 
             return Ok("User added successfully");
@@ -127,5 +120,4 @@ public record AddUserDto(
     [Required] string FirstName,
     [Required] string LastName,
     [Required] string Email,
-    [Required] string IdentityProviderId,
-    [Required] string TenantId);
+    [Required] string IdentityProviderId);

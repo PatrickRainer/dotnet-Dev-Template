@@ -18,8 +18,7 @@ public class RoleControllerTests : IntegrationTestBase
         // Arrange
         var addRoleDto = new AddRoleDto(
             Title: "Integration Test Role",
-            Description: "Role created during integration testing",
-            TenantId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            Description: "Role created during integration testing"
         );
 
         // Act & Assert: 1. Add Role

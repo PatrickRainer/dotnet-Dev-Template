@@ -33,7 +33,11 @@ public class ApiKeyService
     {
         try
         {
-            return await _dbContext.ApiKeys.SingleOrDefaultAsync(a => a.TenantId == tenantId && a.Key == key, cancellationToken);
+            // Note: Use IgnoreQueryFilters here because at authentication time, 
+            // the TenantId is not yet available in the TenantProvider (it's being determined right now).
+            return await _dbContext.ApiKeys
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(a => a.TenantId == tenantId && a.Key == key, cancellationToken);
         }
         catch (Exception e)
         {
@@ -46,13 +50,11 @@ public class ApiKeyService
     {
         try
         {
-            return await _dbContext.ApiKeys
-                .Where(a => a.TenantId == tenantId)
-                .ToListAsync(cancellationToken);
+            return await _dbContext.ApiKeys.ToListAsync(cancellationToken);
         }
         catch (Exception e)
         {
-            _logger?.LogError(e, "Error getting API keys for tenant {TenantId}", tenantId);
+            _logger?.LogError(e, "Error getting API keys");
             throw;
         }
     }

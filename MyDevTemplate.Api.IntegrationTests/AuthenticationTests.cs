@@ -76,8 +76,8 @@ public class AuthenticationTests : IntegrationTestBase
         var addApiKeyDto = new AddApiKeyDto(
             Key: dynamicKey,
             Label: "Dynamic Test Key",
-            TenantId: newTenantId,
-            ExpiresAtUtc: DateTime.UtcNow.AddDays(1)
+            ExpiresAtUtc: DateTime.UtcNow.AddDays(1),
+            TenantId: newTenantId
         );
 
         var createKeyResponse = await Client.PostAsJsonAsync("/api/v1/ApiKey", addApiKeyDto);

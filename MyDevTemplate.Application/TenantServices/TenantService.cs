@@ -20,7 +20,9 @@ public class TenantService
     {
         try
         {
-            return await _dbContext.Tenants.SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
+            return await _dbContext.Tenants
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
         }
         catch (Exception e)
         {
@@ -33,7 +35,9 @@ public class TenantService
     {
         try
         {
-            return await _dbContext.Tenants.ToListAsync(cancellationToken);
+            return await _dbContext.Tenants
+                .IgnoreQueryFilters()
+                .ToListAsync(cancellationToken);
         }
         catch (Exception e)
         {
@@ -74,7 +78,9 @@ public class TenantService
     {
         try
         {
-            var tenant = await _dbContext.Tenants.SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
+            var tenant = await _dbContext.Tenants
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
             if (tenant == null)
             {
                 _logger?.LogWarning("Tenant with id {TenantId} not found for deletion", id);

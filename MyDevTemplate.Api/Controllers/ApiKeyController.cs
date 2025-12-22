@@ -23,20 +23,15 @@ public class ApiKeyController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("tenant/{tenantId}")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ApiKeyRootEntity>))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<ApiKeyRootEntity>>> GetApiKeys(string tenantId, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<ApiKeyRootEntity>>> GetApiKeys(CancellationToken cancellationToken)
     {
         try
         {
-            if (!Guid.TryParse(tenantId, out var tenantGuid))
-            {
-                return BadRequest("Invalid TenantId format. Must be a Guid.");
-            }
-
-            var apiKeys = await _apiKeyService.GetApiKeysAsync(tenantGuid, cancellationToken);
+            // Note: tenantId is now automatically handled by AppDbContext global filter
+            var apiKeys = await _apiKeyService.GetApiKeysAsync(Guid.Empty, cancellationToken);
             return Ok(apiKeys);
         }
         catch (OperationCanceledException)
@@ -58,15 +53,12 @@ public class ApiKeyController : ControllerBase
     {
         try
         {
-            if (!Guid.TryParse(addApiKeyDto.TenantId, out var tenantGuid))
-            {
-                return BadRequest("Invalid TenantId format. Must be a Guid.");
-            }
+            var apiKey = new ApiKeyRootEntity(addApiKeyDto.Key, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc);
 
-            var apiKey = new ApiKeyRootEntity(addApiKeyDto.Key, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc)
+            if (!string.IsNullOrEmpty(addApiKeyDto.TenantId) && Guid.TryParse(addApiKeyDto.TenantId, out var tenantGuid))
             {
-                TenantId = tenantGuid
-            };
+                apiKey.TenantId = tenantGuid;
+            }
 
             await _apiKeyService.AddApiKeyAsync(apiKey, cancellationToken);
 
@@ -121,5 +113,5 @@ public class ApiKeyController : ControllerBase
 public record AddApiKeyDto(
     [Required] string Key,
     [Required] string Label,
-    [Required] string TenantId,
-    DateTime? ExpiresAtUtc);
+    DateTime? ExpiresAtUtc,
+    string? TenantId = null);
