@@ -13,19 +13,24 @@
   - Default database provider is SQL Server.
 
 ### Testing Information
-- **Testing Framework for Unit Test**: xUnit is used for unit and integration testing.
+- **Testing Framework**: xUnit is used for unit and integration testing.
 - **Unit Testing**:
     - Located in `01_Core` solution folder (e.g., `MyDevTemplate.Domain.Tests`).
     - Run using `dotnet test`.
-- **Running Integration Tests**: Use the http files in the  MyDevTemplate.Api/IntegrationTests, run curl commands from the terminal to execute the tests.
-- **Integration Testing**:
-    - API endpoints are tested using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
+- **Integration Testing (C# - Recommended)**:
+    - Located in `MyDevTemplate.Api.IntegrationTests`.
+    - Uses `Microsoft.AspNetCore.Mvc.Testing` and `WebApplicationFactory<Program>`.
+    - Configuration (API Key, TenantId) is managed in `appsettings.json` within the test project.
+    - Run using `dotnet test`.
+    - To allow testing, `Program.cs` in `MyDevTemplate.Api` must have `public partial class Program { }`.
+- **Integration Testing (HTTP Files - Manual/Lightweight)**:
+    - API endpoints can also be tested using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
     - These files can be executed directly in IDEs like JetBrains Rider or VS Code with the REST Client extension.
 - **Adding Tests**:
-    - Use the existing xUnit project (e.g., `MyDevTemplate.Domain.Tests`) for Domain Tests.
+    - Use the existing xUnit projects (e.g., `MyDevTemplate.Domain.Tests` or `MyDevTemplate.Api.IntegrationTests`).
     - Add a reference to the project being tested: `dotnet add <TestProject> reference <ProjectUnderTest>`.
-    - Create test classes following the naming convention `<Entity/Service>Tests.cs`.
-- **Test Example**:
+    - Create test classes following the naming convention `<Entity/Service>Tests.cs` or `<Controller>Tests.cs`.
+- **Unit Test Example**:
     ```csharp
     using MyDevTemplate.Domain.Entities.RoleAggregate;
     using Xunit;
@@ -48,6 +53,21 @@
             Assert.Equal(title, role.Title);
             Assert.Equal(description, role.Description);
         }
+    }
+    ```
+- **Integration Test Example**:
+    ```csharp
+    public class UserControllerTests : IClassFixture<WebApplicationFactory<Program>>
+    {
+        private readonly HttpClient _client;
+        public UserControllerTests(WebApplicationFactory<Program> factory)
+        {
+            var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            _client = factory.CreateClient();
+            _client.DefaultRequestHeaders.Add("X-Api-Key", configuration["IntegrationTests:ApiKey"]);
+            _client.DefaultRequestHeaders.Add("X-Tenant-Id", configuration["IntegrationTests:TenantId"]);
+        }
+        // [Fact] ...
     }
     ```
 

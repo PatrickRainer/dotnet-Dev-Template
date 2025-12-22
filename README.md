@@ -30,6 +30,7 @@ The solution follows Clean Architecture, organized into the following layers:
     - `MyDevTemplate.Domain`: Contains domain entities, aggregate roots, value objects, and contracts.
 - **Test Projects**:
     - `MyDevTemplate.Domain.Tests`: Unit tests for the domain layer.
+    - `MyDevTemplate.Api.IntegrationTests`: Integration tests for the API layer using `WebApplicationFactory`.
 
 ## Requirements
 
@@ -85,10 +86,21 @@ Use the `dotnet test` command to run all tests in the solution.
 dotnet test
 ```
 
+### Unit Tests
+- Located in `MyDevTemplate.Domain.Tests`.
+- Focus on domain logic, entities, and value objects.
+
+### Integration Tests
+- Located in `MyDevTemplate.Api.IntegrationTests`.
+- Use `WebApplicationFactory` to test the API in-memory.
+- Configuration is managed via `appsettings.json` in the test project.
+- **Note**: `Program.cs` in the API project must have `public partial class Program { }` to be accessible by the test project.
+
 ### Adding New Tests
 - Use the existing xUnit project `MyDevTemplate.Domain.Tests` for Domain tests.
-- Follow the naming convention `<Entity/Service>Tests.cs`.
-- Example:
+- Use `MyDevTemplate.Api.IntegrationTests` for API integration tests.
+- Follow the naming convention `<Entity/Service>Tests.cs` or `<Controller>Tests.cs`.
+- Example Unit Test:
     ```csharp
     public class RoleRootEntityTests
     {
