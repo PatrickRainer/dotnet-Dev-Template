@@ -1,9 +1,13 @@
-﻿### Create Tenant
+@TestTenantId1 = 7CDEA225-3155-4001-83F6-1D0BF88D1015
+@TestTenantId2 = 0C72A5A0-033C-4E6E-A847-B9ADE131FDF9
+
+
+### Create Tenant
 POST {{Host}}/api/v1/Tenant
 Accept: application/json
 Content-Type: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 {
   "tenantName": "New Tenant",
@@ -24,8 +28,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Get All Tenants
 GET {{Host}}/api/v1/Tenant
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 > {%
     client.test("Get All Tenants should return success status", function () {
@@ -36,8 +40,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Get Tenant by ID
 GET {{Host}}/api/v1/Tenant/{{tenantId}}
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 > {%
     client.test("Get Tenant by ID should return success status", function () {
@@ -49,8 +53,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 PUT {{Host}}/api/v1/Tenant/{{tenantId}}
 Accept: application/json
 Content-Type: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 {
   "tenantName": "Updated Tenant",
@@ -70,11 +74,79 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Delete Tenant
 DELETE {{Host}}/api/v1/Tenant/{{tenantId}}
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 > {%
     client.test("Delete Tenant should return success status", function () {
         client.assert(response.status === 204, "Expected 204 but got " + response.status);
     });
 %}
+
+### Create a temporary tenant for Auth testing
+POST {{Host}}/api/v1/Tenant
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
+
+{
+  "tenantName": "Auth Test Tenant",
+  "companyName": "Auth Test Company"
+}
+> {%
+    client.test("Create Auth Test Tenant should return success status", function () {
+        client.assert(response.status === 201, "Expected 201 but got " + response.status);
+    });
+    client.global.set("auth_test_tenant_id", response.body.id);
+%}
+
+### Create a valid API key for the temporary tenant
+POST {{Host}}/api/v1/ApiKey
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
+
+{
+  "key": "{{TestTenantId1}}",
+  "label": "Non-Master Test Key",
+  "tenantId": "{{TestTenantId1}}",
+  "expiresAtUtc": "2025-12-31T23:59:59Z"
+}
+> {%
+    client.test("Create API key should return success status", function () {
+        client.assert(response.status === 200, "Expected 200 but got " + response.status);
+    });
+    client.global.set("auth_test_api_key_id", response.body);
+%}
+
+### Create Tenant with Non-Master Key (Should fail with 401)
+POST {{Host}}/api/v1/Tenant
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: non-master-test-key
+X-Tenant-Id: 3B56E91A-CE8E-4AD0-BE25-0644CB166895
+
+{
+  "tenantName": "Should Fail Tenant",
+  "companyName": "Should Fail Company"
+}
+
+> {%
+    client.test("Create Tenant with non-master key should return 403 Forbidden", function () {
+        client.assert(response.status === 401, "Expected 401 but got " + response.status);
+    });
+%}
+
+### Clean up: Delete temporary API key
+DELETE {{Host}}/api/v1/ApiKey/{{auth_test_api_key_id}}
+Accept: application/json
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
+
+### Clean up: Delete temporary tenant
+DELETE {{Host}}/api/v1/Tenant/{{auth_test_tenant_id}}
+Accept: application/json
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}

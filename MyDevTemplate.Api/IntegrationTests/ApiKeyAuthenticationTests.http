@@ -1,4 +1,4 @@
-﻿### Test Without API Key
+### Test Without API Key
 GET {{Host}}/api/v1/User/test@example.com
 
 > {%
@@ -10,7 +10,7 @@ GET {{Host}}/api/v1/User/test@example.com
 ### Test With Invalid API Key
 GET {{Host}}/api/v1/User/test@example.com
 X-Api-Key: InvalidKey
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Tenant-Id: {{MasterTenantId}}
 
 > {%
     client.test("Request with invalid API key should be unauthorized", function() {
@@ -20,7 +20,7 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 
 ### Test With Missing Tenant ID
 GET {{Host}}/api/v1/User/test@example.com
-X-Api-Key: SecretApiKey123
+X-Api-Key: {{MasterApiKey}}
 
 > {%
     client.test("Request with missing tenant ID should be unauthorized", function() {
@@ -32,8 +32,8 @@ X-Api-Key: SecretApiKey123
 # Note: This will likely fail with 404 if the user doesn't exist, 
 # but it should NOT be 401.
 GET {{Host}}/api/v1/User/test@example.com
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 > {%
     client.test("Request with valid API key should not be unauthorized", function() {

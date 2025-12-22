@@ -1,9 +1,9 @@
-﻿### Add Role
+### Add Role
 POST {{Host}}/api/v1/Role
 Accept: application/json
 Content-Type: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 {
   "title": "Test Role",
@@ -21,8 +21,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Get All Roles
 GET {{Host}}/api/v1/Role
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 > {%
     client.test("Get Roles should return success status", function () {
@@ -33,8 +33,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Get Role by ID
 GET {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 
 > {%
@@ -47,8 +47,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 PUT {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
 Content-Type: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 
 {
@@ -65,8 +65,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Remove Role
 DELETE {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 
 > {%
@@ -78,8 +78,8 @@ X-Tenant-Id: 00000000-0000-0000-0000-000000000000
 ### Get Removed Role (Should be 404)
 GET {{Host}}/api/v1/Role/{{role_id}}
 Accept: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 
 > {%

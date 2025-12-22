@@ -8,7 +8,7 @@ using MyDevTemplate.Domain.Entities.TenantAggregate;
 
 namespace MyDevTemplate.Api.Controllers;
 
-[Authorize]
+[Authorize(Policy = "MasterTenant")]
 [ApiVersion("1.0")]
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]

@@ -94,6 +94,13 @@ try
     
     builder.Services.AddApiKeyAuthentication();
     
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("MasterTenant", policy => 
+            policy.RequireAuthenticatedUser()
+                  .RequireClaim(System.Security.Claims.ClaimTypes.Name, "MasterKeyUser"));
+    });
+    
     builder.Services.AddApplicationServices();
 
 // Add Db Context from the Persistence project

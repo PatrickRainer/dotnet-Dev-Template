@@ -1,4 +1,4 @@
-﻿### Add API Key
+### Add API Key
 POST {{Host}}/api/v1/ApiKey
 Accept: application/json
 Content-Type: application/json
