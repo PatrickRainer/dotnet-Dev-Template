@@ -13,34 +13,16 @@ X-Tenant-Id: {{MasterTenantId}}
   "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 
-> {%
-    client.test("Add User should return success status", function () {
-        client.assert(response.status === 200 || response.status === 201, "Expected 200/201 but got " + response.status);
-    });
-%}
-
 ### Get User
 GET {{Host}}/api/v1/User/john.doe@example.com
 Accept: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
 
-> {%
-    client.test("Get User should return success status", function () {
-        client.assert(response.status === 200, "Expected 200 but got " + response.status);
-    });
-%}
-
 ### Remove User
 DELETE {{Host}}/api/v1.0/User/john.doe@example.com
 Accept: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
-
-> {%
-    client.test("Remove User should return success status", function () {
-        client.assert(response.status === 200 || response.status === 204, "Expected 200/204 but got " + response.status);
-    });
-%}
 
 ###

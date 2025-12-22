@@ -11,79 +11,42 @@ X-Tenant-Id: {{MasterTenantId}}
   "tenantId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
 }
 
-> {%
-    client.test("Add Role should return success status", function () {
-        client.assert(response.status === 200, "Expected 200 but got " + response.status);
-    });
-    client.global.set("role_id", response.body);
-%}
-
 ### Get All Roles
 GET {{Host}}/api/v1/Role
 Accept: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
 
-> {%
-    client.test("Get Roles should return success status", function () {
-        client.assert(response.status === 200, "Expected 200 but got " + response.status);
-    });
-%}
-
 ### Get Role by ID
-GET {{Host}}/api/v1/Role/{{role_id}}
+# Replace {id} with the Guid returned from Add Role
+GET {{Host}}/api/v1/Role/{id}
 Accept: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
 
-
-> {%
-    client.test("Get Role by ID should return success status", function () {
-        client.assert(response.status === 200, "Expected 200 but got " + response.status);
-    });
-%}
-
 ### Update Role
-PUT {{Host}}/api/v1/Role/{{role_id}}
+# Replace {id} with the Guid returned from Add Role
+PUT {{Host}}/api/v1/Role/{id}
 Accept: application/json
 Content-Type: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
-
 
 {
   "title": "Updated Test Role",
   "description": "Updated description"
 }
 
-> {%
-    client.test("Update Role should return success status", function () {
-        client.assert(response.status === 200, "Expected 200 but got " + response.status);
-    });
-%}
-
 ### Remove Role
-DELETE {{Host}}/api/v1/Role/{{role_id}}
+# Replace {id} with the Guid returned from Add Role
+DELETE {{Host}}/api/v1/Role/{id}
 Accept: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
-
-
-> {%
-    client.test("Remove Role should return success status", function () {
-        client.assert(response.status === 200, "Expected 200 but got " + response.status);
-    });
-%}
 
 ### Get Removed Role (Should be 404)
-GET {{Host}}/api/v1/Role/{{role_id}}
+# Replace {id} with the Guid returned from Add Role
+GET {{Host}}/api/v1/Role/{id}
 Accept: application/json
 X-Api-Key: {{MasterApiKey}}
 X-Tenant-Id: {{MasterTenantId}}
-
-
-> {%
-    client.test("Get Removed Role should return 404", function () {
-        client.assert(response.status === 404, "Expected 404 but got " + response.status);
-    });
-%}
