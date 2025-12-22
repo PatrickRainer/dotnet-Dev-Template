@@ -1,0 +1,80 @@
+﻿### Create Tenant
+POST {{Host}}/api/v1/Tenant
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
+{
+  "tenantName": "New Tenant",
+  "companyName": "New Company",
+  "street": "123 Main St",
+  "city": "Metropolis",
+  "state": "NY",
+  "country": "USA",
+  "zipCode": "10001"
+}
+> {%
+    client.test("Create Tenant should return success status", function () {
+        client.assert(response.status === 201, "Expected 201 but got " + response.status);
+    });
+    client.global.set("tenantId", response.body.id);
+%}
+
+### Get All Tenants
+GET {{Host}}/api/v1/Tenant
+Accept: application/json
+X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
+> {%
+    client.test("Get All Tenants should return success status", function () {
+        client.assert(response.status === 200, "Expected 200 but got " + response.status);
+    });
+%}
+
+### Get Tenant by ID
+GET {{Host}}/api/v1/Tenant/{{tenantId}}
+Accept: application/json
+X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
+> {%
+    client.test("Get Tenant by ID should return success status", function () {
+        client.assert(response.status === 200, "Expected 200 but got " + response.status);
+    });
+%}
+
+### Update Tenant
+PUT {{Host}}/api/v1/Tenant/{{tenantId}}
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
+{
+  "tenantName": "Updated Tenant",
+  "companyName": "Updated Company",
+  "street": "456 Side St",
+  "city": "Smallville",
+  "state": "KS",
+  "country": "USA",
+  "zipCode": "67524"
+}
+> {%
+    client.test("Update Tenant should return success status", function () {
+        client.assert(response.status === 204, "Expected 204 but got " + response.status);
+    });
+%}
+
+### Delete Tenant
+DELETE {{Host}}/api/v1/Tenant/{{tenantId}}
+Accept: application/json
+X-Api-Key: SecretApiKey123
+X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+
+> {%
+    client.test("Delete Tenant should return success status", function () {
+        client.assert(response.status === 204, "Expected 204 but got " + response.status);
+    });
+%}
