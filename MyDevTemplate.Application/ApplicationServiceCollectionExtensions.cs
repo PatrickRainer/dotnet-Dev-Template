@@ -2,8 +2,9 @@
 using MyDevTemplate.Application.ApiKeyServices;
 using MyDevTemplate.Application.RoleServices;
 using MyDevTemplate.Application.TenantServices;
+using MyDevTemplate.Application.UserServices;
 
-namespace MyDevTemplate.Application.UserServices;
+namespace MyDevTemplate.Application;
 
 public static class ApplicationServiceCollectionExtensions
 {

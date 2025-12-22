@@ -2,6 +2,7 @@ using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MyDevTemplate.Api.Authentication;
+using MyDevTemplate.Application;
 using MyDevTemplate.Application.UserServices;
 using MyDevTemplate.Persistence;
 using Serilog;
