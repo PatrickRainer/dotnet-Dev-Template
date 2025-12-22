@@ -10,6 +10,7 @@ GET {{Host}}/api/v1/User/test@example.com
 ### Test With Invalid API Key
 GET {{Host}}/api/v1/User/test@example.com
 X-Api-Key: InvalidKey
+X-Client-Id: MasterClient
 
 > {%
     client.test("Request with invalid API key should be unauthorized", function() {
@@ -17,11 +18,22 @@ X-Api-Key: InvalidKey
     });
 %}
 
-### Test With Valid API Key
+### Test With Missing Client ID
+GET {{Host}}/api/v1/User/test@example.com
+X-Api-Key: SecretApiKey123
+
+> {%
+    client.test("Request with missing client ID should be unauthorized", function() {
+        client.assert(response.status === 401, "Expected 401 Unauthorized but got " + response.status);
+    });
+%}
+
+### Test With Valid API Key and Client ID
 # Note: This will likely fail with 404 if the user doesn't exist, 
 # but it should NOT be 401.
 GET {{Host}}/api/v1/User/test@example.com
 X-Api-Key: SecretApiKey123
+X-Client-Id: MasterClient
 
 > {%
     client.test("Request with valid API key should not be unauthorized", function() {

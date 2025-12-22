@@ -27,11 +27,16 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
         {
             return AuthenticateResult.NoResult();
         }
+        if (!Request.Headers.TryGetValue(ApiKeyConstants.ClientIdHeaderName, out var extractedClientId))
+        {
+            return AuthenticateResult.Fail("Client ID is missing");
+        }
 
         var expectedApiKey = _configuration.GetValue<string>("Authentication:ApiKey");
+        var expectedClientId = _configuration.GetValue<string>("Authentication:ClientId") ?? "MasterClient";
 
         // Check if it's the master key
-        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey)
+        if (!string.IsNullOrEmpty(expectedApiKey) && extractedApiKey == expectedApiKey && extractedClientId == expectedClientId)
         {
             var claims = new[]
             {
@@ -43,7 +48,7 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
 
         // Check database for dynamic keys
         var apiKeyService = Context.RequestServices.GetRequiredService<ApiKeyService>();
-        var apiKeyEntity = await apiKeyService.GetApiKeyByValueAsync(extractedApiKey!);
+        var apiKeyEntity = await apiKeyService.ValidateApiKeyAsync(extractedClientId!, extractedApiKey!);
 
         if (apiKeyEntity != null && apiKeyEntity.IsValid)
         {

@@ -63,7 +63,7 @@ public class ApiKeyController : ControllerBase
                 return BadRequest("Invalid TenantId format. Must be a Guid.");
             }
 
-            var apiKey = new ApiKeyRootEntity(addApiKeyDto.Key, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc)
+            var apiKey = new ApiKeyRootEntity(addApiKeyDto.Key, addApiKeyDto.ClientId, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc)
             {
                 TenantId = tenantGuid
             };
@@ -120,6 +120,7 @@ public class ApiKeyController : ControllerBase
 
 public record AddApiKeyDto(
     [Required] string Key,
+    [Required] string ClientId,
     [Required] string Label,
     [Required] string TenantId,
     DateTime? ExpiresAtUtc);

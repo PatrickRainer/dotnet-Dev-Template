@@ -19,7 +19,12 @@ public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyRootEntity>
             .IsRequired()
             .HasMaxLength(256);
 
+        builder.Property(a => a.ClientId)
+            .IsRequired()
+            .HasMaxLength(100);
+
         builder.HasIndex(a => a.Key).IsUnique();
+        builder.HasIndex(a => a.ClientId).IsUnique();
 
         builder.Property(a => a.Label)
             .IsRequired()
