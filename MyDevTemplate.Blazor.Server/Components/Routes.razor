@@ -1,6 +1,11 @@
 ﻿<Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <MudText Typo="Typo.h4">Access Denied</MudText>
+                <MudText>You are not authorized to access this page.</MudText>
+            </NotAuthorized>
+        </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>

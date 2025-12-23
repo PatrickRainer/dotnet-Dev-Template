@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
+using Microsoft.IdentityModel.Logging;
 using MudBlazor.Services;
 using MyDevTemplate.Blazor.Server.Components;
 using Serilog;
@@ -14,14 +18,40 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
+    if (builder.Environment.IsDevelopment())
+    {
+        IdentityModelEventSource.ShowPII = true;
+    }
+
     Log.Information("Starting web host");
     builder.Host.UseSerilog((context, services, configuration) => configuration
         .ReadFrom.Configuration(context.Configuration)
         .ReadFrom.Services(services));
+    
+    // Add Microsoft Identity Web authentication
+    builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+        .AddMicrosoftIdentityWebApp(builder.Configuration, "AzureAd");
+
+    builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
+    {
+        options.ResponseType = "code";
+    });
+
+    builder.Services.AddControllersWithViews()
+        .AddMicrosoftIdentityUI();
+
+    builder.Services.AddAuthorization(options =>
+    {
+        // By default, all incoming requests will be authorized according to the default policy
+        // options.FallbackPolicy = options.DefaultPolicy;
+    });
+
     // Add MudBlazor services
     builder.Services.AddMudServices();
 
-// Add services to the container.
+    builder.Services.AddCascadingAuthenticationState();
+
+    // Add services to the container.
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
 
@@ -37,12 +67,16 @@ try
 
     app.UseHttpsRedirection();
 
-
     app.UseAntiforgery();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
 
     app.MapStaticAssets();
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode();
+
+    app.MapControllers();
 
     app.Run();
 
