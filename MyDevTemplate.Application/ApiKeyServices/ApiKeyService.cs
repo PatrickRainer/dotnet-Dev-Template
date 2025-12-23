@@ -16,7 +16,7 @@ public class ApiKeyService
         _logger = logger;
     }
 
-    public async Task<ApiKeyRootEntity?> GetApiKeyAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiKeyRoot?> GetApiKeyAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -29,7 +29,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task<ApiKeyRootEntity?> ValidateApiKeyAsync(Guid tenantId, string key, CancellationToken cancellationToken = default)
+    public async Task<ApiKeyRoot?> ValidateApiKeyAsync(Guid tenantId, string key, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -46,7 +46,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task<List<ApiKeyRootEntity>> GetApiKeysAsync(Guid tenantId, CancellationToken cancellationToken = default)
+    public async Task<List<ApiKeyRoot>> GetApiKeysAsync(Guid tenantId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -59,7 +59,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task AddApiKeyAsync(ApiKeyRootEntity apiKey, CancellationToken cancellationToken = default)
+    public async Task AddApiKeyAsync(ApiKeyRoot apiKey, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -73,7 +73,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task UpdateApiKeyAsync(ApiKeyRootEntity apiKey, CancellationToken cancellationToken = default)
+    public async Task UpdateApiKeyAsync(ApiKeyRoot apiKey, CancellationToken cancellationToken = default)
     {
         try
         {

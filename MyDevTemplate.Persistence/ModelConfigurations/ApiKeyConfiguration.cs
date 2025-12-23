@@ -4,9 +4,9 @@ using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 
 namespace MyDevTemplate.Persistence.ModelConfigurations;
 
-public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyRootEntity>
+public class ApiKeyConfiguration : IEntityTypeConfiguration<ApiKeyRoot>
 {
-    public void Configure(EntityTypeBuilder<ApiKeyRootEntity> builder)
+    public void Configure(EntityTypeBuilder<ApiKeyRoot> builder)
     {
         builder.ToTable("ApiKeys");
 

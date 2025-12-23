@@ -2,16 +2,16 @@
 
 namespace MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 
-public class ApiKeyRootEntity : EntityBase
+public class ApiKeyRoot : EntityBase
 {
     // For EF Core
-    private ApiKeyRootEntity()
+    ApiKeyRoot()
     {
         Key = string.Empty;
         Label = string.Empty;
     }
 
-    public ApiKeyRootEntity(string key, string label, DateTime? expiresAtUtc = null)
+    public ApiKeyRoot(string key, string label, DateTime? expiresAtUtc = null)
     {
         if (string.IsNullOrWhiteSpace(key))
             throw new ArgumentException("Key cannot be null or whitespace", nameof(key));

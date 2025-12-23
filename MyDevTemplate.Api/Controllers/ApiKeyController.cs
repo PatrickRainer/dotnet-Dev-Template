@@ -24,9 +24,9 @@ public class ApiKeyController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ApiKeyRootEntity>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ApiKeyRoot>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<ApiKeyRootEntity>>> GetApiKeys(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<ApiKeyRoot>>> GetApiKeys(CancellationToken cancellationToken)
     {
         try
         {
@@ -53,7 +53,7 @@ public class ApiKeyController : ControllerBase
     {
         try
         {
-            var apiKey = new ApiKeyRootEntity(addApiKeyDto.Key, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc);
+            var apiKey = new ApiKeyRoot(addApiKeyDto.Key, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc);
 
             if (!string.IsNullOrEmpty(addApiKeyDto.TenantId) && Guid.TryParse(addApiKeyDto.TenantId, out var tenantGuid))
             {
