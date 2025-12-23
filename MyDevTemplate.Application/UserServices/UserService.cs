@@ -17,7 +17,7 @@ public class UserService
         _logger = logger;
     }
 
-    public async Task<UserRootEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+    public async Task<UserRoot?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -30,7 +30,7 @@ public class UserService
         }
     }
 
-    public async Task AddUserAsync(UserRootEntity user, CancellationToken cancellationToken = default)
+    public async Task AddUserAsync(UserRoot user, CancellationToken cancellationToken = default)
     {
         try
         {

@@ -16,7 +16,7 @@ public class RoleService
         _logger = logger;
     }
 
-    public async Task<RoleRootEntity?> GetRoleByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<RoleRoot?> GetRoleByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -29,7 +29,7 @@ public class RoleService
         }
     }
 
-    public async Task<List<RoleRootEntity>> GetAllRolesAsync(CancellationToken cancellationToken = default)
+    public async Task<List<RoleRoot>> GetAllRolesAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -42,7 +42,7 @@ public class RoleService
         }
     }
 
-    public async Task AddRoleAsync(RoleRootEntity role, CancellationToken cancellationToken = default)
+    public async Task AddRoleAsync(RoleRoot role, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -56,7 +56,7 @@ public class RoleService
         }
     }
 
-    public async Task UpdateRoleAsync(RoleRootEntity role, CancellationToken cancellationToken = default)
+    public async Task UpdateRoleAsync(RoleRoot role, CancellationToken cancellationToken = default)
     {
         try
         {

@@ -25,10 +25,10 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{email}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRootEntity))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserRoot))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<UserRootEntity>> GetUser([FromRoute] string email, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserRoot>> GetUser([FromRoute] string email, CancellationToken cancellationToken)
     {
         try
         {
@@ -60,7 +60,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            var user = new UserRootEntity(
+            var user = new UserRoot(
                 new EmailAddress(addUserDto.Email),
                 addUserDto.FirstName,
                 addUserDto.LastName,

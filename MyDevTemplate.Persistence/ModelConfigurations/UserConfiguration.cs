@@ -5,9 +5,9 @@ using MyDevTemplate.Domain.Entities.UserAggregate;
 
 namespace MyDevTemplate.Persistence.ModelConfigurations;
 
-public class UserConfiguration : IEntityTypeConfiguration<UserRootEntity>
+public class UserConfiguration : IEntityTypeConfiguration<UserRoot>
 {
-    public void Configure(EntityTypeBuilder<UserRootEntity> builder)
+    public void Configure(EntityTypeBuilder<UserRoot> builder)
     {
         builder.ToTable("Users");
 
@@ -19,7 +19,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserRootEntity>
         builder.OwnsOne(u => u.Email, email =>
         {
             email.Property(e => e.Value)
-                .HasColumnName(nameof(UserRootEntity.Email))
+                .HasColumnName(nameof(UserRoot.Email))
                 .IsRequired()
                 .HasMaxLength(256);
 

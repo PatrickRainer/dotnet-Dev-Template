@@ -2,15 +2,15 @@
 
 namespace MyDevTemplate.Domain.Entities.RoleAggregate;
 
-public class RoleRootEntity : EntityBase
+public class RoleRoot : EntityBase
 {
     // For Ef Core
-    RoleRootEntity()
+    RoleRoot()
     {
         Title = string.Empty;
     }
 
-    public RoleRootEntity(string title, string description = "")
+    public RoleRoot(string title, string description = "")
     {
         Title = title;
         Description = description;

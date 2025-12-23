@@ -3,7 +3,7 @@ using Xunit;
 
 namespace MyDevTemplate.Domain.Tests;
 
-public class RoleRootEntityTests
+public class RoleRootTests
 {
     [Fact]
     public void RoleRootEntity_Should_Initialize_Correctly()
@@ -13,7 +13,7 @@ public class RoleRootEntityTests
         var description = "Administrator role";
 
         // Act
-        var role = new RoleRootEntity(title, description);
+        var role = new RoleRoot(title, description);
 
         // Assert
         Assert.Equal(title, role.Title);
@@ -26,7 +26,7 @@ public class RoleRootEntityTests
     public void AddUser_Should_Add_User_To_Collection()
     {
         // Arrange
-        var role = new RoleRootEntity("Admin");
+        var role = new RoleRoot("Admin");
         var userId = Guid.NewGuid();
 
         // Act
@@ -40,7 +40,7 @@ public class RoleRootEntityTests
     public void RemoveUser_Should_Remove_User_From_Collection()
     {
         // Arrange
-        var role = new RoleRootEntity("Admin");
+        var role = new RoleRoot("Admin");
         var userId = Guid.NewGuid();
         role.AddUser(userId);
 

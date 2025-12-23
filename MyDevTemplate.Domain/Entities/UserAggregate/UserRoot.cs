@@ -3,17 +3,17 @@ using MyDevTemplate.Domain.Entities.Common;
 
 namespace MyDevTemplate.Domain.Entities.UserAggregate;
 
-public class UserRootEntity : EntityBase
+public class UserRoot : EntityBase
 {
     // For Ef Core
-    private UserRootEntity()
+    private UserRoot()
     {
         LastName = string.Empty;
         FirstName = string.Empty;
         IdentityProviderId = string.Empty;
     }
 
-    public UserRootEntity(EmailAddress email, string firstName, string lastName, string identityProviderId)
+    public UserRoot(EmailAddress email, string firstName, string lastName, string identityProviderId)
     {
         Email = email;
         FirstName = firstName;

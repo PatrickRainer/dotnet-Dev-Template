@@ -5,9 +5,9 @@ using MyDevTemplate.Domain.Entities.RoleAggregate;
 
 namespace MyDevTemplate.Persistence.ModelConfigurations;
 
-public class RoleConfiguration : IEntityTypeConfiguration<RoleRootEntity>
+public class RoleConfiguration : IEntityTypeConfiguration<RoleRoot>
 {
-    public void Configure(EntityTypeBuilder<RoleRootEntity> builder)
+    public void Configure(EntityTypeBuilder<RoleRoot> builder)
     {
         builder.ToTable("Roles");
 

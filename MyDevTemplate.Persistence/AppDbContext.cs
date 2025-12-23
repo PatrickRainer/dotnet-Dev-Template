@@ -73,8 +73,8 @@ public class AppDbContext : DbContext
         return base.SaveChangesAsync(cancellationToken);
     }
 
-    public DbSet<UserRootEntity> Users { get; set; }
-    public DbSet<RoleRootEntity> Roles { get; set; }
+    public DbSet<UserRoot> Users { get; set; }
+    public DbSet<RoleRoot> Roles { get; set; }
     public DbSet<ApiKeyRootEntity> ApiKeys { get; set; }
     public DbSet<TenantRoot> Tenants { get; set; }
 }

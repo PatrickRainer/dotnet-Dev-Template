@@ -4,7 +4,7 @@ using Xunit;
 
 namespace MyDevTemplate.Domain.Tests;
 
-public class UserRootEntityTests
+public class UserRootTests
 {
     [Fact]
     public void UserRootEntity_Should_Initialize_Correctly()
@@ -17,7 +17,7 @@ public class UserRootEntityTests
         var identiyProviderId = Guid.NewGuid().ToString();
 
         // Act
-        var user = new UserRootEntity(email, firstName, lastName, identiyProviderId);
+        var user = new UserRoot(email, firstName, lastName, identiyProviderId);
 
         // Assert
         Assert.Equal(email, user.Email);
@@ -33,7 +33,7 @@ public class UserRootEntityTests
     public void AddRole_Should_Add_Role_To_Collection()
     {
         // Arrange
-        var user = new UserRootEntity(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
+        var user = new UserRoot(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
         var roleId = Guid.NewGuid();
 
         // Act
@@ -47,7 +47,7 @@ public class UserRootEntityTests
     public void RemoveRole_Should_Remove_Role_From_Collection()
     {
         // Arrange
-        var user = new UserRootEntity(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
+        var user = new UserRoot(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
         var roleId = Guid.NewGuid();
         user.AddRole(roleId);
 

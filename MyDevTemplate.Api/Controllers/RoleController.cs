@@ -24,9 +24,9 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RoleRootEntity>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<RoleRoot>))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IEnumerable<RoleRootEntity>>> GetRoles(CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<RoleRoot>>> GetRoles(CancellationToken cancellationToken)
     {
         try
         {
@@ -45,10 +45,10 @@ public class RoleController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleRootEntity))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(RoleRoot))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<RoleRootEntity>> GetRole([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<RoleRoot>> GetRole([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         try
         {
@@ -79,7 +79,7 @@ public class RoleController : ControllerBase
     {
         try
         {
-            var role = new RoleRootEntity(addRoleDto.Title, addRoleDto.Description);
+            var role = new RoleRoot(addRoleDto.Title, addRoleDto.Description);
 
             await _roleService.AddRoleAsync(role, cancellationToken);
 
