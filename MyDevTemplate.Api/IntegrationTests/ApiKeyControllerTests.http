@@ -2,8 +2,8 @@
 POST {{Host}}/api/v1/ApiKey
 Accept: application/json
 Content-Type: application/json
-X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Api-Key: {{MasterApiKey}}
+X-Tenant-Id: {{MasterTenantId}}
 
 {
   "key": "test-key-789",
@@ -22,11 +22,11 @@ X-Tenant-Id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
 GET {{Host}}/api/v1/ApiKey/tenant/3fa85f64-5717-4562-b3fc-2c963f66afa6
 Accept: application/json
 X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Tenant-Id: {{MasterTenantId}}
 
 ### Remove API Key
 # Replace {id} with the Guid returned from Add API Key
 DELETE {{Host}}/api/v1/ApiKey/{id}
 Accept: application/json
 X-Api-Key: SecretApiKey123
-X-Tenant-Id: 00000000-0000-0000-0000-000000000000
+X-Tenant-Id: {{MasterTenantId}}
