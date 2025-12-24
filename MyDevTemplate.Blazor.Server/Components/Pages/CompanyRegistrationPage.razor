@@ -1,0 +1,39 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using MyDevTemplate.Blazor.Server.Infrastructure
+@using MyDevTemplate.Blazor.Server.Ressources
+@attribute [Route(UrlProvider.CompanyRegistrationPage)]
+
+<PageTitle>Company Registration</PageTitle>
+
+<AuthorizeView>
+    <NotAuthorized>
+        <MudPaper>
+            <MudText>Please login or create an user account upfront:
+                <MudLink Href="MicrosoftIdentity/Account/SignIn">Sign in</MudLink>
+            </MudText>
+        </MudPaper>
+    </NotAuthorized>
+    <Authorized>
+        <MudForm @ref="_form" @bind-IsValid="@_isFormValid" @bind-Errors="@_errors">
+            <MudTextField T="string" Label="@Blazor_Server_Localization.common_CompanyName"
+                          @bind-Value="Model.CompanyName" Required="true"/>
+            <MudTextField T="string" Label="@Blazor_Server_Localization.common_Street"
+                          @bind-Value="Model.Street"
+                          Required="true"/>
+            <MudTextField T="string" Label="@Blazor_Server_Localization.common_City"
+                          @bind-Value="Model.City"
+                          Required="true"/>
+            <MudTextField T="string" Label="@Blazor_Server_Localization.common_Country"
+                          @bind-Value="Model.Country"
+                          Required="true"/>
+            <MudTextField T="string" Label="@Blazor_Server_Localization.common_ZipCode"
+                          @bind-Value="Model.ZipCode"
+                          Required="true"/>
+        </MudForm>
+        <MudButton color="Color.Primary" variant="Variant.Filled"
+                   @onclick="@(async () => await Register(Model))">
+            @Blazor_Server_Localization.common_Register
+        </MudButton>
+    </Authorized>
+</AuthorizeView>
+

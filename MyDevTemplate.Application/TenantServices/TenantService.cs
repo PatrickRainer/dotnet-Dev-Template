@@ -46,12 +46,13 @@ public class TenantService
         }
     }
 
-    public async Task AddTenantAsync(TenantRoot tenant, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddTenantAsync(TenantRoot tenant, CancellationToken cancellationToken = default)
     {
         try
         {
-            await _dbContext.Tenants.AddAsync(tenant, cancellationToken);
+            var result = await _dbContext.Tenants.AddAsync(tenant, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            return result.Entity.Id;
         }
         catch (Exception e)
         {

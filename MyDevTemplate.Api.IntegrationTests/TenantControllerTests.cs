@@ -23,7 +23,8 @@ public class TenantControllerTests : IntegrationTestBase
             City: "Test City",
             State: "TS",
             Country: "Test Country",
-            ZipCode: "12345"
+            ZipCode: "12345",
+            AdminEmail: "TestAdminEmail@MyDevtemplate.com"
         );
 
         // Act & Assert: 1. Create Tenant

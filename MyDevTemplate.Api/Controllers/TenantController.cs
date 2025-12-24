@@ -80,15 +80,9 @@ public class TenantController : ControllerBase
     {
         try
         {
-            var tenant = new TenantRoot(createTenantDto.TenantName, createTenantDto.CompanyName)
-            {
-                Address = new Address(
-                    createTenantDto.Street ?? string.Empty,
-                    createTenantDto.City ?? string.Empty,
-                    createTenantDto.State ?? string.Empty,
-                    createTenantDto.Country ?? string.Empty,
-                    createTenantDto.ZipCode ?? string.Empty)
-            };
+            var tenant = new TenantRoot(createTenantDto.TenantName, createTenantDto.CompanyName,
+                createTenantDto.AdminEmail);
+            tenant.AddAddress(createTenantDto.Street ?? string.Empty, createTenantDto.City ?? string.Empty, createTenantDto.State, createTenantDto.Country, createTenantDto.ZipCode);
 
             await _tenantService.AddTenantAsync(tenant, cancellationToken);
 
@@ -122,7 +116,7 @@ public class TenantController : ControllerBase
 
             tenant.TenantName = updateTenantDto.TenantName;
             tenant.CompanyName = updateTenantDto.CompanyName;
-            tenant.Address = new Address(
+            tenant.AddAddress(
                 updateTenantDto.Street ?? string.Empty,
                 updateTenantDto.City ?? string.Empty,
                 updateTenantDto.State ?? string.Empty,
@@ -176,6 +170,7 @@ public class TenantController : ControllerBase
 public record CreateTenantDto(
     [Required] string TenantName,
     [Required] string CompanyName,
+    [Required] string AdminEmail,
     string? Street,
     string? City,
     string? State,

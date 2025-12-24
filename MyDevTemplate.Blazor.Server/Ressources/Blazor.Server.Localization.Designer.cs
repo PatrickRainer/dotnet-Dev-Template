@@ -60,6 +60,15 @@ namespace MyDevTemplate.Blazor.Server.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to City.
+        /// </summary>
+        internal static string common_City {
+            get {
+                return ResourceManager.GetString("common.City", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Company Name.
         /// </summary>
         internal static string common_CompanyName {
@@ -69,11 +78,56 @@ namespace MyDevTemplate.Blazor.Server.Ressources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Country.
+        /// </summary>
+        internal static string common_Country {
+            get {
+                return ResourceManager.GetString("common.Country", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Register.
         /// </summary>
         internal static string common_Register {
             get {
                 return ResourceManager.GetString("common.Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to State.
+        /// </summary>
+        internal static string common_State {
+            get {
+                return ResourceManager.GetString("common.State", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Street.
+        /// </summary>
+        internal static string common_Street {
+            get {
+                return ResourceManager.GetString("common.Street", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip Code.
+        /// </summary>
+        internal static string common_ZipCode {
+            get {
+                return ResourceManager.GetString("common.ZipCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The email address is invalid.
+        /// </summary>
+        internal static string companyRegistrationPage_The_email_address_is_invalid {
+            get {
+                return ResourceManager.GetString("companyRegistrationPage.The_email_address_is_invalid", resourceCulture);
             }
         }
     }

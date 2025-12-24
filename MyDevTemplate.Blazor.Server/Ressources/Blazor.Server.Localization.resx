@@ -24,4 +24,22 @@
     <data name="common.Register" xml:space="preserve">
         <value>Register</value>
     </data>
+    <data name="common.Street" xml:space="preserve">
+        <value>Street</value>
+    </data>
+    <data name="common.City" xml:space="preserve">
+        <value>City</value>
+    </data>
+    <data name="common.State" xml:space="preserve">
+        <value>State</value>
+    </data>
+    <data name="common.Country" xml:space="preserve">
+        <value>Country</value>
+    </data>
+    <data name="common.ZipCode" xml:space="preserve">
+        <value>Zip Code</value>
+    </data>
+    <data name="companyRegistrationPage.The_email_address_is_invalid" xml:space="preserve">
+        <value>The email address is invalid</value>
+    </data>
 </root>
