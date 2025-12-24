@@ -4,14 +4,121 @@
 
 <PageTitle>Home</PageTitle>
 
-<MudContainer>
-    <MudCard>
-        <MudCardHeader>@Ressources.Blazor_Server_Localization.common_Register</MudCardHeader>
-        <MudCardContent>
-            Start with your Company Registration
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton @onclick="() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage)">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
-        </MudCardActions>
-    </MudCard>
+<MudContainer Class="mt-4">
+    <MudGrid>
+        <MudItem xs="12" md="4">
+            <MudCard style="height: 100%">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h3">Service 1</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>Welcome to Service 1. This comprehensive platform provides you with powerful tools to
+                        manage and
+                        monitor your business operations effectively.
+                    </MudText>
+                    <MudList T="string">
+                        <MudListItem Text="Dashboard Overview - View your key metrics and statistics"
+                                     Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary"/>
+                        <MudListItem Text="Analytics - Track and analyze your business data"
+                                     Icon="@Icons.Material.Filled.Analytics" IconColor="Color.Primary"/>
+                        <MudListItem Text="Settings - Configure your preferences and options"
+                                     Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary"/>
+                    </MudList>
+                </MudCardContent>
+                <MudCardActions>
+                    <div class="d-flex justify-center" style="width: 100%">
+                        <MudButton @onclick="() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage)"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
+                    </div>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <MudCard style="height: 100%">
+            <MudCardHeader>
+                    <MudText Typo="Typo.h3">Service 2</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>Service 2 expands on Service 1 with additional features for enhanced business management
+                        and
+                        collaboration.
+                    </MudText>
+                    <MudList T="string">
+                        <MudListItem Text="Dashboard Overview - View your key metrics and statistics"
+                                     Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary"/>
+                        <MudListItem Text="Analytics - Track and analyze your business data"
+                                     Icon="@Icons.Material.Filled.Analytics" IconColor="Color.Primary"/>
+                        <MudListItem Text="Settings - Configure your preferences and options"
+                                     Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary"/>
+                        <MudListItem Text="Reports - Generate detailed business reports"
+                                     Icon="@Icons.Material.Filled.Assessment" IconColor="Color.Primary"/>
+                        <MudListItem Text="Notifications - Stay updated with real-time alerts"
+                                     Icon="@Icons.Material.Filled.Notifications" IconColor="Color.Primary"/>
+                        <MudListItem Text="User Management - Control team access and permissions"
+                                     Icon="@Icons.Material.Filled.People" IconColor="Color.Primary"/>
+                        <MudListItem Text="Integration - Connect with third-party services"
+                                     Icon="@Icons.Material.Filled.IntegrationInstructions" IconColor="Color.Primary"/>
+                    </MudList>
+                </MudCardContent>
+                <MudCardActions>
+                    <div class="d-flex justify-center" style="width: 100%">
+                        <MudButton
+                            @onclick="() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage)"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
+                    </div>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <MudCard style="height: 100%">
+            <MudCardHeader>
+                    <MudText Typo="Typo.h3">Service 3</MudText>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText>Service 3 is our premium offering with comprehensive features for enterprise-level business
+                        management and automation.
+                    </MudText>
+                    <MudList T="string">
+                        <MudListItem Text="Dashboard Overview - View your key metrics and statistics"
+                                     Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary"/>
+                        <MudListItem Text="Analytics - Track and analyze your business data"
+                                     Icon="@Icons.Material.Filled.Analytics" IconColor="Color.Primary"/>
+                        <MudListItem Text="Settings - Configure your preferences and options"
+                                     Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary"/>
+                        <MudListItem Text="Reports - Generate detailed business reports"
+                                     Icon="@Icons.Material.Filled.Assessment" IconColor="Color.Primary"/>
+                        <MudListItem Text="Notifications - Stay updated with real-time alerts"
+                                     Icon="@Icons.Material.Filled.Notifications"/>
+                        <MudListItem Text="User Management - Control team access and permissions"
+                                     Icon="@Icons.Material.Filled.People" IconColor="Color.Primary"/>
+                        <MudListItem Text="Integration - Connect with third-party services"
+                                     Icon="@Icons.Material.Filled.IntegrationInstructions"/>
+                        <MudListItem Text="Advanced Analytics - AI-powered insights and predictions"
+                                     Icon="@Icons.Material.Filled.TrendingUp" IconColor="Color.Primary"/>
+                        <MudListItem Text="Automation - Create custom workflows and automations"
+                                     Icon="@Icons.Material.Filled.AutoMode" IconColor="Color.Primary"/>
+                        <MudListItem Text="Security - Enterprise-grade security and compliance"
+                                     Icon="@Icons.Material.Filled.Security" IconColor="Color.Primary"/>
+                        <MudListItem Text="API Access - Full programmatic access to all features"
+                                     Icon="@Icons.Material.Filled.Api" IconColor="Color.Primary"/>
+                        <MudListItem Text="Custom Workflows - Design and implement tailored processes"
+                                     Icon="@Icons.Material.Filled.WorkspacePremium" IconColor="Color.Primary"/>
+                    </MudList>
+                </MudCardContent>
+                <MudCardActions>
+                    <div class="d-flex justify-center" style="width: 100%">
+                        <MudButton
+                            @onclick="() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage)"
+                            Variant="Variant.Filled"
+                            Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
+                    </div>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+
 </MudContainer>
