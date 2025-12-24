@@ -20,7 +20,7 @@ public class AuthenticationTests : IntegrationTestBase
         client.DefaultRequestHeaders.Add("X-Tenant-Id", TenantId);
 
         // Act
-        var response = await client.GetAsync("/api/v1/User/test@example.com");
+        var response = await client.GetAsync("/api/v1/User/email/test@example.com");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -35,7 +35,7 @@ public class AuthenticationTests : IntegrationTestBase
         client.DefaultRequestHeaders.Add("X-Tenant-Id", TenantId);
 
         // Act
-        var response = await client.GetAsync("/api/v1/User/test@example.com");
+        var response = await client.GetAsync("/api/v1/User/email/test@example.com");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -49,7 +49,7 @@ public class AuthenticationTests : IntegrationTestBase
         client.DefaultRequestHeaders.Add("X-Api-Key", ApiKey);
 
         // Act
-        var response = await client.GetAsync("/api/v1/User/test@example.com");
+        var response = await client.GetAsync("/api/v1/User/email/test@example.com");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -89,7 +89,7 @@ public class AuthenticationTests : IntegrationTestBase
         dynamicClient.DefaultRequestHeaders.Add("X-Api-Key", dynamicKey);
         dynamicClient.DefaultRequestHeaders.Add("X-Tenant-Id", newTenantId);
 
-        var userResponse = await dynamicClient.GetAsync("/api/v1/User/nonexistent@example.com");
+        var userResponse = await dynamicClient.GetAsync("/api/v1/User/email/nonexistent@example.com");
         // Should be 404 because user doesn't exist, but NOT 401/403
         Assert.Equal(HttpStatusCode.NotFound, userResponse.StatusCode);
 

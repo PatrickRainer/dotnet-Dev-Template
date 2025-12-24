@@ -18,14 +18,17 @@ public class ApiKeyController : ControllerBase
     private readonly ApiKeyService _apiKeyService;
     private readonly ILogger<ApiKeyController>? _logger;
     private readonly IValidator<AddApiKeyDto> _addValidator;
+    private readonly IValidator<UpdateApiKeyDto> _updateValidator;
 
     public ApiKeyController(
         ApiKeyService apiKeyService, 
         IValidator<AddApiKeyDto> addValidator,
+        IValidator<UpdateApiKeyDto> updateValidator,
         ILogger<ApiKeyController>? logger = null)
     {
         _apiKeyService = apiKeyService;
         _addValidator = addValidator;
+        _updateValidator = updateValidator;
         _logger = logger;
     }
 
@@ -36,8 +39,7 @@ public class ApiKeyController : ControllerBase
     {
         try
         {
-            // Note: tenantId is now automatically handled by AppDbContext global filter
-            var apiKeys = await _apiKeyService.GetApiKeysAsync(Guid.Empty, cancellationToken);
+            var apiKeys = await _apiKeyService.GetAllAsync(cancellationToken);
             return Ok(apiKeys);
         }
         catch (OperationCanceledException)
@@ -47,6 +49,33 @@ public class ApiKeyController : ControllerBase
         catch (Exception e)
         {
             _logger?.LogError(e, "Error getting API keys");
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiKeyRoot))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<ApiKeyRoot>> GetApiKey(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var apiKey = await _apiKeyService.GetByIdAsync(id, cancellationToken);
+            if (apiKey == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(apiKey);
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error getting API key with id {Id}", id);
             return StatusCode(500, "Internal server error");
         }
     }
@@ -68,7 +97,7 @@ public class ApiKeyController : ControllerBase
                 apiKey.TenantId = tenantGuid;
             }
 
-            await _apiKeyService.AddApiKeyAsync(apiKey, cancellationToken);
+            await _apiKeyService.AddAsync(apiKey, cancellationToken);
 
             return Ok(apiKey.Id);
         }
@@ -95,7 +124,47 @@ public class ApiKeyController : ControllerBase
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<string>> UpdateApiKey(Guid id, [FromBody] UpdateApiKeyDto updateApiKeyDto, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _updateValidator.ValidateAndThrowAsync(updateApiKeyDto, cancellationToken);
+            
+            var apiKey = await _apiKeyService.GetByIdAsync(id, cancellationToken);
+            if (apiKey == null)
+            {
+                return NotFound("API key not found");
+            }
+
+            apiKey.Label = updateApiKeyDto.Label;
+            apiKey.IsActive = updateApiKeyDto.IsActive;
+            apiKey.ExpiresAtUtc = updateApiKeyDto.ExpiresAtUtc;
+
+            await _apiKeyService.UpdateAsync(apiKey, cancellationToken);
+
+            return Ok("API key updated successfully");
+        }
+        catch (OperationCanceledException)
+        {
+            return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error updating API key with id {Id}", id);
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -103,7 +172,7 @@ public class ApiKeyController : ControllerBase
     {
         try
         {
-            await _apiKeyService.RemoveApiKeyAsync(id, cancellationToken);
+            await _apiKeyService.DeleteAsync(id, cancellationToken);
             return Ok("API key removed successfully");
         }
         catch (OperationCanceledException)

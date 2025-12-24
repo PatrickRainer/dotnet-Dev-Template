@@ -42,7 +42,7 @@ public class UserServiceTests : IntegrationTestBase
         var user = new UserRoot(new EmailAddress(email), "First", "Last", "oid-1");
 
         // Act
-        await userService.AddUserAsync(user);
+        await userService.AddAsync(user);
 
         // Assert
         var retrievedUser = await userService.GetUserByEmailAsync(email);
@@ -52,7 +52,7 @@ public class UserServiceTests : IntegrationTestBase
         Assert.Equal(Guid.Parse(TenantId), retrievedUser.TenantId);
 
         // Cleanup
-        await userService.RemoveUserAsync(email);
+        await userService.RemoveUserByEmailAsync(email);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class UserServiceTests : IntegrationTestBase
         var userService = scope.ServiceProvider.GetRequiredService<UserService>();
 
         // Act & Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => userService.RemoveUserAsync($"nonexistent.{Guid.NewGuid()}@example.com"));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => userService.RemoveUserByEmailAsync($"nonexistent.{Guid.NewGuid()}@example.com"));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class UserServiceTests : IntegrationTestBase
         Assert.Equal(oid, user.IdentityProviderId);
 
         // Cleanup
-        await userService.RemoveUserAsync(email);
+        await userService.RemoveUserByEmailAsync(email);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class UserServiceTests : IntegrationTestBase
         var updatedOid = "oid-updated";
 
         var user = new UserRoot(new EmailAddress(email), "First", "Last", initialOid);
-        await userService.AddUserAsync(user);
+        await userService.AddAsync(user);
 
         // Act
         await userService.UpsertAfterLogin(updatedOid, email);
@@ -129,7 +129,7 @@ public class UserServiceTests : IntegrationTestBase
         Assert.Equal(updatedOid, updatedUser.IdentityProviderId);
 
         // Cleanup
-        await userService.RemoveUserAsync(email);
+        await userService.RemoveUserByEmailAsync(email);
     }
 
     [Fact]
@@ -168,6 +168,6 @@ public class UserServiceTests : IntegrationTestBase
         var userService = scope.ServiceProvider.GetRequiredService<UserService>();
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => userService.RemoveUserAsync("invalid-email"));
+        await Assert.ThrowsAsync<ArgumentException>(() => userService.RemoveUserByEmailAsync("invalid-email"));
     }
 }

@@ -1,23 +1,50 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.UserAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.UserServices;
 
-public class UserService
+public class UserService : ICrudService<UserRoot, Guid>
 {
-    private readonly AppDbContext _dbContext;
-    private readonly ILogger<UserService>? _logger;
-    private readonly IValidator<UserRoot> _validator;
+    readonly AppDbContext _dbContext;
+    readonly ILogger<UserService>? _logger;
+    readonly IValidator<UserRoot> _validator;
 
     public UserService(AppDbContext dbContext, IValidator<UserRoot> validator, ILogger<UserService>? logger = null)
     {
         _dbContext = dbContext;
         _validator = validator;
         _logger = logger;
+    }
+
+    public async Task<UserRoot?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error getting user by id {Id}", id);
+            throw;
+        }
+    }
+
+    public async Task<List<UserRoot>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            return await _dbContext.Users.ToListAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error getting all users");
+            throw;
+        }
     }
 
     public async Task<UserRoot?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
@@ -34,7 +61,7 @@ public class UserService
         }
     }
 
-    public async Task<Guid> AddUserAsync(UserRoot user, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddAsync(UserRoot user, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -54,7 +81,43 @@ public class UserService
         }
     }
 
-    public async Task<int> RemoveUserAsync(string email, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(UserRoot user, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await _validator.ValidateAndThrowAsync(user, cancellationToken);
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (ValidationException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error updating user {Id}", user.Id);
+            throw;
+        }
+    }
+
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
+            if (user == null) throw new KeyNotFoundException($"User with id {id} not found");
+
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError(e, "Error removing user {Id}", id);
+            throw;
+        }
+    }
+
+    public async Task<int> RemoveUserByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -103,7 +166,7 @@ public class UserService
                 // Create a new user
                 var newUser = new UserRoot(new EmailAddress(email), string.Empty, string.Empty, identityProviderId)
                     {LastLoginAtUtc = DateTime.UtcNow};
-                var result = await AddUserAsync(newUser);
+                var result = await AddAsync(newUser);
 
                 return result;
             }

@@ -41,7 +41,7 @@ public class TenantController : ControllerBase
     {
         try
         {
-            var tenants = await _tenantService.GetAllTenantsAsync(cancellationToken);
+            var tenants = await _tenantService.GetAllAsync(cancellationToken);
             return Ok(tenants);
         }
         catch (OperationCanceledException)
@@ -63,7 +63,7 @@ public class TenantController : ControllerBase
     {
         try
         {
-            var tenant = await _tenantService.GetTenantByIdAsync(id, cancellationToken);
+            var tenant = await _tenantService.GetByIdAsync(id, cancellationToken);
             if (tenant == null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ public class TenantController : ControllerBase
                 createTenantDto.AdminEmail);
             tenant.AddAddress(createTenantDto.Street ?? string.Empty, createTenantDto.City ?? string.Empty, createTenantDto.State, createTenantDto.Country, createTenantDto.ZipCode);
 
-            await _tenantService.AddTenantAsync(tenant, cancellationToken);
+            await _tenantService.AddAsync(tenant, cancellationToken);
 
             return CreatedAtAction(nameof(GetTenant), new { id = tenant.Id }, tenant);
         }
@@ -126,7 +126,7 @@ public class TenantController : ControllerBase
         {
             await _updateValidator.ValidateAndThrowAsync(updateTenantDto, cancellationToken);
             
-            var tenant = await _tenantService.GetTenantByIdAsync(id, cancellationToken);
+            var tenant = await _tenantService.GetByIdAsync(id, cancellationToken);
             if (tenant == null)
             {
                 return NotFound();
@@ -141,7 +141,7 @@ public class TenantController : ControllerBase
                 updateTenantDto.Country ?? string.Empty,
                 updateTenantDto.ZipCode ?? string.Empty);
 
-            await _tenantService.UpdateTenantAsync(tenant, cancellationToken);
+            await _tenantService.UpdateAsync(tenant, cancellationToken);
 
             return NoContent();
         }
@@ -168,13 +168,13 @@ public class TenantController : ControllerBase
     {
         try
         {
-            var tenant = await _tenantService.GetTenantByIdAsync(id, cancellationToken);
+            var tenant = await _tenantService.GetByIdAsync(id, cancellationToken);
             if (tenant == null)
             {
                 return NotFound();
             }
 
-            await _tenantService.DeleteTenantAsync(id, cancellationToken);
+            await _tenantService.DeleteAsync(id, cancellationToken);
             return NoContent();
         }
         catch (OperationCanceledException)

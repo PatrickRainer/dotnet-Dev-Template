@@ -1,16 +1,17 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Entities.RoleAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.RoleServices;
 
-public class RoleService
+public class RoleService : ICrudService<RoleRoot, Guid>
 {
-    private readonly AppDbContext _dbContext;
-    private readonly ILogger<RoleService>? _logger;
-    private readonly IValidator<RoleRoot> _validator;
+    readonly AppDbContext _dbContext;
+    readonly ILogger<RoleService>? _logger;
+    readonly IValidator<RoleRoot> _validator;
 
     public RoleService(AppDbContext dbContext, IValidator<RoleRoot> validator, ILogger<RoleService>? logger = null)
     {
@@ -19,7 +20,7 @@ public class RoleService
         _logger = logger;
     }
 
-    public async Task<RoleRoot?> GetRoleByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<RoleRoot?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -32,7 +33,7 @@ public class RoleService
         }
     }
 
-    public async Task<List<RoleRoot>> GetAllRolesAsync(CancellationToken cancellationToken = default)
+    public async Task<List<RoleRoot>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -45,13 +46,14 @@ public class RoleService
         }
     }
 
-    public async Task AddRoleAsync(RoleRoot role, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddAsync(RoleRoot role, CancellationToken cancellationToken = default)
     {
         try
         {
             await _validator.ValidateAndThrowAsync(role, cancellationToken);
             await _dbContext.Roles.AddAsync(role, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            return role.Id;
         }
         catch (ValidationException)
         {
@@ -64,7 +66,7 @@ public class RoleService
         }
     }
 
-    public async Task UpdateRoleAsync(RoleRoot role, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(RoleRoot role, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -83,7 +85,7 @@ public class RoleService
         }
     }
 
-    public async Task RemoveRoleAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {

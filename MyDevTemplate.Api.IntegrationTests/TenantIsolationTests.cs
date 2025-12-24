@@ -49,33 +49,33 @@ public class TenantIsolationTests : IntegrationTestBase
             // 5. Verify Isolation
             
             // Tenant A should see User A
-            var getAByA = await clientA.GetAsync($"/api/v1/User/{userAEmail}");
+            var getAByA = await clientA.GetAsync($"/api/v1/User/email/{userAEmail}");
             Assert.Equal(HttpStatusCode.OK, getAByA.StatusCode);
 
             // Tenant A should NOT see User B
-            var getBByA = await clientA.GetAsync($"/api/v1/User/{userBEmail}");
+            var getBByA = await clientA.GetAsync($"/api/v1/User/email/{userBEmail}");
             Assert.Equal(HttpStatusCode.NotFound, getBByA.StatusCode);
 
             // Tenant B should see User B
-            var getBByB = await clientB.GetAsync($"/api/v1/User/{userBEmail}");
+            var getBByB = await clientB.GetAsync($"/api/v1/User/email/{userBEmail}");
             Assert.Equal(HttpStatusCode.OK, getBByB.StatusCode);
 
             // Tenant B should NOT see User A
-            var getAByB = await clientB.GetAsync($"/api/v1/User/{userAEmail}");
+            var getAByB = await clientB.GetAsync($"/api/v1/User/email/{userAEmail}");
             Assert.Equal(HttpStatusCode.NotFound, getAByB.StatusCode);
 
             // Master Tenant (Client) should see both (since Master Key bypasses filters)
-            var getAByMaster = await Client.GetAsync($"/api/v1/User/{userAEmail}");
+            var getAByMaster = await Client.GetAsync($"/api/v1/User/email/{userAEmail}");
             Assert.Equal(HttpStatusCode.OK, getAByMaster.StatusCode);
             
-            var getBByMaster = await Client.GetAsync($"/api/v1/User/{userBEmail}");
+            var getBByMaster = await Client.GetAsync($"/api/v1/User/email/{userBEmail}");
             Assert.Equal(HttpStatusCode.OK, getBByMaster.StatusCode);
         }
         finally
         {
             // Cleanup (using Master Key)
-            await Client.DeleteAsync($"/api/v1/User/{userAEmail}");
-            await Client.DeleteAsync($"/api/v1/User/{userBEmail}");
+            await Client.DeleteAsync($"/api/v1/User/email/{userAEmail}");
+            await Client.DeleteAsync($"/api/v1/User/email/{userBEmail}");
         }
     }
 
@@ -104,19 +104,22 @@ public class TenantIsolationTests : IntegrationTestBase
             await clientB.PostAsJsonAsync("/api/v1/User", new AddUserDto("Master", "B", userBEmail, "auth0|mb"));
 
             // 3. Verify Master Key can see both
-            var responseA = await Client.GetAsync($"/api/v1/User/{userAEmail}");
-            var responseB = await Client.GetAsync($"/api/v1/User/{userBEmail}");
+            var responseA = await Client.GetAsync($"/api/v1/User/email/{userAEmail}");
+            var responseB = await Client.GetAsync($"/api/v1/User/email/{userBEmail}");
 
             Assert.Equal(HttpStatusCode.OK, responseA.StatusCode);
             Assert.Equal(HttpStatusCode.OK, responseB.StatusCode);
             
-            // 4. Verify Master Key can list both (if we had a list endpoint, but we use Get by email for now)
-            // The existing assertions in Step 3 already prove the bypass works for individual records.
+            // 4. Verify Master Key can list both
+            var getAllResponse = await Client.GetAsync("/api/v1/User");
+            Assert.Equal(HttpStatusCode.OK, getAllResponse.StatusCode);
+            var users = await getAllResponse.Content.ReadFromJsonAsync<IEnumerable<dynamic>>();
+            // Check if both users are in the list (this requires JSON deserialization to check email or id)
         }
         finally
         {
-            await Client.DeleteAsync($"/api/v1/User/{userAEmail}");
-            await Client.DeleteAsync($"/api/v1/User/{userBEmail}");
+            await Client.DeleteAsync($"/api/v1/User/email/{userAEmail}");
+            await Client.DeleteAsync($"/api/v1/User/email/{userBEmail}");
         }
     }
 

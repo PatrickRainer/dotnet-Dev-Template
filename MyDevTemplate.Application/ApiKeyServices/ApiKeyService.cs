@@ -1,16 +1,17 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.ApiKeyServices;
 
-public class ApiKeyService
+public class ApiKeyService : ICrudService<ApiKeyRoot, Guid>
 {
-    private readonly AppDbContext _dbContext;
-    private readonly ILogger<ApiKeyService>? _logger;
-    private readonly IValidator<ApiKeyRoot> _validator;
+    readonly AppDbContext _dbContext;
+    readonly ILogger<ApiKeyService>? _logger;
+    readonly IValidator<ApiKeyRoot> _validator;
 
     public ApiKeyService(AppDbContext dbContext, IValidator<ApiKeyRoot> validator, ILogger<ApiKeyService>? logger = null)
     {
@@ -19,7 +20,7 @@ public class ApiKeyService
         _logger = logger;
     }
 
-    public async Task<ApiKeyRoot?> GetApiKeyAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<ApiKeyRoot?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -49,7 +50,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task<List<ApiKeyRoot>> GetApiKeysAsync(Guid tenantId, CancellationToken cancellationToken = default)
+    public async Task<List<ApiKeyRoot>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -62,13 +63,14 @@ public class ApiKeyService
         }
     }
 
-    public async Task AddApiKeyAsync(ApiKeyRoot apiKey, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddAsync(ApiKeyRoot apiKey, CancellationToken cancellationToken = default)
     {
         try
         {
             await _validator.ValidateAndThrowAsync(apiKey, cancellationToken);
             await _dbContext.ApiKeys.AddAsync(apiKey, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+            return apiKey.Id;
         }
         catch (ValidationException)
         {
@@ -81,7 +83,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task UpdateApiKeyAsync(ApiKeyRoot apiKey, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(ApiKeyRoot apiKey, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -100,7 +102,7 @@ public class ApiKeyService
         }
     }
 
-    public async Task RemoveApiKeyAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {

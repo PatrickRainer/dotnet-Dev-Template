@@ -1,16 +1,17 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.TenantServices;
 
-public class TenantService
+public class TenantService : ICrudService<TenantRoot, Guid>
 {
-    private readonly AppDbContext _dbContext;
-    private readonly ILogger<TenantService>? _logger;
-    private readonly IValidator<TenantRoot> _validator;
+    readonly AppDbContext _dbContext;
+    readonly ILogger<TenantService>? _logger;
+    readonly IValidator<TenantRoot> _validator;
 
     public TenantService(AppDbContext dbContext, IValidator<TenantRoot> validator, ILogger<TenantService>? logger = null)
     {
@@ -19,7 +20,7 @@ public class TenantService
         _logger = logger;
     }
 
-    public async Task<TenantRoot?> GetTenantByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TenantRoot?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -34,7 +35,7 @@ public class TenantService
         }
     }
 
-    public async Task<List<TenantRoot>> GetAllTenantsAsync(CancellationToken cancellationToken = default)
+    public async Task<List<TenantRoot>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         try
         {
@@ -49,7 +50,7 @@ public class TenantService
         }
     }
 
-    public async Task<Guid> AddTenantAsync(TenantRoot tenant, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddAsync(TenantRoot tenant, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -70,7 +71,7 @@ public class TenantService
         }
     }
 
-    public async Task UpdateTenantAsync(TenantRoot tenant, CancellationToken cancellationToken = default)
+    public async Task UpdateAsync(TenantRoot tenant, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -90,7 +91,7 @@ public class TenantService
         }
     }
 
-    public async Task DeleteTenantAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         try
         {

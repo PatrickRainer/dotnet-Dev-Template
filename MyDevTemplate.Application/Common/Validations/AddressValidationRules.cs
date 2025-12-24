@@ -21,7 +21,6 @@ public static class AddressValidationRules
     public static IRuleBuilderOptions<T, string> ApplyStateRules<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
-            .NotEmpty()
             .MaximumLength(100);
     }
 

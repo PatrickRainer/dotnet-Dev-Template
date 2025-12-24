@@ -39,7 +39,7 @@ public class RoleController : ControllerBase
     {
         try
         {
-            var roles = await _roleService.GetAllRolesAsync(cancellationToken);
+            var roles = await _roleService.GetAllAsync(cancellationToken);
             return Ok(roles);
         }
         catch (OperationCanceledException)
@@ -61,7 +61,7 @@ public class RoleController : ControllerBase
     {
         try
         {
-            var role = await _roleService.GetRoleByIdAsync(id, cancellationToken);
+            var role = await _roleService.GetByIdAsync(id, cancellationToken);
             if (role == null)
             {
                 return NotFound();
@@ -92,7 +92,7 @@ public class RoleController : ControllerBase
             
             var role = new RoleRoot(addRoleDto.Title, addRoleDto.Description);
 
-            await _roleService.AddRoleAsync(role, cancellationToken);
+            await _roleService.AddAsync(role, cancellationToken);
 
             return Ok(role.Id);
         }
@@ -126,7 +126,7 @@ public class RoleController : ControllerBase
         {
             await _updateValidator.ValidateAndThrowAsync(updateRoleDto, cancellationToken);
             
-            var role = await _roleService.GetRoleByIdAsync(id, cancellationToken);
+            var role = await _roleService.GetByIdAsync(id, cancellationToken);
             if (role == null)
             {
                 return NotFound("Role not found");
@@ -135,7 +135,7 @@ public class RoleController : ControllerBase
             role.Title = updateRoleDto.Title;
             role.Description = updateRoleDto.Description;
 
-            await _roleService.UpdateRoleAsync(role, cancellationToken);
+            await _roleService.UpdateAsync(role, cancellationToken);
 
             return Ok("Role updated successfully");
         }
@@ -166,7 +166,7 @@ public class RoleController : ControllerBase
     {
         try
         {
-            await _roleService.RemoveRoleAsync(id, cancellationToken);
+            await _roleService.DeleteAsync(id, cancellationToken);
             return Ok("Role removed successfully");
         }
         catch (OperationCanceledException)

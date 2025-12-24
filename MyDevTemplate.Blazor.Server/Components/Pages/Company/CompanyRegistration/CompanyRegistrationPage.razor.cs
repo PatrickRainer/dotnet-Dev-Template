@@ -37,7 +37,7 @@ public partial class CompanyRegistrationPage : ComponentBase
                     loggedInUser ?? throw new UserIdentityException());
                 newTenant.AddAddress(model.Street, model.City, model.ZipCode, model.Country, string.Empty);
 
-                var result = await TenantService.AddTenantAsync(newTenant);
+                var result = await TenantService.AddAsync(newTenant);
 
                 if (result != Guid.Empty)
                 {
