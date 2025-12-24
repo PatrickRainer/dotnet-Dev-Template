@@ -21,8 +21,18 @@ public partial class CompanyRegistrationPage : ComponentBase
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; } = null!;
     [Inject] public CompanyRegistrationPageModelValidator ModelValidator { get; set; } = null!;
 
+    [Parameter] public string? ServiceModel { get; set; }
+
 
     CompanyRegistrationPageModel Model { get; set; } = new();
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(ServiceModel))
+        {
+            Model.ChosenService = ServiceModel;
+        }
+    }
 
 
     async Task Register(CompanyRegistrationPageModel model)
