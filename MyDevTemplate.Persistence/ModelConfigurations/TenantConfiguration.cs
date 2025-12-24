@@ -53,7 +53,7 @@ public class TenantConfiguration : IEntityTypeConfiguration<TenantRoot>
         builder.Property(t => t.CreatedAtUtc)
             .IsRequired();
 
-        builder.Property(t => t.TenantId)
+        builder.Property(t => t.TenantId)// Todo why it has this property and not using ID?
             .IsRequired();
     }
 }
