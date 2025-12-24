@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.UserAggregate;
 
 namespace MyDevTemplate.Persistence.ModelConfigurations;
@@ -16,15 +17,15 @@ public class UserConfiguration : IEntityTypeConfiguration<UserRoot>
         builder.Property(u => u.Id)
             .ValueGeneratedNever();
 
-        builder.OwnsOne(u => u.Email, email =>
-        {
-            email.Property(e => e.Value)
-                .HasColumnName(nameof(UserRoot.Email))
-                .IsRequired()
-                .HasMaxLength(256);
+        builder.Property(u => u.Email)
+            .HasConversion(
+                email => email.Value,
+                value => new EmailAddress(value))
+            .HasColumnName("Email")
+            .IsRequired()
+            .HasMaxLength(256);
 
-            email.HasIndex(e => e.Value).IsUnique();
-        });
+        builder.HasIndex(u => u.Email).IsUnique();
 
         builder.Property(u => u.FirstName)
             .IsRequired()

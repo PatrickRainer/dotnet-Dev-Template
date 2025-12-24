@@ -1,9 +1,17 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.IdentityModel.Logging;
 using MudBlazor.Services;
+using MyDevTemplate.Application;
+using MyDevTemplate.Application.UserServices;
 using MyDevTemplate.Blazor.Server.Components;
+using MyDevTemplate.Blazor.Server.Infrastructure;
+using MyDevTemplate.Domain.Contracts.Abstractions;
+using MyDevTemplate.Persistence;
 using Serilog;
 using Serilog.Events;
 
@@ -32,9 +40,31 @@ try
     builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
         .AddMicrosoftIdentityWebApp(builder.Configuration, "AzureAd");
 
+    // Register the claims transformer
+    builder.Services.AddTransient<IClaimsTransformation, LocalClaimsTransformation>();
+
     builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
     {
         options.ResponseType = "code";
+        
+        options.Events.OnTokenValidated = async context =>
+        {
+            var principal = context.Principal;
+            if (principal == null) return;
+
+            // Extract info from Entra ID claims
+            var oid = principal.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
+            var email = principal.FindFirst("preferred_username")?.Value ?? principal.FindFirst(ClaimTypes.Email)?.Value;
+
+            // Create a scope to resolve scoped services
+            await using var scope = context.HttpContext.RequestServices.CreateAsyncScope();
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+                
+            // Logic to check and add user to DB
+            if(oid == null)
+                throw new InvalidOperationException("OID claim not found in Entra ID token");
+            await userService.UpsertUserFromEntraAsync(oid, email);
+        };
     });
 
     builder.Services.AddControllersWithViews()
@@ -49,11 +79,25 @@ try
     // Add MudBlazor services
     builder.Services.AddMudServices();
 
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<ITenantProvider, BlazorTenantProvider>();
+
     builder.Services.AddCascadingAuthenticationState();
 
     // Add services to the container.
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents();
+    
+    // Add application services.
+    builder.Services.AddApplicationServices();
+    
+    // Add Db Context from the Persistence project
+    builder.Services.AddDbContext<AppDbContext>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    
+        options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+    });
 
     var app = builder.Build();
 

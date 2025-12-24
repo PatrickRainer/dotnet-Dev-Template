@@ -19,4 +19,5 @@ public record EmailAddress
         
         Value = value;
     }
+    
 }
