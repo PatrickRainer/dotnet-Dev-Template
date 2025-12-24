@@ -85,6 +85,24 @@
     - `04_ViewLayer`: Blazor Server UI and ASP.NET Core Web API.
   - **Dependency Direction**: View -> Application -> Infrastructure -> Domain.
 
+### Validation
+- **FluentValidation**: Use FluentValidation for all validation needs (API DTOs, Domain Entities, UI Models).
+- **Registration**: Register all validators in the Dependency Injection container using `AddValidatorsFromAssembly`.
+- **Value Objects**: Create dedicated validators for Value Objects (e.g., `AddressValidator`) and use `SetValidator` to validate complex properties.
+- **Shared Rules**: Centralize common validation logic (e.g., String length, patterns) using extension methods on `IRuleBuilder`.
+- **Enforcement**: 
+    - API: Inject `IValidator<TDto>` into controllers and validate requests early.
+    - Application: Inject `IValidator<TEntity>` into services to ensure business logic operates on valid data.
+- **Blazor Integration**: Use the `ValidateValue` pattern in validators to support `MudBlazor` property-level validation.
+
+### Blazor Coding Style
+- **Feature-based Organization**: Group all files related to a specific feature/page together in the `Components/Pages` folder.
+- **Folder Structure**: Each page should have its own directory containing:
+    - The `.razor` file (markup).
+    - The `.razor.cs` file (code-behind).
+    - The `Model.cs` file (UI-specific data structure).
+    - The `Validator.cs` file (FluentValidation logic).
+
 ### Additional Development Information
 - **Domain-Driven Design (DDD)**: The project uses Aggregate Roots (e.g., `UserRootEntity`, `RoleRootEntity`) and Value Objects (e.g., `EmailAddress`).
 - **Base Entity**: All entities should inherit from `EntityBase` which provides `Id` (Guid), `CreatedAtUtc`, and `TenantId`.

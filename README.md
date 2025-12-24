@@ -126,11 +126,21 @@ dotnet test
 
 - **Base Entity**: All entities should inherit from `EntityBase` (provides `Id`, `CreatedAtUtc`, `TenantId`).
 - **DDD**: Use Aggregate Roots and Value Objects.
+- **Validation**:
+    - Use FluentValidation for all input validation (API DTOs, Domain Entities, UI Models).
+    - Register validators in DI using `AddValidatorsFromAssembly`.
+    - Create dedicated validators for Value Objects (e.g., `AddressValidator`) and use `SetValidator` for complex properties.
+    - Use extension methods on `IRuleBuilder` for shared validation rules.
+    - Perform validation in both the API layer (Controllers) and Application layer (Services) using `IValidator<T>`.
+- **Blazor Coding Style**:
+    - Follow a feature-based folder structure for pages in `Components/Pages`.
+    - Group all page-related files (Razor, Code-behind, Models, Validators) into a single feature directory (e.g., `Pages/Company/CompanyRegistration/`).
 - **Code Style**:
     - Use file-scoped namespaces.
     - Use `async`/`await` for asynchronous operations.
     - Entities should have a private constructor for EF Core.
     - Register dependencies in `ServiceCollectionExtensions.cs` within Service and Persistence projects.
+    - Don't use redundant modifiers (e.g., `private` when it's the default).
 
 ## License
 
