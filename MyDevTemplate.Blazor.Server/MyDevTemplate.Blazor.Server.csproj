@@ -26,4 +26,21 @@
   <ItemGroup>
     <ProjectReference Include="..\MyDevTemplate.Application\MyDevTemplate.Application.csproj" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Update="Ressources\Blazor.Server.Localization.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Blazor.Server.Localization.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Ressources\Blazor.Server.Localization.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Blazor.Server.Localization.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>
