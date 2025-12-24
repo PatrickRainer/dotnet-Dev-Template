@@ -1,9 +1,7 @@
 ﻿using FluentValidation;
 using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Application.TenantServices;
-using MyDevTemplate.Blazor.Server.Models;
-
-namespace MyDevTemplate.Blazor.Server.Validators;
+namespace MyDevTemplate.Blazor.Server.Components.Pages.Company.CompanyRegistration;
 
 public class CompanyRegistrationPageModelValidator : AbstractValidator<CompanyRegistrationPageModel>
 {

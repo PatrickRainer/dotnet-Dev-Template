@@ -1,4 +1,4 @@
-﻿namespace MyDevTemplate.Blazor.Server.Models;
+﻿namespace MyDevTemplate.Blazor.Server.Components.Pages.Company.CompanyRegistration;
 
 public class CompanyRegistrationPageModel
 {

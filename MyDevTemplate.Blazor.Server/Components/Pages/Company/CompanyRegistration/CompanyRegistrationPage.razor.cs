@@ -4,12 +4,10 @@ using MudBlazor;
 using MyDevTemplate.Application.Common;
 using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Application.TenantServices;
-using MyDevTemplate.Blazor.Server.Models;
-using MyDevTemplate.Blazor.Server.Validators;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 using Severity = MudBlazor.Severity;
 
-namespace MyDevTemplate.Blazor.Server.Components.Pages;
+namespace MyDevTemplate.Blazor.Server.Components.Pages.Company.CompanyRegistration;
 
 public partial class CompanyRegistrationPage : ComponentBase
 {
