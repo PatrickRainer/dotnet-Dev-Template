@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyDevTemplate.Domain.Entities.RoleAggregate;
 using MyDevTemplate.Persistence;
@@ -9,10 +10,12 @@ public class RoleService
 {
     private readonly AppDbContext _dbContext;
     private readonly ILogger<RoleService>? _logger;
+    private readonly IValidator<RoleRoot> _validator;
 
-    public RoleService(AppDbContext dbContext, ILogger<RoleService>? logger = null)
+    public RoleService(AppDbContext dbContext, IValidator<RoleRoot> validator, ILogger<RoleService>? logger = null)
     {
         _dbContext = dbContext;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -46,8 +49,13 @@ public class RoleService
     {
         try
         {
+            await _validator.ValidateAndThrowAsync(role, cancellationToken);
             await _dbContext.Roles.AddAsync(role, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -60,8 +68,13 @@ public class RoleService
     {
         try
         {
+            await _validator.ValidateAndThrowAsync(role, cancellationToken);
             _dbContext.Roles.Update(role);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {

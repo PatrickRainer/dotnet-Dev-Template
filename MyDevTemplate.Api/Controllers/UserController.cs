@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.UserServices;
+using MyDevTemplate.Application.UserServices.Dtos;
 using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.UserAggregate;
 
@@ -15,12 +16,17 @@ namespace MyDevTemplate.Api.Controllers;
 [Produces("application/json")]
 public class UserController : ControllerBase
 {
-    readonly ILogger<UserController>? _logger;
-    readonly UserService _userService;
+    private readonly ILogger<UserController>? _logger;
+    private readonly UserService _userService;
+    private readonly IValidator<AddUserDto> _addValidator;
 
-    public UserController(UserService userService, ILogger<UserController>? logger = null)
+    public UserController(
+        UserService userService, 
+        IValidator<AddUserDto> addValidator,
+        ILogger<UserController>? logger = null)
     {
         _userService = userService;
+        _addValidator = addValidator;
         _logger = logger;
     }
 
@@ -53,13 +59,15 @@ public class UserController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<string>> AddUser([FromBody] AddUserDto addUserDto, CancellationToken cancellationToken)
     {
         try
         {
+            await _addValidator.ValidateAndThrowAsync(addUserDto, cancellationToken);
+            
             var user = new UserRoot(
                 new EmailAddress(addUserDto.Email),
                 addUserDto.FirstName,
@@ -73,6 +81,10 @@ public class UserController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (ArgumentException e)
         {
@@ -115,9 +127,3 @@ public class UserController : ControllerBase
         }
     }
 }
-
-public record AddUserDto(
-    [Required] string FirstName,
-    [Required] string LastName,
-    [Required] string Email,
-    [Required] string IdentityProviderId);

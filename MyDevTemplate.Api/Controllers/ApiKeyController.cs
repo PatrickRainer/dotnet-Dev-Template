@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.ApiKeyServices;
+using MyDevTemplate.Application.ApiKeyServices.Dtos;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 
 namespace MyDevTemplate.Api.Controllers;
@@ -16,10 +17,15 @@ public class ApiKeyController : ControllerBase
 {
     private readonly ApiKeyService _apiKeyService;
     private readonly ILogger<ApiKeyController>? _logger;
+    private readonly IValidator<AddApiKeyDto> _addValidator;
 
-    public ApiKeyController(ApiKeyService apiKeyService, ILogger<ApiKeyController>? logger = null)
+    public ApiKeyController(
+        ApiKeyService apiKeyService, 
+        IValidator<AddApiKeyDto> addValidator,
+        ILogger<ApiKeyController>? logger = null)
     {
         _apiKeyService = apiKeyService;
+        _addValidator = addValidator;
         _logger = logger;
     }
 
@@ -47,12 +53,14 @@ public class ApiKeyController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Guid>> AddApiKey([FromBody] AddApiKeyDto addApiKeyDto, CancellationToken cancellationToken)
     {
         try
         {
+            await _addValidator.ValidateAndThrowAsync(addApiKeyDto, cancellationToken);
+            
             var apiKey = new ApiKeyRoot(addApiKeyDto.Key, addApiKeyDto.Label, addApiKeyDto.ExpiresAtUtc);
 
             if (!string.IsNullOrEmpty(addApiKeyDto.TenantId) && Guid.TryParse(addApiKeyDto.TenantId, out var tenantGuid))
@@ -67,6 +75,10 @@ public class ApiKeyController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (ArgumentException e)
         {
@@ -109,9 +121,3 @@ public class ApiKeyController : ControllerBase
         }
     }
 }
-
-public record AddApiKeyDto(
-    [Required] string Key,
-    [Required] string Label,
-    DateTime? ExpiresAtUtc,
-    string? TenantId = null);

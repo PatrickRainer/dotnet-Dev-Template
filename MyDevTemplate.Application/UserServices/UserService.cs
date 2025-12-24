@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.UserAggregate;
@@ -8,13 +9,14 @@ namespace MyDevTemplate.Application.UserServices;
 
 public class UserService
 {
-    readonly AppDbContext _dbContext;
-    readonly ILogger<UserService>? _logger;
+    private readonly AppDbContext _dbContext;
+    private readonly ILogger<UserService>? _logger;
+    private readonly IValidator<UserRoot> _validator;
 
-
-    public UserService(AppDbContext dbContext, ILogger<UserService>? logger = null)
+    public UserService(AppDbContext dbContext, IValidator<UserRoot> validator, ILogger<UserService>? logger = null)
     {
         _dbContext = dbContext;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -36,11 +38,14 @@ public class UserService
     {
         try
         {
-           var result= await _dbContext.Users.AddAsync(user, cancellationToken);
-
+            await _validator.ValidateAndThrowAsync(user, cancellationToken);
+            var result = await _dbContext.Users.AddAsync(user, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
-
             return result.Entity.Id;
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -85,9 +90,11 @@ public class UserService
             if (user != null)
             {
                 // Update OID if it's missing or different
-                    user.IdentityProviderId = identityProviderId;
-                    user.LastLoginAtUtc = DateTime.UtcNow;
-                    await _dbContext.SaveChangesAsync();
+                user.IdentityProviderId = identityProviderId;
+                user.LastLoginAtUtc = DateTime.UtcNow;
+                
+                await _validator.ValidateAndThrowAsync(user);
+                await _dbContext.SaveChangesAsync();
 
                 return user.Id;
             }

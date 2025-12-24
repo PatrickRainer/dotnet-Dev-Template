@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using MyDevTemplate.Api.Controllers;
+using MyDevTemplate.Application.UserServices.Dtos;
 
 namespace MyDevTemplate.Api.IntegrationTests;
 

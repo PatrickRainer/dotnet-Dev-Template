@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.RoleServices;
+using MyDevTemplate.Application.RoleServices.Dtos;
 using MyDevTemplate.Domain.Entities.RoleAggregate;
 
 namespace MyDevTemplate.Api.Controllers;
@@ -16,10 +17,18 @@ public class RoleController : ControllerBase
 {
     private readonly ILogger<RoleController>? _logger;
     private readonly RoleService _roleService;
+    private readonly IValidator<AddRoleDto> _addValidator;
+    private readonly IValidator<UpdateRoleDto> _updateValidator;
 
-    public RoleController(RoleService roleService, ILogger<RoleController>? logger = null)
+    public RoleController(
+        RoleService roleService, 
+        IValidator<AddRoleDto> addValidator,
+        IValidator<UpdateRoleDto> updateValidator,
+        ILogger<RoleController>? logger = null)
     {
         _roleService = roleService;
+        _addValidator = addValidator;
+        _updateValidator = updateValidator;
         _logger = logger;
     }
 
@@ -73,12 +82,14 @@ public class RoleController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Guid>> AddRole([FromBody] AddRoleDto addRoleDto, CancellationToken cancellationToken)
     {
         try
         {
+            await _addValidator.ValidateAndThrowAsync(addRoleDto, cancellationToken);
+            
             var role = new RoleRoot(addRoleDto.Title, addRoleDto.Description);
 
             await _roleService.AddRoleAsync(role, cancellationToken);
@@ -88,6 +99,10 @@ public class RoleController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (ArgumentException e)
         {
@@ -102,13 +117,15 @@ public class RoleController : ControllerBase
 
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<string>> UpdateRole([FromRoute] Guid id, [FromBody] UpdateRoleDto updateRoleDto, CancellationToken cancellationToken)
     {
         try
         {
+            await _updateValidator.ValidateAndThrowAsync(updateRoleDto, cancellationToken);
+            
             var role = await _roleService.GetRoleByIdAsync(id, cancellationToken);
             if (role == null)
             {
@@ -125,6 +142,10 @@ public class RoleController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (ArgumentException e)
         {
@@ -163,11 +184,3 @@ public class RoleController : ControllerBase
         }
     }
 }
-
-public record AddRoleDto(
-    [Required] string Title,
-    string Description);
-
-public record UpdateRoleDto(
-    [Required] string Title,
-    string Description);

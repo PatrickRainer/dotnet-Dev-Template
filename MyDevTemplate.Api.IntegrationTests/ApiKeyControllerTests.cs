@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using MyDevTemplate.Api.Controllers;
+using MyDevTemplate.Application.ApiKeyServices.Dtos;
 
 namespace MyDevTemplate.Api.IntegrationTests;
 

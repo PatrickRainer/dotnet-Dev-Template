@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 using MyDevTemplate.Persistence;
@@ -9,10 +10,12 @@ public class ApiKeyService
 {
     private readonly AppDbContext _dbContext;
     private readonly ILogger<ApiKeyService>? _logger;
+    private readonly IValidator<ApiKeyRoot> _validator;
 
-    public ApiKeyService(AppDbContext dbContext, ILogger<ApiKeyService>? logger = null)
+    public ApiKeyService(AppDbContext dbContext, IValidator<ApiKeyRoot> validator, ILogger<ApiKeyService>? logger = null)
     {
         _dbContext = dbContext;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -63,8 +66,13 @@ public class ApiKeyService
     {
         try
         {
+            await _validator.ValidateAndThrowAsync(apiKey, cancellationToken);
             await _dbContext.ApiKeys.AddAsync(apiKey, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -77,8 +85,13 @@ public class ApiKeyService
     {
         try
         {
+            await _validator.ValidateAndThrowAsync(apiKey, cancellationToken);
             _dbContext.ApiKeys.Update(apiKey);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {
