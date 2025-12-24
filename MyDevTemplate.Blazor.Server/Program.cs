@@ -63,7 +63,7 @@ try
             // Logic to check and add user to DB
             if(oid == null)
                 throw new InvalidOperationException("OID claim not found in Entra ID token");
-            await userService.UpsertUserFromEntraAsync(oid, email);
+            await userService.UpsertAfterLogin(oid, email);
         };
     });
 

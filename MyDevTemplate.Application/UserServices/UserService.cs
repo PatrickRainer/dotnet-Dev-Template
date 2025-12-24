@@ -72,7 +72,7 @@ public class UserService
         }
     }
 
-    public async Task<Guid> UpsertUserFromEntraAsync(string oid, string email)
+    public async Task<Guid> UpsertAfterLogin(string identityProviderId, string email)
     {
         try
         {
@@ -85,28 +85,25 @@ public class UserService
             if (user != null)
             {
                 // Update OID if it's missing or different
-                if (!string.IsNullOrWhiteSpace(oid) && user.IdentityProviderId != oid)
-                {
-                    user.IdentityProviderId = oid;
+                    user.IdentityProviderId = identityProviderId;
+                    user.LastLoginAtUtc = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync();
-                    _logger?.LogInformation("Updated user {Email} with OID {Oid}", email, oid);
-                }
 
                 return user.Id;
             }
             else
             {
                 // Create a new user
-                var newUser = new UserRoot(new EmailAddress(email), string.Empty, string.Empty, oid);
+                var newUser = new UserRoot(new EmailAddress(email), string.Empty, string.Empty, identityProviderId)
+                    {LastLoginAtUtc = DateTime.UtcNow};
                 var result = await AddUserAsync(newUser);
-                _logger?.LogInformation("Created new user {Email} with OID {Oid}", email, oid);
 
                 return result;
             }
         }
         catch (Exception e)
         {
-            _logger?.LogError(e, "Error upserting user from Entra with email {Email} and OID {Oid}", email, oid);
+            _logger?.LogError(e, "Error upserting user from Entra with email {Email} and OID {Oid}", email, identityProviderId);
             throw;
         }
     }

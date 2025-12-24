@@ -94,7 +94,7 @@ public class UserServiceTests : IntegrationTestBase
         var oid = "oid-new";
 
         // Act
-        await userService.UpsertUserFromEntraAsync(oid, email);
+        await userService.UpsertAfterLogin(oid, email);
 
         // Assert
         var user = await userService.GetUserByEmailAsync(email);
@@ -121,7 +121,7 @@ public class UserServiceTests : IntegrationTestBase
         await userService.AddUserAsync(user);
 
         // Act
-        await userService.UpsertUserFromEntraAsync(updatedOid, email);
+        await userService.UpsertAfterLogin(updatedOid, email);
 
         // Assert
         var updatedUser = await userService.GetUserByEmailAsync(email);
@@ -141,10 +141,10 @@ public class UserServiceTests : IntegrationTestBase
         var userService = scope.ServiceProvider.GetRequiredService<UserService>();
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertUserFromEntraAsync("oid", null!));
-        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertUserFromEntraAsync("oid", ""));
-        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertUserFromEntraAsync("oid", "   "));
-        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertUserFromEntraAsync("oid", "invalid-email"));
+        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertAfterLogin("oid", null!));
+        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertAfterLogin("oid", ""));
+        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertAfterLogin("oid", "   "));
+        await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertAfterLogin("oid", "invalid-email"));
     }
 
     [Fact]
