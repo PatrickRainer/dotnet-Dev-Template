@@ -1,4 +1,6 @@
+using System.Reflection;
 using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
@@ -90,6 +92,7 @@ try
     
     // Add application services.
     builder.Services.AddApplicationServices();
+    builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
     
     // Add Db Context from the Persistence project
     builder.Services.AddDbContext<AppDbContext>(options =>

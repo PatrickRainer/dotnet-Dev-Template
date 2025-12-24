@@ -4,6 +4,8 @@ using MudBlazor;
 using MyDevTemplate.Application.Common;
 using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Application.TenantServices;
+using MyDevTemplate.Blazor.Server.Models;
+using MyDevTemplate.Blazor.Server.Validators;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 using Severity = MudBlazor.Severity;
 
@@ -13,13 +15,13 @@ public partial class CompanyRegistrationPage : ComponentBase
 {
     MudForm _form = null!;
     bool _isFormValid;
-    readonly CompanyRegistrationPageModelValidator _companyRegistrationPageModelValidator = new();
     string[] _errors = Array.Empty<string>();
     
     
     [Inject] public TenantService TenantService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; } = null!;
+    [Inject] public CompanyRegistrationPageModelValidator ModelValidator { get; set; } = null!;
 
 
     CompanyRegistrationPageModel Model { get; set; } = new();
@@ -56,37 +58,5 @@ public partial class CompanyRegistrationPage : ComponentBase
                 Snackbar.Add("An unexpected error occurred", Severity.Error);
             }
         }
-    }
-
-    class CompanyRegistrationPageModel
-    {
-        public string CompanyName { get; set; } = string.Empty;
-        public string Street { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
-        public string ZipCode { get; set; } = string.Empty;
-        public string Country { get; set; } = string.Empty;
-    }
-
-    class CompanyRegistrationPageModelValidator : AbstractValidator<CompanyRegistrationPageModel>
-    {
-        public CompanyRegistrationPageModelValidator()
-        {
-            RuleFor(x => x.CompanyName).ApplyCompanyNameRules();
-            RuleFor(x => x.Street).ApplyStreetRules();
-            RuleFor(x => x.City).ApplyCityRules();
-            RuleFor(x => x.ZipCode).ApplyZipCodeRules();
-            RuleFor(x => x.Country).ApplyCountryRules();
-        }
-
-        public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
-        {
-            var result =
-                await ValidateAsync(ValidationContext<CompanyRegistrationPageModel>.CreateWithOptions(
-                    (CompanyRegistrationPageModel)model,
-                    x => x.IncludeProperties(propertyName)));
-            if (result.IsValid)
-                return Array.Empty<string>();
-            return result.Errors.Select(e => e.ErrorMessage);
-        };
     }
 }

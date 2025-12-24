@@ -8,6 +8,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="Microsoft.Identity.Web" Version="4.2.0" />
     <PackageReference Include="Microsoft.Identity.Web.UI" Version="4.2.0" />
     <PackageReference Include="MudBlazor" Version="8.*" />

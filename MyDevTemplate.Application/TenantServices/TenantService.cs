@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 using MyDevTemplate.Persistence;
@@ -9,10 +10,12 @@ public class TenantService
 {
     private readonly AppDbContext _dbContext;
     private readonly ILogger<TenantService>? _logger;
+    private readonly IValidator<TenantRoot> _validator;
 
-    public TenantService(AppDbContext dbContext, ILogger<TenantService>? logger = null)
+    public TenantService(AppDbContext dbContext, IValidator<TenantRoot> validator, ILogger<TenantService>? logger = null)
     {
         _dbContext = dbContext;
+        _validator = validator;
         _logger = logger;
     }
 
@@ -50,9 +53,15 @@ public class TenantService
     {
         try
         {
+            await _validator.ValidateAndThrowAsync(tenant, cancellationToken);
+            
             var result = await _dbContext.Tenants.AddAsync(tenant, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
             return result.Entity.Id;
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {
@@ -65,8 +74,14 @@ public class TenantService
     {
         try
         {
+            await _validator.ValidateAndThrowAsync(tenant, cancellationToken);
+
             _dbContext.Tenants.Update(tenant);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (ValidationException)
+        {
+            throw;
         }
         catch (Exception e)
         {

@@ -14,7 +14,7 @@
     </NotAuthorized>
     <Authorized>
         <MudForm Model="@Model" @ref="_form" @bind-IsValid="@_isFormValid" @bind-Errors="@_errors"
-                 Validation="@_companyRegistrationPageModelValidator.ValidateValue" ValidationDelay="0">
+                 Validation="@ModelValidator.ValidateValue" ValidationDelay="0">
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_CompanyName"
                           For="@(() => Model.CompanyName)"
                           Immediate="true"

@@ -11,11 +11,7 @@ public class TenantValidator : AbstractValidator<TenantRoot>
     {
         RuleFor(x => x.TenantName).NotEmpty().MaximumLength(200);
         RuleFor(x => x.CompanyName).ApplyCompanyNameRules();
-        RuleFor(x => x.Address.Street).ApplyStreetRules();
-        RuleFor(x => x.Address.City).ApplyCityRules();
-        RuleFor(x => x.Address.State).ApplyStateRules();
-        RuleFor(x => x.Address.Country).ApplyCountryRules();
-        RuleFor(x => x.Address.ZipCode).ApplyZipCodeRules();
+        RuleFor(x => x.Address).SetValidator(new AddressValidator());
         RuleFor(x => x.AdminEmail).NotEmpty().MaximumLength(256).EmailAddress();
     }
 
@@ -35,7 +31,7 @@ public static class TenantValidationRules
     public static IRuleBuilderOptions<T, string> ApplyCompanyNameRules<T>(this IRuleBuilder<T, string> ruleBuilder)
     {
         return ruleBuilder
-            .NotEmpty().WithMessage("Company name is required")
-            .MaximumLength(200).WithMessage("Company name must not exceed 200 characters");
+            .NotEmpty()
+            .MaximumLength(200);
     }
 }

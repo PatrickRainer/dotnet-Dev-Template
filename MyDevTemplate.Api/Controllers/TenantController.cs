@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.TenantServices;
 using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
+
+using MyDevTemplate.Application.TenantServices.Dtos;
 
 namespace MyDevTemplate.Api.Controllers;
 
@@ -17,10 +19,18 @@ public class TenantController : ControllerBase
 {
     private readonly TenantService _tenantService;
     private readonly ILogger<TenantController>? _logger;
+    private readonly IValidator<CreateTenantDto> _createValidator;
+    private readonly IValidator<UpdateTenantDto> _updateValidator;
 
-    public TenantController(TenantService tenantService, ILogger<TenantController>? logger = null)
+    public TenantController(
+        TenantService tenantService, 
+        IValidator<CreateTenantDto> createValidator,
+        IValidator<UpdateTenantDto> updateValidator,
+        ILogger<TenantController>? logger = null)
     {
         _tenantService = tenantService;
+        _createValidator = createValidator;
+        _updateValidator = updateValidator;
         _logger = logger;
     }
 
@@ -80,6 +90,8 @@ public class TenantController : ControllerBase
     {
         try
         {
+            await _createValidator.ValidateAndThrowAsync(createTenantDto, cancellationToken);
+            
             var tenant = new TenantRoot(createTenantDto.TenantName, createTenantDto.CompanyName,
                 createTenantDto.AdminEmail);
             tenant.AddAddress(createTenantDto.Street ?? string.Empty, createTenantDto.City ?? string.Empty, createTenantDto.State, createTenantDto.Country, createTenantDto.ZipCode);
@@ -91,6 +103,10 @@ public class TenantController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (Exception e)
         {
@@ -108,6 +124,8 @@ public class TenantController : ControllerBase
     {
         try
         {
+            await _updateValidator.ValidateAndThrowAsync(updateTenantDto, cancellationToken);
+            
             var tenant = await _tenantService.GetTenantByIdAsync(id, cancellationToken);
             if (tenant == null)
             {
@@ -130,6 +148,10 @@ public class TenantController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (ValidationException e)
+        {
+            return BadRequest(e.Errors);
         }
         catch (Exception e)
         {
@@ -167,21 +189,3 @@ public class TenantController : ControllerBase
     }
 }
 
-public record CreateTenantDto(
-    [Required] string TenantName,
-    [Required] string CompanyName,
-    [Required] string AdminEmail,
-    string? Street,
-    string? City,
-    string? State,
-    string? Country,
-    string? ZipCode);
-
-public record UpdateTenantDto(
-    [Required] string TenantName,
-    [Required] string CompanyName,
-    string? Street,
-    string? City,
-    string? State,
-    string? Country,
-    string? ZipCode);

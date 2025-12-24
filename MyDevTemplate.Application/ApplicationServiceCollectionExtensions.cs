@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Reflection;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using MyDevTemplate.Application.ApiKeyServices;
 using MyDevTemplate.Application.RoleServices;
 using MyDevTemplate.Application.TenantServices;
@@ -16,6 +18,8 @@ public static class ApplicationServiceCollectionExtensions
     
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        
         services.AddScoped<UserService>();
         services.AddScoped<ApiKeyService>();
         services.AddScoped<RoleService>();
