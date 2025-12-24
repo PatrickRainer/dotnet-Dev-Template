@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using MyDevTemplate.Application.Common;
+using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 
 namespace MyDevTemplate.Application.TenantServices;
@@ -8,12 +10,12 @@ public class TenantValidator : AbstractValidator<TenantRoot>
     public TenantValidator()
     {
         RuleFor(x => x.TenantName).NotEmpty().MaximumLength(200);
-        RuleFor(x => x.CompanyName).NotEmpty().MaximumLength(200);
-        RuleFor(x => x.Address.Street).NotEmpty().MaximumLength(200);
-        RuleFor(x => x.Address.City).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Address.State).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Address.Country).NotEmpty().MaximumLength(100);
-        RuleFor(x => x.Address.ZipCode).NotEmpty().MaximumLength(20);
+        RuleFor(x => x.CompanyName).ApplyCompanyNameRules();
+        RuleFor(x => x.Address.Street).ApplyStreetRules();
+        RuleFor(x => x.Address.City).ApplyCityRules();
+        RuleFor(x => x.Address.State).ApplyStateRules();
+        RuleFor(x => x.Address.Country).ApplyCountryRules();
+        RuleFor(x => x.Address.ZipCode).ApplyZipCodeRules();
         RuleFor(x => x.AdminEmail).NotEmpty().MaximumLength(256).EmailAddress();
     }
 
@@ -26,4 +28,14 @@ public class TenantValidator : AbstractValidator<TenantRoot>
             return Array.Empty<string>();
         return result.Errors.Select(e => e.ErrorMessage);
     };
+}
+
+public static class TenantValidationRules
+{
+    public static IRuleBuilderOptions<T, string> ApplyCompanyNameRules<T>(this IRuleBuilder<T, string> ruleBuilder)
+    {
+        return ruleBuilder
+            .NotEmpty().WithMessage("Company name is required")
+            .MaximumLength(200).WithMessage("Company name must not exceed 200 characters");
+    }
 }

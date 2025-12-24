@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using MyDevTemplate.Application.Common;
+using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Application.TenantServices;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 using Severity = MudBlazor.Severity;
@@ -12,12 +13,13 @@ public partial class CompanyRegistrationPage : ComponentBase
 {
     MudForm _form = null!;
     bool _isFormValid;
+    readonly CompanyRegistrationPageModelValidator _companyRegistrationPageModelValidator = new();
     string[] _errors = Array.Empty<string>();
+    
+    
     [Inject] public TenantService TenantService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; } = null!;
-
-    CompanyRegistrationPageModelValidator _companyRegistrationPageModelValidator = new();
 
 
     CompanyRegistrationPageModel Model { get; set; } = new();
@@ -42,7 +44,7 @@ public partial class CompanyRegistrationPage : ComponentBase
                     Snackbar.Add("Tenant created successfully", Severity.Success);
                 }
             }
-            catch (FluentValidation.ValidationException ex)
+            catch (ValidationException ex)
             {
                 foreach (var error in ex.Errors)
                 {
@@ -69,25 +71,11 @@ public partial class CompanyRegistrationPage : ComponentBase
     {
         public CompanyRegistrationPageModelValidator()
         {
-            RuleFor(x => x.CompanyName)
-                .NotEmpty().WithMessage("Company name is required")
-                .MaximumLength(200).WithMessage("Company name must not exceed 200 characters");
-
-            RuleFor(x => x.Street)
-                .NotEmpty().WithMessage("Street is required")
-                .MaximumLength(200).WithMessage("Street must not exceed 200 characters");
-
-            RuleFor(x => x.City)
-                .NotEmpty().WithMessage("City is required")
-                .MaximumLength(100).WithMessage("City must not exceed 100 characters");
-
-            RuleFor(x => x.ZipCode)
-                .NotEmpty().WithMessage("Zip code is required")
-                .MaximumLength(20).WithMessage("Zip code must not exceed 20 characters");
-
-            RuleFor(x => x.Country)
-                .NotEmpty().WithMessage("Country is required")
-                .MaximumLength(100).WithMessage("Country must not exceed 100 characters");
+            RuleFor(x => x.CompanyName).ApplyCompanyNameRules();
+            RuleFor(x => x.Street).ApplyStreetRules();
+            RuleFor(x => x.City).ApplyCityRules();
+            RuleFor(x => x.ZipCode).ApplyZipCodeRules();
+            RuleFor(x => x.Country).ApplyCountryRules();
         }
 
         public Func<object, string, Task<IEnumerable<string>>> ValidateValue => async (model, propertyName) =>
