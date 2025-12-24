@@ -14,21 +14,28 @@
         </MudPaper>
     </NotAuthorized>
     <Authorized>
-        <MudForm @ref="_form" @bind-IsValid="@_isFormValid" @bind-Errors="@_errors">
+        <MudForm Model="@Model" @ref="_form" @bind-IsValid="@_isFormValid" @bind-Errors="@_errors"
+                 Validation="@_companyRegistrationPageModelValidator.ValidateValue" ValidationDelay="0">
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_CompanyName"
-                          @bind-Value="Model.CompanyName" Required="true"/>
+                          For="@(() => Model.CompanyName)"
+                          Immediate="true"
+                          @bind-Value="Model.CompanyName"/>
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_Street"
-                          @bind-Value="Model.Street"
-                          Required="true"/>
+                          For="@(() => Model.Street)"
+                          Immediate="true"
+                          @bind-Value="Model.Street"/>
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_City"
-                          @bind-Value="Model.City"
-                          Required="true"/>
+                          For="@(() => Model.City)"
+                          Immediate="true"
+                          @bind-Value="Model.City"/>
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_Country"
-                          @bind-Value="Model.Country"
-                          Required="true"/>
+                          For="@(() => Model.Country)"
+                          Immediate="true"
+                          @bind-Value="Model.Country"/>
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_ZipCode"
-                          @bind-Value="Model.ZipCode"
-                          Required="true"/>
+                          For="@(() => Model.ZipCode)"
+                          Immediate="true"
+                          @bind-Value="Model.ZipCode"/>
         </MudForm>
         <MudButton color="Color.Primary" variant="Variant.Filled"
                    @onclick="@(async () => await Register(Model))">
