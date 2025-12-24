@@ -85,6 +85,27 @@
     - `04_ViewLayer`: Blazor Server UI and ASP.NET Core Web API.
   - **Dependency Direction**: View -> Application -> Infrastructure -> Domain.
 
+### Standardized CRUD Pattern
+- **Interface**: Use `ICrudService<TEntity, TId>` in the Application layer to define standard operations: `GetByIdAsync`, `GetAllAsync`, `AddAsync`, `UpdateAsync`, and `DeleteAsync`.
+- **Implementation**: All application services (e.g., `UserService`, `ApiKeyService`) must implement this interface to ensure consistency.
+- **Service Registration**: Register services in the DI container as scoped.
+
+### Multi-tenancy & Isolation
+- **Domain**: All entities except `TenantRoot` must inherit from `EntityBase` to include the `TenantId` property.
+- **Provider**: `ITenantProvider` is used to resolve the current `TenantId` and whether the caller is a "Master Tenant".
+- **Database Enforcement**:
+    - **Global Filters**: `AppDbContext` applies a query filter to all entities (except tenants) to restrict results to the current `TenantId`, unless `IsMasterTenant` is true.
+    - **Automatic Assignment**: `AppDbContext.SaveChangesAsync` automatically assigns the current `TenantId` to new entities during creation.
+- **Service Isolation**: Services naturally respect isolation via the global filters. Explicit checks (like `SingleOrDefaultAsync`) will return `null` if a tenant tries to access a resource they don't own, which should result in a `404 Not Found` at the API level.
+
+### Security & Authorization
+- **Master Tenant**: Defined by the `Authentication:ApiKey` in `appsettings.json`. Master tenants have full access across all tenants.
+- **Tenant Management**: `TenantService` is strictly restricted to the Master Tenant. Use the `EnsureMasterTenant()` check in all service methods.
+- **API Keys**: 
+    - Regular tenants can only create API keys for their own tenant.
+    - Master tenants can specify a `TenantId` when creating keys to manage other tenants.
+- **Authorization Policies**: Use the `MasterTenant` policy in controllers to restrict access to sensitive endpoints.
+
 ### Validation
 - **FluentValidation**: Use FluentValidation for all validation needs (API DTOs, Domain Entities, UI Models).
 - **Registration**: Register all validators in the Dependency Injection container using `AddValidatorsFromAssembly`.

@@ -12,6 +12,7 @@ This project is designed as a starting point for building scalable and maintaina
 - **Frontend**: Blazor Server with [MudBlazor](https://mudblazor.com/)
 - **API**: ASP.NET Core Web API
 - **Persistence**: Entity Framework Core
+- **Multi-tenancy**: Automatic data isolation and tenant management
 - **Logging**: Serilog
 - **Testing**: xUnit
 
@@ -95,7 +96,7 @@ dotnet test
 - Use `WebApplicationFactory` to test the API in-memory.
 - Base class `IntegrationTestBase.cs` handles common setup (config, headers, sequential execution).
 - Configuration is managed via `appsettings.json` in the test project.
-- **Coverage**: Includes CRUD operations for Users, Roles, ApiKeys, Tenants, and comprehensive Authentication/Authorization scenarios.
+- **Coverage**: Includes CRUD operations for Users, Roles, ApiKeys, Tenants, and comprehensive Multi-tenant Isolation and Security scenarios.
 - **Note**: `Program.cs` in the API project must have `public partial class Program { }` to be accessible by the test project.
 
 ### Manual API Execution
@@ -125,6 +126,15 @@ dotnet test
 ## Development Guidelines
 
 - **Base Entity**: All entities should inherit from `EntityBase` (provides `Id`, `CreatedAtUtc`, `TenantId`).
+- **Multi-tenancy & Isolation**:
+    - Data isolation is strictly enforced at the database level using EF Core Global Query Filters.
+    - `AppDbContext` automatically filters records based on the current tenant's ID: `e => IsMasterTenant || e.TenantId == CurrentTenantId`.
+    - `AppDbContext.SaveChangesAsync` automatically sets the `TenantId` for new records based on the `ITenantProvider`.
+- **Security & Authorization**:
+    - **Master Tenant**: Authenticated via the Master API Key. Has full visibility and is the only one authorized to use `TenantService` (Tenant management).
+    - **Regular Tenants**: Restricted to their own data. Attempting to access another tenant's data via ID returns `404 Not Found`.
+- **Standardized CRUD Pattern**:
+    - Application services should implement `ICrudService<TEntity, Guid>` to maintain a consistent API and logic across the solution.
 - **DDD**: Use Aggregate Roots and Value Objects.
 - **Validation**:
     - Use FluentValidation for all input validation (API DTOs, Domain Entities, UI Models).

@@ -48,6 +48,10 @@ public class TenantController : ControllerBase
         {
             return StatusCode(499);
         }
+        catch (UnauthorizedAccessException e)
+        {
+            return Forbid(e.Message);
+        }
         catch (Exception e)
         {
             _logger?.LogError(e, "Error getting all tenants");
@@ -74,6 +78,10 @@ public class TenantController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Forbid(e.Message);
         }
         catch (Exception e)
         {
@@ -103,6 +111,10 @@ public class TenantController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Forbid(e.Message);
         }
         catch (ValidationException e)
         {
@@ -149,6 +161,10 @@ public class TenantController : ControllerBase
         {
             return StatusCode(499);
         }
+        catch (UnauthorizedAccessException e)
+        {
+            return Forbid(e.Message);
+        }
         catch (ValidationException e)
         {
             return BadRequest(e.Errors);
@@ -180,6 +196,10 @@ public class TenantController : ControllerBase
         catch (OperationCanceledException)
         {
             return StatusCode(499);
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            return Forbid(e.Message);
         }
         catch (Exception e)
         {

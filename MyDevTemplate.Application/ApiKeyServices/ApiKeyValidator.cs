@@ -14,5 +14,11 @@ public class ApiKeyValidator : AbstractValidator<ApiKeyRoot>
         RuleFor(x => x.Label)
             .NotEmpty()
             .MaximumLength(100);
+
+        // All API keys must belong to a tenant to ensure data isolation.
+        // NOTE: If migrating legacy data with empty TenantIds, ensure they are 
+        // assigned a valid TenantId before this validation is enforced during updates.
+        RuleFor(x => x.TenantId)
+            .NotEmpty();
     }
 }

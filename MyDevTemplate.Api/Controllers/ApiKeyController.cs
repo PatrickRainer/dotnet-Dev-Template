@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.ApiKeyServices;
 using MyDevTemplate.Application.ApiKeyServices.Dtos;
+using MyDevTemplate.Domain.Contracts.Abstractions;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 
 namespace MyDevTemplate.Api.Controllers;
@@ -19,16 +20,19 @@ public class ApiKeyController : ControllerBase
     private readonly ILogger<ApiKeyController>? _logger;
     private readonly IValidator<AddApiKeyDto> _addValidator;
     private readonly IValidator<UpdateApiKeyDto> _updateValidator;
+    private readonly ITenantProvider _tenantProvider;
 
     public ApiKeyController(
         ApiKeyService apiKeyService, 
         IValidator<AddApiKeyDto> addValidator,
         IValidator<UpdateApiKeyDto> updateValidator,
+        ITenantProvider tenantProvider,
         ILogger<ApiKeyController>? logger = null)
     {
         _apiKeyService = apiKeyService;
         _addValidator = addValidator;
         _updateValidator = updateValidator;
+        _tenantProvider = tenantProvider;
         _logger = logger;
     }
 
@@ -80,6 +84,11 @@ public class ApiKeyController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Adds a new API key. If the caller is a regular tenant, the API key will be automatically 
+    /// associated with their tenant, even if they provide a different TenantId in the request.
+    /// Master tenants can explicitly specify a TenantId to create keys for other tenants.
+    /// </summary>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Guid))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -95,6 +104,14 @@ public class ApiKeyController : ControllerBase
             if (!string.IsNullOrEmpty(addApiKeyDto.TenantId) && Guid.TryParse(addApiKeyDto.TenantId, out var tenantGuid))
             {
                 apiKey.TenantId = tenantGuid;
+            }
+            else
+            {
+                var currentTenantId = _tenantProvider.GetTenantId();
+                if (currentTenantId.HasValue)
+                {
+                    apiKey.TenantId = currentTenantId.Value;
+                }
             }
 
             await _apiKeyService.AddAsync(apiKey, cancellationToken);
