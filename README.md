@@ -12,7 +12,8 @@ This project is designed as a starting point for building scalable and maintaina
 - **Frontend**: Blazor Server with [MudBlazor](https://mudblazor.com/)
 - **API**: ASP.NET Core Web API
 - **Persistence**: Entity Framework Core
-- **Multi-tenancy**: Automatic data isolation and tenant management
+- **Multi-tenancy**: Automatic data isolation, tenant management, and subscription plans
+- **Feature Flagging**: Flexible feature access control based on subscription plans and user roles
 - **Logging**: Serilog
 - **Testing**: xUnit
 
@@ -96,7 +97,7 @@ dotnet test
 - Use `WebApplicationFactory` to test the API in-memory.
 - Base class `IntegrationTestBase.cs` handles common setup (config, headers, sequential execution).
 - Configuration is managed via `appsettings.json` in the test project.
-- **Coverage**: Includes CRUD operations for Users, Roles, ApiKeys, Tenants, and comprehensive Multi-tenant Isolation and Security scenarios.
+- **Coverage**: Includes CRUD operations for Users, Roles, ApiKeys, Tenants, Subscriptions, and comprehensive Registration, Multi-tenant Isolation, and Security scenarios.
 - **Note**: `Program.cs` in the API project must have `public partial class Program { }` to be accessible by the test project.
 
 ### Manual API Execution
@@ -125,14 +126,21 @@ dotnet test
 
 ## Development Guidelines
 
-- **Base Entity**: All entities should inherit from `EntityBase` (provides `Id`, `CreatedAtUtc`, `TenantId`).
+- **Base Entity**: All entities (except global ones like `SubscriptionRoot`) should inherit from `EntityBase` (provides `Id`, `CreatedAtUtc`, `TenantId`).
 - **Multi-tenancy & Isolation**:
     - Data isolation is strictly enforced at the database level using EF Core Global Query Filters.
     - `AppDbContext` automatically filters records based on the current tenant's ID: `e => IsMasterTenant || e.TenantId == CurrentTenantId`.
+    - `SubscriptionRoot` and `TenantRoot` are excluded from the global query filter.
     - `AppDbContext.SaveChangesAsync` automatically sets the `TenantId` for new records based on the `ITenantProvider`.
 - **Security & Authorization**:
-    - **Master Tenant**: Authenticated via the Master API Key. Has full visibility and is the only one authorized to use `TenantService` (Tenant management).
+    - **Master Tenant**: Authenticated via the Master API Key. Has full visibility and is authorized to manage tenants and subscription plans.
     - **Regular Tenants**: Restricted to their own data. Attempting to access another tenant's data via ID returns `404 Not Found`.
+- **Feature Flagging**:
+    - Access to specific features is controlled via `IFeatureService`.
+    - Logic considers the Master Tenant status, the tenant's Subscription plan features, and explicitly granted User roles.
+    - UI elements can be protected using the `FeatureGate` component.
+- **Onboarding**:
+    - `IRegistrationService` provides a decoupled logic for registering new companies/tenants.
 - **Standardized CRUD Pattern**:
     - Application services should implement `ICrudService<TEntity, Guid>` to maintain a consistent API and logic across the solution.
 - **DDD**: Use Aggregate Roots and Value Objects.

@@ -29,6 +29,8 @@
         - `RoleControllerTests`: Role CRUD operations.
         - `ApiKeyControllerTests`: API Key lifecycle.
         - `TenantControllerTests`: Tenant management (requires Master API Key).
+        - `SubscriptionControllerTests`: Subscription plan management.
+        - `RegistrationControllerTests`: New tenant onboarding.
         - `AuthenticationTests`: Missing/invalid keys, tenant ID validation, and policy checks.
     - Run using `dotnet test`.
     - To allow testing, `Program.cs` in `MyDevTemplate.Api` must have `public partial class Program { }`.
@@ -87,16 +89,35 @@
 
 ### Standardized CRUD Pattern
 - **Interface**: Use `ICrudService<TEntity, TId>` in the Application layer to define standard operations: `GetByIdAsync`, `GetAllAsync`, `AddAsync`, `UpdateAsync`, and `DeleteAsync`.
-- **Implementation**: All application services (e.g., `UserService`, `ApiKeyService`) must implement this interface to ensure consistency.
+- **Implementation**: All application services (e.g., `UserService`, `ApiKeyService`, `SubscriptionService`) must implement this interface to ensure consistency.
 - **Service Registration**: Register services in the DI container as scoped.
 
 ### Multi-tenancy & Isolation
-- **Domain**: All entities except `TenantRoot` must inherit from `EntityBase` to include the `TenantId` property.
+- **Domain**: All entities except `TenantRoot` and `SubscriptionRoot` must inherit from `EntityBase` to include the `TenantId` property.
 - **Provider**: `ITenantProvider` is used to resolve the current `TenantId` and whether the caller is a "Master Tenant".
 - **Database Enforcement**:
-    - **Global Filters**: `AppDbContext` applies a query filter to all entities (except tenants) to restrict results to the current `TenantId`, unless `IsMasterTenant` is true.
+    - **Global Filters**: `AppDbContext` applies a query filter to all entities (except tenants and subscriptions) to restrict results to the current `TenantId`, unless `IsMasterTenant` is true.
     - **Automatic Assignment**: `AppDbContext.SaveChangesAsync` automatically assigns the current `TenantId` to new entities during creation.
 - **Service Isolation**: Services naturally respect isolation via the global filters. Explicit checks (like `SingleOrDefaultAsync`) will return `null` if a tenant tries to access a resource they don't own, which should result in a `404 Not Found` at the API level.
+
+### Feature Flagging
+- **Logic**: Access to features is determined by `IFeatureService.HasFeatureAsync(featureName)`.
+- **Criteria**:
+    - **Master Tenant**: Always has access to all features.
+    - **Subscription Plan**: Checks if the feature is included in the tenant's assigned `SubscriptionRoot`.
+    - **User Roles**: Checks if any of the user's assigned roles explicitly grant the feature.
+- **UI Integration**: Use the `FeatureGate` component to conditionally render content:
+    ```razor
+    <FeatureGate Feature="@SubscriptionFeatures.Automation">
+        <ChildContent>...</ChildContent>
+        <UnauthorizedContent>...</UnauthorizedContent>
+    </FeatureGate>
+    ```
+
+### Registration
+- **Service**: `IRegistrationService` handles the creation of new tenants and their initial setup.
+- **Controller**: `RegistrationController` provides an anonymous endpoint for onboarding.
+- **Admin Email**: For new registrations, the administrator's email is captured (either from the authenticated user or an `X-Admin-Email` header).
 
 ### Security & Authorization
 - **Master Tenant**: Defined by the `Authentication:ApiKey` in `appsettings.json`. Master tenants have full access across all tenants.
