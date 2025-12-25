@@ -13,15 +13,17 @@ public class TenantRoot : EntityBase
         CompanyName = string.Empty;
     }
     
-    public TenantRoot(string tenantName, string companyName, string adminEmail)
+    public TenantRoot(string tenantName, string companyName, string adminEmail, Guid? subscriptionId = null)
     {
         TenantName = tenantName;
         CompanyName = companyName;
         AdminEmail = adminEmail;
+        SubscriptionId = subscriptionId;
     }
 
     public string TenantName { get; set; }
     public string CompanyName { get; set; }
+    public Guid? SubscriptionId { get; set; }
     public Address Address { get; private set; } = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
     public string AdminEmail { get; set; }
 

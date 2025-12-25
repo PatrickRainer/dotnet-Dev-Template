@@ -25,7 +25,8 @@ public class TenantControllerTests : IntegrationTestBase
             State: "TS",
             Country: "Test Country",
             ZipCode: "12345",
-            AdminEmail: "TestAdminEmail@MyDevtemplate.com"
+            AdminEmail: "TestAdminEmail@MyDevtemplate.com",
+            SubscriptionId: null
         );
 
         // Act & Assert: 1. Create Tenant
@@ -58,7 +59,8 @@ public class TenantControllerTests : IntegrationTestBase
             City: "Updated City",
             State: "US",
             Country: "Updated Country",
-            ZipCode: "54321"
+            ZipCode: "54321",
+            SubscriptionId: null
         );
         var putResponse = await Client.PutAsJsonAsync($"/api/v1/Tenant/{createdTenant.Id}", updateTenantDto);
         Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);

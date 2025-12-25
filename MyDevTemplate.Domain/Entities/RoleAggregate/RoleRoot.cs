@@ -18,6 +18,7 @@ public class RoleRoot : EntityBase
 
     public string Title { get; set; }
     public string Description { get; set; } = string.Empty;
+    public List<string> Features { get; set; } = new();
     
     // Navigation Properties
     private readonly List<Guid> _users = new();

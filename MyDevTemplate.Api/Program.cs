@@ -97,6 +97,7 @@ try
     
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<MyDevTemplate.Domain.Contracts.Abstractions.ITenantProvider, MyDevTemplate.Api.Providers.HttpTenantProvider>();
+    builder.Services.AddScoped<MyDevTemplate.Domain.Contracts.Abstractions.IUserProvider, MyDevTemplate.Api.Providers.HttpUserProvider>();
     
     builder.Services.AddAuthorization(options =>
     {

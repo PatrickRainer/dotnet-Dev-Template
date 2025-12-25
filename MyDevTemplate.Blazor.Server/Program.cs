@@ -83,6 +83,7 @@ try
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<ITenantProvider, BlazorTenantProvider>();
+    builder.Services.AddScoped<IUserProvider, BlazorUserProvider>();
 
     builder.Services.AddCascadingAuthenticationState();
 

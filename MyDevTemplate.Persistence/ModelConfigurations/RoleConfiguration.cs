@@ -29,6 +29,15 @@ public class RoleConfiguration : IEntityTypeConfiguration<RoleRoot>
         builder.Property(r => r.TenantId)
             .IsRequired();
 
+        builder.Property(r => r.Features)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
+            .Metadata.SetValueComparer(new ValueComparer<List<string>>(
+                (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToList()));
+
         builder.Property(r => r.Users)
             .HasField("_users")
             .UsePropertyAccessMode(PropertyAccessMode.Field)

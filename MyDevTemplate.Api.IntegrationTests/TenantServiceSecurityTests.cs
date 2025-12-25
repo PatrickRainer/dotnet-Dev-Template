@@ -29,11 +29,11 @@ public class TenantServiceSecurityTests : IntegrationTestBase
         var getResponse = await tenantClient.GetAsync("/api/v1/Tenant");
         Assert.Equal(HttpStatusCode.Forbidden, getResponse.StatusCode);
 
-        var createDto = new CreateTenantDto("New Tenant", "New Co", "admin@test.com", "Street", "City", "State", "Country", "12345");
+        var createDto = new CreateTenantDto("New Tenant", "New Co", "admin@test.com", "Street", "City", "State", "Country", "12345", null);
         var postResponse = await tenantClient.PostAsJsonAsync("/api/v1/Tenant", createDto);
         Assert.Equal(HttpStatusCode.Forbidden, postResponse.StatusCode);
 
-        var putResponse = await tenantClient.PutAsJsonAsync($"/api/v1/Tenant/{Guid.NewGuid()}", new UpdateTenantDto("Update", "Update Co", "St", "Ci", "St", "Co", "12"));
+        var putResponse = await tenantClient.PutAsJsonAsync($"/api/v1/Tenant/{Guid.NewGuid()}", new UpdateTenantDto("Update", "Update Co", "St", "Ci", "St", "Co", "12", null));
         Assert.Equal(HttpStatusCode.Forbidden, putResponse.StatusCode);
 
         var deleteResponse = await tenantClient.DeleteAsync($"/api/v1/Tenant/{Guid.NewGuid()}");

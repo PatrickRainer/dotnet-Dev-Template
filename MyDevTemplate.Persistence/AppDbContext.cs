@@ -4,6 +4,7 @@ using MyDevTemplate.Domain.Contracts.Abstractions;
 using MyDevTemplate.Domain.Entities.Abstractions;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 using MyDevTemplate.Domain.Entities.RoleAggregate;
+using MyDevTemplate.Domain.Entities.SubscriptionAggregate;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 using MyDevTemplate.Domain.Entities.UserAggregate;
 
@@ -26,7 +27,9 @@ public class AppDbContext : DbContext
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(EntityBase).IsAssignableFrom(entityType.ClrType) && entityType.ClrType != typeof(TenantRoot))
+            if (typeof(EntityBase).IsAssignableFrom(entityType.ClrType) 
+                && entityType.ClrType != typeof(TenantRoot)
+                && entityType.ClrType != typeof(SubscriptionRoot))
             {
                 var parameter = Expression.Parameter(entityType.ClrType, "e");
                 
@@ -77,4 +80,5 @@ public class AppDbContext : DbContext
     public DbSet<RoleRoot> Roles { get; set; }
     public DbSet<ApiKeyRoot> ApiKeys { get; set; }
     public DbSet<TenantRoot> Tenants { get; set; }
+    public DbSet<SubscriptionRoot> Subscriptions { get; set; }
 }

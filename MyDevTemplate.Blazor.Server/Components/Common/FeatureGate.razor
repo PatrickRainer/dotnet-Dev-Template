@@ -1,0 +1,24 @@
+﻿@using MyDevTemplate.Application.Common.Interfaces
+@inject IFeatureService FeatureService
+
+@if (_hasAccess)
+{
+    @ChildContent
+}
+else if (UnauthorizedContent != null)
+{
+    @UnauthorizedContent
+}
+
+@code {
+    [Parameter] public string Feature { get; set; } = string.Empty;
+    [Parameter] public RenderFragment ChildContent { get; set; } = null!;
+    [Parameter] public RenderFragment? UnauthorizedContent { get; set; }
+
+    private bool _hasAccess;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _hasAccess = await FeatureService.HasFeatureAsync(Feature);
+    }
+}

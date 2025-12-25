@@ -1,124 +1,106 @@
 ﻿@page "/"
 @using MyDevTemplate.Blazor.Server.Infrastructure
+@using MyDevTemplate.Domain.Entities.SubscriptionAggregate
+@using MyDevTemplate.Application.SubscriptionServices
+@using MyDevTemplate.Blazor.Server.Components.Common
+@inject SubscriptionService SubscriptionService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
 <MudContainer Class="mt-4">
     <MudGrid>
-        <MudItem xs="12" md="4">
-            <MudCard style="height: 100%">
-                <MudCardHeader>
-                    <MudText Typo="Typo.h3">Service 1</MudText>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText>Welcome to Service 1. This comprehensive platform provides you with powerful tools to
-                        manage and
-                        monitor your business operations effectively.
-                    </MudText>
-                    <MudList T="string">
-                        <MudListItem Text="Dashboard Overview - View your key metrics and statistics"
-                                     Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary"/>
-                        <MudListItem Text="Analytics - Track and analyze your business data"
-                                     Icon="@Icons.Material.Filled.Analytics" IconColor="Color.Primary"/>
-                        <MudListItem Text="Settings - Configure your preferences and options"
-                                     Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary"/>
-                    </MudList>
-                </MudCardContent>
-                <MudCardActions>
-                    <div class="d-flex justify-center" style="width: 100%">
-                        <MudButton @onclick='() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage + "/Service 1")'
-                                   Variant="Variant.Filled"
-                                   Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
-                    </div>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
+        @if (_subscriptions == null)
+        {
+            <MudText>Loading subscriptions...</MudText>
+        }
+        else
+        {
+            @foreach (var subscription in _subscriptions)
+            {
+                <MudItem xs="12" md="4">
+                    <MudCard style="height: 100%">
+                        <MudCardHeader>
+                            <MudText Typo="Typo.h3">@subscription.Name</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText>@subscription.Description</MudText>
+                            <MudList T="string">
+                                @foreach (var feature in subscription.Features)
+                                {
+                                    <MudListItem Text="@feature"
+                                                 Icon="@GetIconForFeature(feature)" IconColor="Color.Primary"/>
+                                }
+                            </MudList>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <div class="d-flex justify-center" style="width: 100%">
+                                <MudButton @onclick='() => NavigationManager.NavigateTo($"{UrlProvider.CompanyRegistrationPage}/{subscription.Id.ToString()}")'
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
+                            </div>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        }
+    </MudGrid>
+    
+    <MudDivider Class="my-8" />
 
-        <MudItem xs="12" md="4">
-            <MudCard style="height: 100%">
-            <MudCardHeader>
-                    <MudText Typo="Typo.h3">Service 2</MudText>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText>Service 2 expands on Service 1 with additional features for enhanced business management
-                        and
-                        collaboration.
-                    </MudText>
-                    <MudList T="string">
-                        <MudListItem Text="Dashboard Overview - View your key metrics and statistics"
-                                     Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary"/>
-                        <MudListItem Text="Analytics - Track and analyze your business data"
-                                     Icon="@Icons.Material.Filled.Analytics" IconColor="Color.Primary"/>
-                        <MudListItem Text="Settings - Configure your preferences and options"
-                                     Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary"/>
-                        <MudListItem Text="Reports - Generate detailed business reports"
-                                     Icon="@Icons.Material.Filled.Assessment" IconColor="Color.Primary"/>
-                        <MudListItem Text="Notifications - Stay updated with real-time alerts"
-                                     Icon="@Icons.Material.Filled.Notifications" IconColor="Color.Primary"/>
-                        <MudListItem Text="User Management - Control team access and permissions"
-                                     Icon="@Icons.Material.Filled.People" IconColor="Color.Primary"/>
-                        <MudListItem Text="Integration - Connect with third-party services"
-                                     Icon="@Icons.Material.Filled.IntegrationInstructions" IconColor="Color.Primary"/>
-                    </MudList>
-                </MudCardContent>
-                <MudCardActions>
-                    <div class="d-flex justify-center" style="width: 100%">
-                        <MudButton
-                            @onclick='() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage + "/Service 2")'
-                            Variant="Variant.Filled"
-                            Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
-                    </div>
-                </MudCardActions>
-            </MudCard>
+    <MudText Typo="Typo.h4" GutterBottom="true">Feature Gate Test Section</MudText>
+    <MudText Class="mb-4">This section tests the <code>FeatureGate</code> component. Your access depends on your current Tenant's Subscription Plan or your User Roles.</MudText>
+    
+    <MudGrid>
+        <MudItem xs="12" md="6">
+            <FeatureGate Feature="@SubscriptionFeatures.Dashboard">
+                <ChildContent>
+                    <MudAlert Severity="Severity.Success" Variant="Variant.Filled">You have access to the <b>Dashboard</b> feature!</MudAlert>
+                </ChildContent>
+                <UnauthorizedContent>
+                    <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined">You do NOT have access to the <b>Dashboard</b> feature. (Try registering with any Subscription)</MudAlert>
+                </UnauthorizedContent>
+            </FeatureGate>
         </MudItem>
-
-        <MudItem xs="12" md="4">
-            <MudCard style="height: 100%">
-            <MudCardHeader>
-                    <MudText Typo="Typo.h3">Service 3</MudText>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudText>Service 3 is our premium offering with comprehensive features for enterprise-level business
-                        management and automation.
-                    </MudText>
-                    <MudList T="string">
-                        <MudListItem Text="Dashboard Overview - View your key metrics and statistics"
-                                     Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Primary"/>
-                        <MudListItem Text="Analytics - Track and analyze your business data"
-                                     Icon="@Icons.Material.Filled.Analytics" IconColor="Color.Primary"/>
-                        <MudListItem Text="Settings - Configure your preferences and options"
-                                     Icon="@Icons.Material.Filled.Settings" IconColor="Color.Primary"/>
-                        <MudListItem Text="Reports - Generate detailed business reports"
-                                     Icon="@Icons.Material.Filled.Assessment" IconColor="Color.Primary"/>
-                        <MudListItem Text="Notifications - Stay updated with real-time alerts"
-                                     Icon="@Icons.Material.Filled.Notifications"/>
-                        <MudListItem Text="User Management - Control team access and permissions"
-                                     Icon="@Icons.Material.Filled.People" IconColor="Color.Primary"/>
-                        <MudListItem Text="Integration - Connect with third-party services"
-                                     Icon="@Icons.Material.Filled.IntegrationInstructions"/>
-                        <MudListItem Text="Advanced Analytics - AI-powered insights and predictions"
-                                     Icon="@Icons.Material.Filled.TrendingUp" IconColor="Color.Primary"/>
-                        <MudListItem Text="Automation - Create custom workflows and automations"
-                                     Icon="@Icons.Material.Filled.AutoMode" IconColor="Color.Primary"/>
-                        <MudListItem Text="Security - Enterprise-grade security and compliance"
-                                     Icon="@Icons.Material.Filled.Security" IconColor="Color.Primary"/>
-                        <MudListItem Text="API Access - Full programmatic access to all features"
-                                     Icon="@Icons.Material.Filled.Api" IconColor="Color.Primary"/>
-                        <MudListItem Text="Custom Workflows - Design and implement tailored processes"
-                                     Icon="@Icons.Material.Filled.WorkspacePremium" IconColor="Color.Primary"/>
-                    </MudList>
-                </MudCardContent>
-                <MudCardActions>
-                    <div class="d-flex justify-center" style="width: 100%">
-                        <MudButton
-                            @onclick='() => NavigationManager.NavigateTo(UrlProvider.CompanyRegistrationPage + "/Service 3")'
-                            Variant="Variant.Filled"
-                            Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
-                    </div>
-                </MudCardActions>
-            </MudCard>
+        <MudItem xs="12" md="6">
+            <FeatureGate Feature="@SubscriptionFeatures.Automation">
+                <ChildContent>
+                    <MudAlert Severity="Severity.Success" Variant="Variant.Filled">You have access to the <b>Automation</b> feature!</MudAlert>
+                </ChildContent>
+                <UnauthorizedContent>
+                    <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined">You do NOT have access to the <b>Automation</b> feature. (Only available in Subscription 3)</MudAlert>
+                </UnauthorizedContent>
+            </FeatureGate>
         </MudItem>
     </MudGrid>
 
 </MudContainer>
+
+@code {
+    private List<SubscriptionRoot>? _subscriptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _subscriptions = await SubscriptionService.GetAllAsync();
+    }
+
+    private string GetIconForFeature(string feature)
+    {
+        return feature switch
+        {
+            SubscriptionFeatures.Dashboard => Icons.Material.Filled.Dashboard,
+            SubscriptionFeatures.Analytics => Icons.Material.Filled.Analytics,
+            SubscriptionFeatures.Settings => Icons.Material.Filled.Settings,
+            SubscriptionFeatures.Reports => Icons.Material.Filled.Assessment,
+            SubscriptionFeatures.Notifications => Icons.Material.Filled.Notifications,
+            SubscriptionFeatures.UserManagement => Icons.Material.Filled.People,
+            SubscriptionFeatures.Integration => Icons.Material.Filled.IntegrationInstructions,
+            SubscriptionFeatures.AdvancedAnalytics => Icons.Material.Filled.TrendingUp,
+            SubscriptionFeatures.Automation => Icons.Material.Filled.AutoMode,
+            SubscriptionFeatures.Security => Icons.Material.Filled.Security,
+            SubscriptionFeatures.ApiAccess => Icons.Material.Filled.Api,
+            SubscriptionFeatures.CustomWorkflows => Icons.Material.Filled.WorkspacePremium,
+            _ => Icons.Material.Filled.Help
+        };
+    }
+}

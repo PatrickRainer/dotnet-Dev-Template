@@ -2,7 +2,10 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using MyDevTemplate.Application.ApiKeyServices;
+using MyDevTemplate.Application.Common;
+using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Application.RoleServices;
+using MyDevTemplate.Application.SubscriptionServices;
 using MyDevTemplate.Application.TenantServices;
 using MyDevTemplate.Application.UserServices;
 
@@ -24,6 +27,8 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<ApiKeyService>();
         services.AddScoped<RoleService>();
         services.AddScoped<TenantService>();
+        services.AddScoped<SubscriptionService>();
+        services.AddScoped<IFeatureService, FeatureService>();
         return services;
     }
 }

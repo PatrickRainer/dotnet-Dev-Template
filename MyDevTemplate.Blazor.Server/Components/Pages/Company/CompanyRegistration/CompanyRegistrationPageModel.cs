@@ -7,5 +7,5 @@ public class CompanyRegistrationPageModel
     public string City { get; set; } = string.Empty;
     public string ZipCode { get; set; } = string.Empty;
     public string Country { get; set; } = string.Empty;
-    public string ChosenService { get; set; } = string.Empty;
+    public string ChosenSubscription { get; set; } = string.Empty;
 }

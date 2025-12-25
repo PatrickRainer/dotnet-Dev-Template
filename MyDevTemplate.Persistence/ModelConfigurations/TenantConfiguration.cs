@@ -22,6 +22,8 @@ public class TenantConfiguration : IEntityTypeConfiguration<TenantRoot>
         builder.Property(t => t.CompanyName)
             .IsRequired()
             .HasMaxLength(200);
+
+        builder.Property(t => t.SubscriptionId);
         
         builder.Property(t => t.AdminEmail)
             .IsRequired()

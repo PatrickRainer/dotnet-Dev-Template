@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyDevTemplate.Persistence;
 
@@ -11,9 +12,11 @@ using MyDevTemplate.Persistence;
 namespace MyDevTemplate.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251224123302_SeedServiceModels")]
+    partial class SeedServiceModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,7 +94,7 @@ namespace MyDevTemplate.Persistence.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("MyDevTemplate.Domain.Entities.SubscriptionAggregate.SubscriptionRoot", b =>
+            modelBuilder.Entity("MyDevTemplate.Domain.Entities.ServiceAggregate.ServiceRoot", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -118,7 +121,7 @@ namespace MyDevTemplate.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Services", (string)null);
 
                     b.HasData(
                         new
@@ -127,7 +130,7 @@ namespace MyDevTemplate.Persistence.Migrations
                             CreatedAtUtc = new DateTime(2024, 1, 1, 1, 0, 0, 0, DateTimeKind.Local),
                             Description = "Basic business management platform.",
                             Features = "Dashboard,Analytics,Settings",
-                            Name = "Subscription 1",
+                            Name = "Service 1",
                             TenantId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
@@ -136,7 +139,7 @@ namespace MyDevTemplate.Persistence.Migrations
                             CreatedAtUtc = new DateTime(2024, 1, 1, 1, 0, 0, 0, DateTimeKind.Local),
                             Description = "Enhanced business management and collaboration.",
                             Features = "Dashboard,Analytics,Settings,Reports,Notifications,UserManagement,Integration",
-                            Name = "Subscription 2",
+                            Name = "Service 2",
                             TenantId = new Guid("00000000-0000-0000-0000-000000000000")
                         },
                         new
@@ -145,7 +148,7 @@ namespace MyDevTemplate.Persistence.Migrations
                             CreatedAtUtc = new DateTime(2024, 1, 1, 1, 0, 0, 0, DateTimeKind.Local),
                             Description = "Enterprise-level business management and automation.",
                             Features = "Dashboard,Analytics,Settings,Reports,Notifications,UserManagement,Integration,AdvancedAnalytics,Automation,Security,ApiAccess,CustomWorkflows",
-                            Name = "Subscription 3",
+                            Name = "Service 3",
                             TenantId = new Guid("00000000-0000-0000-0000-000000000000")
                         });
                 });
@@ -168,7 +171,7 @@ namespace MyDevTemplate.Persistence.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("SubscriptionId")
+                    b.Property<Guid?>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TenantId")

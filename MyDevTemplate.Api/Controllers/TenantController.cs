@@ -101,7 +101,7 @@ public class TenantController : ControllerBase
             await _createValidator.ValidateAndThrowAsync(createTenantDto, cancellationToken);
             
             var tenant = new TenantRoot(createTenantDto.TenantName, createTenantDto.CompanyName,
-                createTenantDto.AdminEmail);
+                createTenantDto.AdminEmail, createTenantDto.SubscriptionId);
             tenant.AddAddress(createTenantDto.Street ?? string.Empty, createTenantDto.City ?? string.Empty, createTenantDto.State, createTenantDto.Country, createTenantDto.ZipCode);
 
             await _tenantService.AddAsync(tenant, cancellationToken);
@@ -146,6 +146,7 @@ public class TenantController : ControllerBase
 
             tenant.TenantName = updateTenantDto.TenantName;
             tenant.CompanyName = updateTenantDto.CompanyName;
+            tenant.SubscriptionId = updateTenantDto.SubscriptionId;
             tenant.AddAddress(
                 updateTenantDto.Street ?? string.Empty,
                 updateTenantDto.City ?? string.Empty,

@@ -10,7 +10,8 @@ public record CreateTenantDto(
     string? City,
     string? State,
     string? Country,
-    string? ZipCode);
+    string? ZipCode,
+    Guid? SubscriptionId);
 
 public record UpdateTenantDto(
     [Required] string TenantName,
@@ -19,4 +20,5 @@ public record UpdateTenantDto(
     string? City,
     string? State,
     string? Country,
-    string? ZipCode);
+    string? ZipCode,
+    Guid? SubscriptionId);

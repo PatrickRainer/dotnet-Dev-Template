@@ -1,7 +1,7 @@
 ﻿@using MyDevTemplate.Blazor.Server.Infrastructure
 @using MyDevTemplate.Blazor.Server.Ressources
 @attribute [Route(UrlProvider.CompanyRegistrationPage)]
-@attribute [Route(UrlProvider.CompanyRegistrationPage + "/{serviceModel}")]
+@attribute [Route(UrlProvider.CompanyRegistrationPage + "/{SubscriptionId}")]
 
 <PageTitle>Company Registration</PageTitle>
 
@@ -14,13 +14,23 @@
         </MudPaper>
     </NotAuthorized>
     <Authorized>
-        <MudText>Your Service Model: @ServiceModel</MudText>
+        @if (SelectedSubscription != null)
+        {
+            <MudText Typo="Typo.h6">Your Subscription Model: @SelectedSubscription.Name</MudText>
+            <MudText Typo="Typo.body2">@SelectedSubscription.Description</MudText>
+            <MudChipSet T="string">
+                @foreach (var feature in SelectedSubscription.Features)
+                {
+                    <MudChip T="string" Text="@feature" Color="Color.Info" Variant="Variant.Text" />
+                }
+            </MudChipSet>
+        }
         <MudForm Model="@Model" @ref="_form" @bind-IsValid="@_isFormValid" @bind-Errors="@_errors"
                  Validation="@ModelValidator.ValidateValue" ValidationDelay="0">
-            <MudTextField T="string" Label="Chosen Service"
-                          For="@(() => Model.ChosenService)"
+            <MudTextField T="string" Label="Chosen Subscription"
+                          For="@(() => Model.ChosenSubscription)"
                           ReadOnly="true"
-                          @bind-Value="Model.ChosenService"/>
+                          @bind-Value="Model.ChosenSubscription"/>
             <MudTextField T="string" Label="@Blazor_Server_Localization.common_CompanyName"
                           For="@(() => Model.CompanyName)"
                           Immediate="true"
