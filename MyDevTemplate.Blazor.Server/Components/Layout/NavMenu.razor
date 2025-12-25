@@ -5,6 +5,10 @@
     
     <MudNavLink Href="weather" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
 
+    <AuthorizeView Policy="MasterTenant">
+        <MudNavLink Href="company/tenants" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Business">Tenants</MudNavLink>
+    </AuthorizeView>
+
 </MudNavMenu>
 
 

@@ -1,0 +1,126 @@
+﻿@page "/company/tenants"
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using MyDevTemplate.Blazor.Server.Components.Pages.Company.TenantManagement
+@attribute [Authorize(Policy = "MasterTenant")]
+@rendermode InteractiveServer
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudText Typo="Typo.h3" GutterBottom="true">Tenant Management</MudText>
+    
+    <MudTable Items="@Tenants" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Tenants</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCreateDialog">Add Tenant</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Tenant Name</MudTh>
+            <MudTh>Company Name</MudTh>
+            <MudTh>Admin Email</MudTh>
+            <MudTh>Subscription</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Tenant Name">@context.TenantName</MudTd>
+            <MudTd DataLabel="Company Name">@context.CompanyName</MudTd>
+            <MudTd DataLabel="Admin Email">@context.AdminEmail</MudTd>
+            <MudTd DataLabel="Subscription">
+                @(Subscriptions.FirstOrDefault(s => s.Id == context.SubscriptionId)?.Name ?? "No Subscription")
+            </MudTd>
+            <MudTd DataLabel="Actions">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => OpenEditDialog(context))" />
+                @if (context.Id != _masterTenantId)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteTenant(context))" />
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+<MudDialog @bind-Visible="_isDialogVisible" Options="_dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(Model.Id == Guid.Empty ? "Create Tenant" : "Edit Tenant")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@Model" @ref="@_form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.TenantName"
+                                  For="@(() => Model.TenantName)"
+                                  Label="Tenant Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.CompanyName"
+                                  For="@(() => Model.CompanyName)"
+                                  Label="Company Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.AdminEmail"
+                                  For="@(() => Model.AdminEmail)"
+                                  Label="Admin Email"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudSelect T="Guid?" Label="Subscription" @bind-Value="Model.SubscriptionId" Variant="Variant.Outlined" Margin="Margin.Normal" AnchorOrigin="Origin.BottomCenter">
+                        <MudSelectItem T="Guid?" Value="@(null)">No Subscription</MudSelectItem>
+                        @foreach (var sub in Subscriptions)
+                        {
+                            <MudSelectItem T="Guid?" Value="@sub.Id">@sub.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1" Class="mt-4">Address</MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="Model.Street"
+                                  For="@(() => Model.Street)"
+                                  Label="Street"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.City"
+                                  For="@(() => Model.City)"
+                                  Label="City"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.State"
+                                  For="@(() => Model.State)"
+                                  Label="State"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.ZipCode"
+                                  For="@(() => Model.ZipCode)"
+                                  Label="Zip Code"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.Country"
+                                  For="@(() => Model.Country)"
+                                  Label="Country"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="CloseDialog" Class="px-10">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Save</MudButton>
+    </DialogActions>
+</MudDialog>
