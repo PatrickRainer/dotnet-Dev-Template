@@ -1,13 +1,13 @@
 ﻿@using MyDevTemplate.Blazor.Server.Infrastructure
 <MudNavMenu>
     <MudNavLink Href="@UrlProvider.HomePage" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="@UrlProvider.CounterPage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
     
-    <MudNavLink Href="@UrlProvider.WeatherPage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Weather</MudNavLink>
 
     <AuthorizeView Policy="MasterTenant">
+        <MudNavGroup Title="Master Admin">
         <MudNavLink Href="@UrlProvider.TenantManagementPage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Business">Tenants</MudNavLink>
         <MudNavLink Href="@UrlProvider.SubscriptionManagementPage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.CardMembership">Subscriptions</MudNavLink>
+        </MudNavGroup>
     </AuthorizeView>
 
 </MudNavMenu>
