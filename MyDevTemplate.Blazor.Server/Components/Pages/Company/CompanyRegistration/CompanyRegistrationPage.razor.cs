@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MyDevTemplate.Application.Common;
 using MyDevTemplate.Application.Common.Validations;
+using MyDevTemplate.Application.RegistrationServices;
+using MyDevTemplate.Application.RegistrationServices.Dtos;
 using MyDevTemplate.Application.SubscriptionServices;
 using MyDevTemplate.Application.TenantServices;
 using MyDevTemplate.Domain.Entities.SubscriptionAggregate;
@@ -18,7 +20,7 @@ public partial class CompanyRegistrationPage : ComponentBase
     string[] _errors = Array.Empty<string>();
     
     
-    [Inject] public TenantService TenantService { get; set; } = null!;
+    [Inject] public IRegistrationService RegistrationService { get; set; } = null!;
     [Inject] public SubscriptionService SubscriptionService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; } = null!;
@@ -52,12 +54,18 @@ public partial class CompanyRegistrationPage : ComponentBase
             {
                 var loggedInUser = HttpContextAccessor.HttpContext?.User.Identity?.Name;
                 var subscriptionId = SelectedSubscription?.Id;
-                
-                var newTenant = new TenantRoot(model.CompanyName, model.CompanyName,
-                    loggedInUser ?? throw new UserIdentityException(), subscriptionId);
-                newTenant.AddAddress(model.Street, model.City, model.ZipCode, model.Country, string.Empty);
 
-                var result = await TenantService.AddAsync(newTenant);
+                var registrationDto = new RegistrationDto(
+                    model.CompanyName,
+                    model.Street,
+                    model.City,
+                    model.ZipCode,
+                    model.Country,
+                    subscriptionId);
+
+                var result = await RegistrationService.RegisterAsync(
+                    registrationDto, 
+                    loggedInUser ?? throw new UserIdentityException());
 
                 if (result != Guid.Empty)
                 {

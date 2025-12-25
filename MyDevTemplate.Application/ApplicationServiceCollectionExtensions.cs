@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyDevTemplate.Application.ApiKeyServices;
 using MyDevTemplate.Application.Common;
 using MyDevTemplate.Application.Common.Interfaces;
+using MyDevTemplate.Application.RegistrationServices;
 using MyDevTemplate.Application.RoleServices;
 using MyDevTemplate.Application.SubscriptionServices;
 using MyDevTemplate.Application.TenantServices;
@@ -28,6 +29,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<RoleService>();
         services.AddScoped<TenantService>();
         services.AddScoped<SubscriptionService>();
+        services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<IFeatureService, FeatureService>();
         return services;
     }
