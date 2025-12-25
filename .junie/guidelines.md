@@ -144,6 +144,10 @@
     - The `.razor.cs` file (code-behind).
     - The `Model.cs` file (UI-specific data structure).
     - The `Validator.cs` file (FluentValidation logic).
+- **URL Management**: Use the `UrlProvider` class in `MyDevTemplate.Blazor.Server.Infrastructure` for all Blazor page routes and navigation Hrefs. Avoid hardcoded strings for URLs.
+    - Page route definition: Use `@attribute [Route(UrlProvider.MyPage)]` instead of `@page "/my-page"`.
+    - Navigation: Use `NavigationManager.NavigateTo(UrlProvider.MyPage)`.
+    - NavMenu: Use `<MudNavLink Href="@UrlProvider.MyPage" ...>`.
 
 ### Additional Development Information
 - **Development Approach**: 

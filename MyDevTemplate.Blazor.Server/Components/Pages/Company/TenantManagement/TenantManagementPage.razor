@@ -1,7 +1,8 @@
-﻿@page "/company/tenants"
+﻿@using MyDevTemplate.Blazor.Server.Infrastructure
 @using Microsoft.AspNetCore.Authorization
 @using MudBlazor
 @using MyDevTemplate.Blazor.Server.Components.Pages.Company.TenantManagement
+@attribute [Route(UrlProvider.TenantManagementPage)]
 @attribute [Authorize(Policy = "MasterTenant")]
 @rendermode InteractiveServer
 

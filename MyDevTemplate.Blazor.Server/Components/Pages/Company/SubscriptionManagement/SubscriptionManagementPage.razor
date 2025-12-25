@@ -1,0 +1,82 @@
+﻿@using MyDevTemplate.Blazor.Server.Infrastructure
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@using MyDevTemplate.Blazor.Server.Components.Pages.Company.SubscriptionManagement
+@attribute [Route(UrlProvider.SubscriptionManagementPage)]
+@attribute [Authorize(Policy = "MasterTenant")]
+@rendermode InteractiveServer
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudText Typo="Typo.h3" GutterBottom="true">Subscription Management</MudText>
+
+    <MudTable Items="@Subscriptions" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Subscription Models</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCreateDialog">Add Subscription</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Description</MudTh>
+            <MudTh>Features Count</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Description">@context.Description</MudTd>
+            <MudTd DataLabel="Features Count">@context.Features.Count</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => OpenEditDialog(context))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteSubscription(context))" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+<MudDialog @bind-Visible="_isDialogVisible" Options="_dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(Model.Id == Guid.Empty ? "Create Subscription" : "Edit Subscription")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@Model" @ref="@_form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="Model.Name"
+                                  For="@(() => Model.Name)"
+                                  Label="Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="Model.Description"
+                                  For="@(() => Model.Description)"
+                                  Label="Description"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal"
+                                  Lines="3" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1" Class="mt-4">Features</MudText>
+                    <MudGrid>
+                        @foreach (var feature in AllFeatures)
+                        {
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudCheckBox T="bool" 
+                                             Value="@Model.SelectedFeatures.Contains(feature)" 
+                                             ValueChanged="@((val) => OnFeatureToggled(feature, val))"
+                                             Label="@feature" 
+                                             Color="Color.Primary" />
+                            </MudItem>
+                        }
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="CloseDialog" Class="px-10">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Save</MudButton>
+    </DialogActions>
+</MudDialog>
