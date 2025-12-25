@@ -12,17 +12,17 @@ public partial class SubscriptionManagementPage : ComponentBase
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
 
-    private List<SubscriptionRoot> Subscriptions { get; set; } = new();
-    private bool _loading = true;
-    private bool _isDialogVisible;
-    private SubscriptionModel Model { get; set; } = new();
-    private SubscriptionModelValidator Validator { get; } = new();
-    private MudForm _form = default!;
+    public List<SubscriptionRoot> Subscriptions { get; set; } = new();
+    public bool _loading = true;
+    public bool _isDialogVisible;
+    public SubscriptionModel Model { get; set; } = new();
+    public SubscriptionModelValidator Validator { get; } = new();
+    public MudForm _form = default!;
 
-    private readonly DialogOptions _dialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
+    public readonly DialogOptions _dialogOptions = new() { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseButton = true };
 
-    private readonly List<string> AllFeatures = typeof(SubscriptionFeatures)
-        .GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+    public readonly List<string> AllFeatures = typeof(SubscriptionFeatures)
+        .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
         .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
         .Select(x => (string)x.GetRawConstantValue()!)
         .ToList();
@@ -32,7 +32,7 @@ public partial class SubscriptionManagementPage : ComponentBase
         await LoadSubscriptions();
     }
 
-    private async Task LoadSubscriptions()
+    public async Task LoadSubscriptions()
     {
         _loading = true;
         try
@@ -49,13 +49,13 @@ public partial class SubscriptionManagementPage : ComponentBase
         }
     }
 
-    private void OpenCreateDialog()
+    public void OpenCreateDialog()
     {
         Model = new SubscriptionModel();
         _isDialogVisible = true;
     }
 
-    private void OpenEditDialog(SubscriptionRoot subscription)
+    public void OpenEditDialog(SubscriptionRoot subscription)
     {
         Model = new SubscriptionModel
         {
@@ -67,12 +67,12 @@ public partial class SubscriptionManagementPage : ComponentBase
         _isDialogVisible = true;
     }
 
-    private void CloseDialog()
+    public void CloseDialog()
     {
         _isDialogVisible = false;
     }
 
-    private void OnFeatureToggled(string feature, bool isSelected)
+    public void OnFeatureToggled(string feature, bool isSelected)
     {
         if (isSelected)
         {
@@ -85,47 +85,52 @@ public partial class SubscriptionManagementPage : ComponentBase
         }
     }
 
-    private async Task Submit()
+    public async Task Submit()
     {
         await _form.Validate();
 
         if (_form.IsValid)
         {
-            try
-            {
-                if (Model.Id == Guid.Empty)
-                {
-                    var subscription = new SubscriptionRoot(Model.Name, Model.Description)
-                    {
-                        Features = Model.SelectedFeatures
-                    };
-                    await SubscriptionService.AddAsync(subscription);
-                    Snackbar.Add("Subscription created successfully", Severity.Success);
-                }
-                else
-                {
-                    var subscription = await SubscriptionService.GetByIdAsync(Model.Id);
-                    if (subscription != null)
-                    {
-                        subscription.Name = Model.Name;
-                        subscription.Description = Model.Description;
-                        subscription.Features = Model.SelectedFeatures;
-                        await SubscriptionService.UpdateAsync(subscription);
-                        Snackbar.Add("Subscription updated successfully", Severity.Success);
-                    }
-                }
-
-                _isDialogVisible = false;
-                await LoadSubscriptions();
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"Error saving subscription: {ex.Message}", Severity.Error);
-            }
+            await SaveAsync();
         }
     }
 
-    private async Task DeleteSubscription(SubscriptionRoot subscription)
+    public async Task SaveAsync()
+    {
+        try
+        {
+            if (Model.Id == Guid.Empty)
+            {
+                var subscription = new SubscriptionRoot(Model.Name, Model.Description)
+                {
+                    Features = Model.SelectedFeatures
+                };
+                await SubscriptionService.AddAsync(subscription);
+                Snackbar.Add("Subscription created successfully", Severity.Success);
+            }
+            else
+            {
+                var subscription = await SubscriptionService.GetByIdAsync(Model.Id);
+                if (subscription != null)
+                {
+                    subscription.Name = Model.Name;
+                    subscription.Description = Model.Description;
+                    subscription.Features = Model.SelectedFeatures;
+                    await SubscriptionService.UpdateAsync(subscription);
+                    Snackbar.Add("Subscription updated successfully", Severity.Success);
+                }
+            }
+
+            _isDialogVisible = false;
+            await LoadSubscriptions();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error saving subscription: {ex.Message}", Severity.Error);
+        }
+    }
+
+    public async Task DeleteSubscription(SubscriptionRoot subscription)
     {
         bool? result = await DialogService.ShowMessageBox(
             "Delete Subscription",

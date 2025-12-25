@@ -16,15 +16,15 @@ public partial class TenantManagementPage
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IDialogService DialogService { get; set; } = null!;
 
-    private List<TenantManagementModel> Tenants { get; set; } = new();
-    private List<SubscriptionRoot> Subscriptions { get; set; } = new();
-    private TenantManagementModel Model { get; set; } = new();
-    private TenantManagementValidator Validator { get; set; } = new();
-    private MudForm _form = null!;
-    private bool _loading;
-    private bool _isDialogVisible;
-    private Guid? _masterTenantId;
-    private readonly DialogOptions _dialogOptions = new() { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+    public List<TenantManagementModel> Tenants { get; set; } = new();
+    public List<SubscriptionRoot> Subscriptions { get; set; } = new();
+    public TenantManagementModel Model { get; set; } = new();
+    public TenantManagementValidator Validator { get; set; } = new();
+    public MudForm _form = null!;
+    public bool _loading;
+    public bool _isDialogVisible;
+    public Guid? _masterTenantId;
+    public readonly DialogOptions _dialogOptions = new() { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,7 +33,7 @@ public partial class TenantManagementPage
         await LoadSubscriptions();
     }
 
-    private async Task LoadTenants()
+    public async Task LoadTenants()
     {
         _loading = true;
         try
@@ -63,7 +63,7 @@ public partial class TenantManagementPage
         }
     }
 
-    private async Task LoadSubscriptions()
+    public async Task LoadSubscriptions()
     {
         try
         {
@@ -75,13 +75,13 @@ public partial class TenantManagementPage
         }
     }
 
-    private void OpenCreateDialog()
+    public void OpenCreateDialog()
     {
         Model = new TenantManagementModel();
         _isDialogVisible = true;
     }
 
-    private void OpenEditDialog(TenantManagementModel model)
+    public void OpenEditDialog(TenantManagementModel model)
     {
         Model = new TenantManagementModel
         {
@@ -99,16 +99,21 @@ public partial class TenantManagementPage
         _isDialogVisible = true;
     }
 
-    private void CloseDialog()
+    public void CloseDialog()
     {
         _isDialogVisible = false;
     }
 
-    private async Task Submit()
+    public async Task Submit()
     {
         await _form.Validate();
         if (!_form.IsValid) return;
 
+        await SaveAsync();
+    }
+
+    public async Task SaveAsync()
+    {
         try
         {
             if (Model.Id == Guid.Empty)
@@ -141,7 +146,7 @@ public partial class TenantManagementPage
         }
     }
 
-    private async Task DeleteTenant(TenantManagementModel model)
+    public async Task DeleteTenant(TenantManagementModel model)
     {
         bool? result = await DialogService.ShowMessageBox(
             "Delete Tenant", 

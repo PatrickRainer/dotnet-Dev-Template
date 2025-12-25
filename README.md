@@ -33,6 +33,7 @@ The solution follows Clean Architecture, organized into the following layers:
 - **Test Projects**:
     - `MyDevTemplate.Domain.Tests`: Unit tests for the domain layer.
     - `MyDevTemplate.Api.IntegrationTests`: Integration tests for the API layer using `WebApplicationFactory`.
+    - `MyDevTemplate.Blazor.Server.Tests`: Integration tests for the Blazor Server project using `bUnit` and `Moq`.
 
 ## Requirements
 
@@ -100,6 +101,13 @@ dotnet test
 - **Coverage**: Includes CRUD operations for Users, Roles, ApiKeys, Tenants, Subscriptions, and comprehensive Registration, Multi-tenant Isolation, and Security scenarios.
 - **Note**: `Program.cs` in the API project must have `public partial class Program { }` to be accessible by the test project.
 
+### Blazor Integration Tests
+- Located in `MyDevTemplate.Blazor.Server.Tests`.
+- Use `bUnit` and `Moq` to test Blazor components and pages.
+- Base class `BlazorTestBase.cs` provides common logic for MudBlazor and service mocking.
+- **Coverage**: Includes critical user flows on `UserManagementPage`, `TenantManagementPage`, and `SubscriptionManagementPage`.
+- **Testability**: Pages are designed with `public`/`protected` access to key methods and properties to facilitate bUnit testing.
+
 ### Manual API Execution
 - Located in `MyDevTemplate.Api/IntegrationTests`.
 - `.http` files for manual debugging and endpoint exploration.
@@ -108,7 +116,8 @@ dotnet test
 ### Adding New Tests
 - Use the existing xUnit project `MyDevTemplate.Domain.Tests` for Domain tests.
 - Use `MyDevTemplate.Api.IntegrationTests` for API integration tests.
-- Follow the naming convention `<Entity/Service>Tests.cs` or `<Controller>Tests.cs`.
+- Use `MyDevTemplate.Blazor.Server.Tests` for Blazor UI integration tests.
+- Follow the naming convention `<Entity/Service>Tests.cs`, `<Controller>Tests.cs`, or `<Page>Tests.cs`.
 - Example Unit Test:
     ```csharp
     public class RoleRootEntityTests

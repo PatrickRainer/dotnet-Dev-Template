@@ -35,14 +35,26 @@
         - `AuthenticationTests`: Missing/invalid keys, tenant ID validation, and policy checks.
     - Run using `dotnet test`.
     - To allow testing, `Program.cs` in `MyDevTemplate.Api` must have `public partial class Program { }`.
+- **Blazor Integration Testing**:
+    - Located in `MyDevTemplate.Blazor.Server.Tests`.
+    - Uses `bUnit` for component rendering and `Moq` for service mocking.
+    - Base class `BlazorTestBase.cs` provides common logic:
+        - MudBlazor services registration.
+        - Mocking of core application services (`IUserService`, `ISubscriptionService`, etc.).
+        - JSInterop loose mode configuration for MudBlazor components.
+    - Test Coverage:
+        - `UserManagementPageTests`: Data loading and creation/update flow.
+        - `TenantManagementPageTests`: Master tenant data management.
+        - `SubscriptionManagementPageTests`: Subscription lifecycle.
+    - Run using `dotnet test`.
 - **Integration Testing (HTTP Files - Manual/Lightweight Debugging)**:
     - API endpoints can also be manually executed using `.http` files located in `MyDevTemplate.Api/IntegrationTests`.
     - These files are primarily for manual debugging and do not contain automated tests.
     - These files can be executed directly in IDEs like JetBrains Rider or VS Code with the REST Client extension.
 - **Adding Tests**:
-    - Use the existing xUnit projects (e.g., `MyDevTemplate.Domain.Tests` or `MyDevTemplate.Api.IntegrationTests`).
+    - Use the existing xUnit projects (e.g., `MyDevTemplate.Domain.Tests`, `MyDevTemplate.Api.IntegrationTests`, or `MyDevTemplate.Blazor.Server.Tests`).
     - Add a reference to the project being tested: `dotnet add <TestProject> reference <ProjectUnderTest>`.
-    - Create test classes following the naming convention `<Entity/Service>Tests.cs` or `<Controller>Tests.cs`.
+    - Create test classes following the naming convention `<Entity/Service>Tests.cs`, `<Controller>Tests.cs`, or `<Page>Tests.cs`.
 - **Unit Test Example**:
     ```csharp
     using MyDevTemplate.Domain.Entities.RoleAggregate;
@@ -145,7 +157,12 @@
     - The `.razor.cs` file (code-behind).
     - The `Model.cs` file (UI-specific data structure).
     - The `Validator.cs` file (FluentValidation logic).
-- **URL Management**: Use the `UrlProvider` class in `MyDevTemplate.Blazor.Server.Infrastructure` for all Blazor page routes and navigation Hrefs. Avoid hardcoded strings for URLs.
+- **Testability**: 
+    - Design pages so they are testable with `bUnit`. 
+    - Use interfaces for injected services (`IUserService` instead of `UserService`).
+    - Keep methods and properties that need to be accessed from tests (like `SaveAsync`, `LoadData`, `Model`, `_form`) as `public` or `protected`.
+- **URL Management**: 
+    - Use the `UrlProvider` class in `MyDevTemplate.Blazor.Server.Infrastructure` for all Blazor page routes and navigation Hrefs. Avoid hardcoded strings for URLs.
     - Page route definition: Use `@attribute [Route(UrlProvider.MyPage)]` instead of `@page "/my-page"`.
     - Navigation: Use `NavigationManager.NavigateTo(UrlProvider.MyPage)`.
     - NavMenu: Use `<MudNavLink Href="@UrlProvider.MyPage" ...>`.
