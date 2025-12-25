@@ -15,13 +15,13 @@ namespace MyDevTemplate.Api.Controllers;
 [Produces("application/json")]
 public class TenantController : ControllerBase
 {
-    private readonly TenantService _tenantService;
+    private readonly ITenantService _tenantService;
     private readonly ILogger<TenantController>? _logger;
     private readonly IValidator<CreateTenantDto> _createValidator;
     private readonly IValidator<UpdateTenantDto> _updateValidator;
 
     public TenantController(
-        TenantService tenantService, 
+        ITenantService tenantService, 
         IValidator<CreateTenantDto> createValidator,
         IValidator<UpdateTenantDto> updateValidator,
         ILogger<TenantController>? logger = null)

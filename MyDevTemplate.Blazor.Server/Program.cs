@@ -60,7 +60,7 @@ try
 
             // Create a scope to resolve scoped services
             await using var scope = context.HttpContext.RequestServices.CreateAsyncScope();
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
                 
             // Logic to check and add user to DB
             if(oid == null)

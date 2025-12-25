@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using MyDevTemplate.Application.SubscriptionServices;
 using MyDevTemplate.Domain.Entities.SubscriptionAggregate;
@@ -7,7 +8,7 @@ namespace MyDevTemplate.Blazor.Server.Components.Pages.Company.SubscriptionManag
 
 public partial class SubscriptionManagementPage : ComponentBase
 {
-    [Inject] private SubscriptionService SubscriptionService { get; set; } = default!;
+    [Inject] private ISubscriptionService SubscriptionService { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
 

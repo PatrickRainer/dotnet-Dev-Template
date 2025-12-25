@@ -33,7 +33,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         var email = $"add.test.{Guid.NewGuid()}@example.com";
         var user = new UserRoot(new EmailAddress(email), "First", "Last", "oid-1");
@@ -58,7 +58,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         // Act
         var user = await userService.GetUserByEmailAsync($"nonexistent.{Guid.NewGuid()}@example.com");
@@ -150,7 +150,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => userService.GetUserByEmailAsync("invalid-email"));
@@ -165,7 +165,7 @@ public class UserServiceTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             SetTenantContext(scope.ServiceProvider, TenantId);
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             email = $"feature.test.{Guid.NewGuid()}@example.com";
             var user = new UserRoot(new EmailAddress(email), "First", "Last", "oid-f1");
             userId = await userService.AddAsync(user);
@@ -177,7 +177,7 @@ public class UserServiceTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             SetTenantContext(scope.ServiceProvider, TenantId);
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             await Assert.ThrowsAsync<InvalidOperationException>(() => 
                 userService.AddFeatureToUserAsync(userId, unsubscribedFeature));
         }

@@ -17,8 +17,8 @@ public static class ApplicationServiceCollectionExtensions
 {
     public static IServiceCollection AddUserService(this IServiceCollection services)
     {
-        services.AddScoped<UserService>();
-        services.AddScoped<UserGroupService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserGroupService, UserGroupService>();
         return services;
     }
     
@@ -26,12 +26,12 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         
-        services.AddScoped<UserService>();
-        services.AddScoped<UserGroupService>();
-        services.AddScoped<ApiKeyService>();
-        services.AddScoped<RoleService>();
-        services.AddScoped<TenantService>();
-        services.AddScoped<SubscriptionService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserGroupService, UserGroupService>();
+        services.AddScoped<IApiKeyService, ApiKeyService>();
+        services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<IFeatureService, FeatureService>();
         return services;

@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.ApiKeyServices;
 
-public class ApiKeyService : ICrudService<ApiKeyRoot, Guid>
+public class ApiKeyService : IApiKeyService
 {
     readonly AppDbContext _dbContext;
     readonly ILogger<ApiKeyService>? _logger;

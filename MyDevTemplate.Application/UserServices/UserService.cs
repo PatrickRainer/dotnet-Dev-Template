@@ -8,7 +8,7 @@ using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.UserServices;
 
-public class UserService : ICrudService<UserRoot, Guid>
+public class UserService : IUserService
 {
     readonly AppDbContext _dbContext;
     readonly ILogger<UserService>? _logger;

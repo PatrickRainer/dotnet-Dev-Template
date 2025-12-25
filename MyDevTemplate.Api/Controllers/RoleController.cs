@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Asp.Versioning;
+﻿using Asp.Versioning;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.RoleServices;
@@ -16,12 +16,12 @@ namespace MyDevTemplate.Api.Controllers;
 public class RoleController : ControllerBase
 {
     private readonly ILogger<RoleController>? _logger;
-    private readonly RoleService _roleService;
+    private readonly IRoleService _roleService;
     private readonly IValidator<AddRoleDto> _addValidator;
     private readonly IValidator<UpdateRoleDto> _updateValidator;
 
     public RoleController(
-        RoleService roleService, 
+        IRoleService roleService, 
         IValidator<AddRoleDto> addValidator,
         IValidator<UpdateRoleDto> updateValidator,
         ILogger<RoleController>? logger = null)

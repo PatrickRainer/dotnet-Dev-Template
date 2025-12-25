@@ -14,13 +14,13 @@ namespace MyDevTemplate.Api.Controllers;
 [Authorize(Policy = "MasterTenant")]
 public class SubscriptionController : ControllerBase
 {
-    private readonly SubscriptionService _subscriptionService;
+    private readonly ISubscriptionService _subscriptionService;
     private readonly IValidator<CreateSubscriptionDto> _createValidator;
     private readonly IValidator<UpdateSubscriptionDto> _updateValidator;
     private readonly ILogger<SubscriptionController>? _logger;
 
     public SubscriptionController(
-        SubscriptionService subscriptionService,
+        ISubscriptionService subscriptionService,
         IValidator<CreateSubscriptionDto> createValidator,
         IValidator<UpdateSubscriptionDto> updateValidator,
         ILogger<SubscriptionController>? logger = null)

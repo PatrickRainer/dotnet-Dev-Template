@@ -1,9 +1,10 @@
-﻿@using MyDevTemplate.Blazor.Server.Infrastructure
-@attribute [Route(UrlProvider.HomePage)]
-@using MyDevTemplate.Domain.Entities.SubscriptionAggregate
-@using MyDevTemplate.Application.SubscriptionServices
+﻿@using MyDevTemplate.Application.SubscriptionServices
 @using MyDevTemplate.Blazor.Server.Components.Common
-@inject SubscriptionService SubscriptionService
+@using MyDevTemplate.Blazor.Server.Infrastructure
+@using MyDevTemplate.Blazor.Server.Ressources
+@using MyDevTemplate.Domain.Entities.SubscriptionAggregate
+@attribute [Route(UrlProvider.HomePage)]
+@inject ISubscriptionService SubscriptionService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
@@ -37,7 +38,7 @@
                             <div class="d-flex justify-center" style="width: 100%">
                                 <MudButton @onclick='() => NavigationManager.NavigateTo($"{UrlProvider.CompanyRegistrationPage}/{subscription.Id.ToString()}")'
                                            Variant="Variant.Filled"
-                                           Color="Color.Primary">@Ressources.Blazor_Server_Localization.common_Register</MudButton>
+                                           Color="Color.Primary">@Blazor_Server_Localization.common_Register</MudButton>
                             </div>
                         </MudCardActions>
                     </MudCard>

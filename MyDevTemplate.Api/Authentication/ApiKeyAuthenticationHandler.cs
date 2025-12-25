@@ -51,7 +51,7 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<AuthenticationS
         }
 
         // Check database for dynamic keys
-        var apiKeyService = Context.RequestServices.GetRequiredService<ApiKeyService>();
+        var apiKeyService = Context.RequestServices.GetRequiredService<IApiKeyService>();
         var apiKeyEntity = await apiKeyService.ValidateApiKeyAsync(tenantId, extractedApiKey!);
 
         if (apiKeyEntity != null && apiKeyEntity.IsValid)

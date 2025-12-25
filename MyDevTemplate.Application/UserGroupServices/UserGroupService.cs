@@ -7,7 +7,7 @@ using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.UserGroupServices;
 
-public class UserGroupService : ICrudService<UserGroup, Guid>
+public class UserGroupService : IUserGroupService
 {
     readonly AppDbContext _dbContext;
     readonly ILogger<UserGroupService>? _logger;

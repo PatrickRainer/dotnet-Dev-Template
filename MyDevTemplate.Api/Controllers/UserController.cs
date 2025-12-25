@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Asp.Versioning;
+﻿using Asp.Versioning;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.UserServices;
@@ -17,12 +17,12 @@ namespace MyDevTemplate.Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController>? _logger;
-    private readonly UserService _userService;
+    private readonly IUserService _userService;
     private readonly IValidator<AddUserDto> _addValidator;
     private readonly IValidator<UpdateUserDto> _updateValidator;
 
     public UserController(
-        UserService userService, 
+        IUserService userService, 
         IValidator<AddUserDto> addValidator,
         IValidator<UpdateUserDto> updateValidator,
         ILogger<UserController>? logger = null)

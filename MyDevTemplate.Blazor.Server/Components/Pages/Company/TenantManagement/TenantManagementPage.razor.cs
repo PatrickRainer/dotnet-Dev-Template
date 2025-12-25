@@ -10,8 +10,8 @@ namespace MyDevTemplate.Blazor.Server.Components.Pages.Company.TenantManagement;
 
 public partial class TenantManagementPage
 {
-    [Inject] private TenantService TenantService { get; set; } = null!;
-    [Inject] private SubscriptionService SubscriptionService { get; set; } = null!;
+    [Inject] private ITenantService TenantService { get; set; } = null!;
+    [Inject] private ISubscriptionService SubscriptionService { get; set; } = null!;
     [Inject] private ITenantProvider TenantProvider { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IDialogService DialogService { get; set; } = null!;

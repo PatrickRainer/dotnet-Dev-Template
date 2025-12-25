@@ -1,14 +1,13 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Contracts.Abstractions;
 using MyDevTemplate.Domain.Entities.SubscriptionAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.SubscriptionServices;
 
-public class SubscriptionService : ICrudService<SubscriptionRoot, Guid>
+public class SubscriptionService : ISubscriptionService
 {
     private readonly AppDbContext _dbContext;
     private readonly ILogger<SubscriptionService>? _logger;

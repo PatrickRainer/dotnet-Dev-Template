@@ -1,5 +1,5 @@
-﻿using FluentValidation;
-using Asp.Versioning;
+﻿using Asp.Versioning;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.ApiKeyServices;
@@ -16,14 +16,14 @@ namespace MyDevTemplate.Api.Controllers;
 [Produces("application/json")]
 public class ApiKeyController : ControllerBase
 {
-    private readonly ApiKeyService _apiKeyService;
+    private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<ApiKeyController>? _logger;
     private readonly IValidator<AddApiKeyDto> _addValidator;
     private readonly IValidator<UpdateApiKeyDto> _updateValidator;
     private readonly ITenantProvider _tenantProvider;
 
     public ApiKeyController(
-        ApiKeyService apiKeyService, 
+        IApiKeyService apiKeyService, 
         IValidator<AddApiKeyDto> addValidator,
         IValidator<UpdateApiKeyDto> updateValidator,
         ITenantProvider tenantProvider,

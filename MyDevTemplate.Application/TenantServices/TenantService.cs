@@ -1,9 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MyDevTemplate.Application.Common.Interfaces;
-using MyDevTemplate.Domain.Entities.TenantAggregate;
 using MyDevTemplate.Domain.Contracts.Abstractions;
+using MyDevTemplate.Domain.Entities.TenantAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.TenantServices;
@@ -12,7 +11,7 @@ namespace MyDevTemplate.Application.TenantServices;
 /// Service for managing tenants. Access is restricted to the Master Tenant to ensure
 /// that regular tenants cannot manage other tenants.
 /// </summary>
-public class TenantService : ICrudService<TenantRoot, Guid>
+public class TenantService : ITenantService
 {
     readonly AppDbContext _dbContext;
     readonly ILogger<TenantService>? _logger;

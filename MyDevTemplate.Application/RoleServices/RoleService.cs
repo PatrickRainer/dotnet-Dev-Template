@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MyDevTemplate.Application.Common.Interfaces;
 using MyDevTemplate.Domain.Entities.RoleAggregate;
 using MyDevTemplate.Persistence;
 
 namespace MyDevTemplate.Application.RoleServices;
 
-public class RoleService : ICrudService<RoleRoot, Guid>
+public class RoleService : IRoleService
 {
     readonly AppDbContext _dbContext;
     readonly ILogger<RoleService>? _logger;

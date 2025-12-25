@@ -17,7 +17,7 @@ public partial class CompanyRegistrationPage : ComponentBase
     
     
     [Inject] public IRegistrationService RegistrationService { get; set; } = null!;
-    [Inject] public SubscriptionService SubscriptionService { get; set; } = null!;
+    [Inject] public ISubscriptionService SubscriptionService { get; set; } = null!;
     [Inject] public ISnackbar Snackbar { get; set; } = null!;
     [Inject] public IHttpContextAccessor HttpContextAccessor { get; set; } = null!;
     [Inject] public CompanyRegistrationPageModelValidator ModelValidator { get; set; } = null!;
