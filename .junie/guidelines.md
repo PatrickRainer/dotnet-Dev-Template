@@ -9,7 +9,7 @@
 - **Persistence**: `AppDbContext` is located in `MyDevTemplate.Persistence`.
   - Connection strings are configured in `appsettings.Development.json` for local development.
   - Entity Framework Core is used for data access.
-  - Configurations are applied from the assembly using `modelBuilder.ApplyConfigurationsFromAssembly`.
+  - Configurations are applied from the assembly using `modelBuilder.ApplyConfigurationsFFromAssembly`.
   - Default database provider is SQL Server.
 
 ### Testing Information
@@ -146,6 +146,9 @@
     - The `Validator.cs` file (FluentValidation logic).
 
 ### Additional Development Information
+- **Development Approach**: 
+  - Emphasize maintainability, testability, and scalability.
+  - Use TDD approach for new features, so start always with a failing Integration and/or Domain test.
 - **Domain-Driven Design (DDD)**: The project uses Aggregate Roots (e.g., `UserRootEntity`, `RoleRootEntity`) and Value Objects (e.g., `EmailAddress`).
 - **Base Entity**: All entities should inherit from `EntityBase` which provides `Id` (Guid), `CreatedAtUtc`, and `TenantId`.
 - **UI Framework**: `MudBlazor` is used for the Blazor Server UI components.
