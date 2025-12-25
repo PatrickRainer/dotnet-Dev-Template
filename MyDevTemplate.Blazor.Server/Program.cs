@@ -80,6 +80,10 @@ try
             policy.RequireAuthenticatedUser()
                 .RequireClaim("TenantId", builder.Configuration["Authentication:TenantId"] ?? string.Empty)
                 .RequireRole("TenantAdmin"));
+
+        options.AddPolicy("TenantAdmin", policy =>
+            policy.RequireAuthenticatedUser()
+                .RequireRole("TenantAdmin"));
     });
 
     // Add MudBlazor services
