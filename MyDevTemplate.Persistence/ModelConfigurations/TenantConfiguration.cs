@@ -55,7 +55,9 @@ public class TenantConfiguration : IEntityTypeConfiguration<TenantRoot>
         builder.Property(t => t.CreatedAtUtc)
             .IsRequired();
 
-        builder.Property(t => t.TenantId)// Todo why it has this property and not using ID?
+        // TenantRoot inherits from EntityBase, so it has both an Id and a TenantId property.
+        // For the TenantRoot entity, these two are identical and both refer to the same tenant identifier.
+        builder.Property(t => t.TenantId)
             .IsRequired();
     }
 }

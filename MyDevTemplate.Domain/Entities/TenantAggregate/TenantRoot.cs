@@ -19,6 +19,9 @@ public class TenantRoot : EntityBase
         CompanyName = companyName;
         AdminEmail = adminEmail;
         SubscriptionId = subscriptionId;
+        
+        // For TenantRoot, the TenantId (from EntityBase) must always be its own Id.
+        TenantId = Id;
     }
 
     public string TenantName { get; set; }
@@ -26,6 +29,16 @@ public class TenantRoot : EntityBase
     public Guid? SubscriptionId { get; set; }
     public Address Address { get; private set; } = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
     public string AdminEmail { get; set; }
+    
+    /// <summary>
+    /// Returns the Tenant identifier. 
+    /// For TenantRoot, this is always the same as the Id inherited from EntityBase.
+    /// </summary>
+    public new Guid TenantId 
+    { 
+        get => Id; 
+        init => base.TenantId = value; 
+    }
 
     public override string ToString()
     {
