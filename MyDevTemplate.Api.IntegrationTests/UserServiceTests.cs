@@ -73,7 +73,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => userService.RemoveUserByEmailAsync($"nonexistent.{Guid.NewGuid()}@example.com"));
@@ -85,7 +85,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         var email = $"upsert.new.{Guid.NewGuid()}@example.com";
         var oid = "oid-new";
@@ -103,12 +103,69 @@ public class UserServiceTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task UpsertAfterLogin_ShouldMapToExistingUser_WhenIdentityProviderIdIsEmpty()
+    {
+        // Arrange
+        using var scope = Factory.Services.CreateScope();
+        SetTenantContext(scope.ServiceProvider, TenantId);
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+
+        var email = $"map.test.{Guid.NewGuid()}@example.com";
+        // Create user with empty IdentityProviderId (as if added by admin)
+        var user = new UserRoot(new EmailAddress(email), "First", "Last", "");
+        await userService.AddAsync(user);
+
+        // Act - Simulate login which calls UpsertAfterLogin
+        var oidFromEntra = "oid-from-entra";
+        await userService.UpsertAfterLogin(oidFromEntra, email);
+
+        // Assert
+        var updatedUser = await userService.GetUserByEmailAsync(email);
+        Assert.NotNull(updatedUser);
+        Assert.Equal(oidFromEntra, updatedUser.IdentityProviderId);
+        Assert.NotNull(updatedUser.LastLoginAtUtc);
+
+        // Cleanup
+        await userService.RemoveUserByEmailAsync(email);
+    }
+
+    [Fact]
+    public async Task UpsertAfterLogin_ShouldMapToExistingUser_EvenIfTenantContextIsMissing()
+    {
+        // Arrange
+        using var scope1 = Factory.Services.CreateScope();
+        SetTenantContext(scope1.ServiceProvider, TenantId);
+        var userService1 = scope1.ServiceProvider.GetRequiredService<IUserService>();
+
+        var email = $"map.cross.{Guid.NewGuid()}@example.com";
+        var user = new UserRoot(new EmailAddress(email), "First", "Last", "");
+        await userService1.AddAsync(user);
+
+        // Act - Simulate login WITHOUT tenant context
+        using var scope2 = Factory.Services.CreateScope();
+        // NOT calling SetTenantContext here
+        var userService2 = scope2.ServiceProvider.GetRequiredService<IUserService>();
+        
+        var oidFromEntra = "oid-cross";
+        await userService2.UpsertAfterLogin(oidFromEntra, email);
+
+        // Assert
+        SetTenantContext(scope2.ServiceProvider, TenantId); // Set it back to retrieve the user
+        var updatedUser = await userService2.GetUserByEmailAsync(email);
+        Assert.NotNull(updatedUser);
+        Assert.Equal(oidFromEntra, updatedUser.IdentityProviderId);
+
+        // Cleanup
+        await userService1.RemoveUserByEmailAsync(email);
+    }
+
+    [Fact]
     public async Task UpsertUserFromEntraAsync_ShouldUpdateOid_WhenUserExistsWithDifferentOid()
     {
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         var email = $"upsert.update.{Guid.NewGuid()}@example.com";
         var initialOid = "oid-initial";
@@ -135,7 +192,7 @@ public class UserServiceTests : IntegrationTestBase
         // Arrange
         using var scope = Factory.Services.CreateScope();
         SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => userService.UpsertAfterLogin("oid", null!));
@@ -186,7 +243,7 @@ public class UserServiceTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             SetTenantContext(scope.ServiceProvider, TenantId);
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             await userService.RemoveUserByEmailAsync(email);
         }
     }
@@ -200,7 +257,7 @@ public class UserServiceTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             SetTenantContext(scope.ServiceProvider, TenantId, "MasterKeyUser");
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             email = $"feature.master.{Guid.NewGuid()}@example.com";
             var user = new UserRoot(new EmailAddress(email), "First", "Last", "oid-f2");
             userId = await userService.AddAsync(user);
@@ -212,7 +269,7 @@ public class UserServiceTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             SetTenantContext(scope.ServiceProvider, TenantId, "MasterKeyUser");
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             await userService.AddFeatureToUserAsync(userId, feature);
 
             // Assert
@@ -224,7 +281,7 @@ public class UserServiceTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             SetTenantContext(scope.ServiceProvider, TenantId, "MasterKeyUser");
-            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
             await userService.RemoveUserByEmailAsync(email);
         }
     }

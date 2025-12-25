@@ -163,6 +163,7 @@ public class UserService : IUserService
             var emailAddress = new EmailAddress(email);
             var user = await _dbContext.Users
                 .AsTracking()
+                .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(u => u.Email == emailAddress);
 
             if (user != null)
