@@ -61,5 +61,20 @@ public class UserConfiguration : IEntityTypeConfiguration<UserRoot>
                 (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
                 c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                 c => c.ToList()));
+
+        builder.Property(u => u.AllowedFeatures)
+            .HasField("_features")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
+            .Metadata.SetValueComparer(new ValueComparer<IReadOnlyCollection<string>>(
+                (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToList()));
+
+        builder.HasMany(u => u.Groups)
+            .WithMany(g => g.Users)
+            .UsingEntity(j => j.ToTable("UserUserGroups"));
     }
 }

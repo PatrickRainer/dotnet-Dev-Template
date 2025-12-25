@@ -67,9 +67,61 @@ public class FeatureService : IFeatureService
                         return true;
                     }
                 }
+
+                // 3. Check User's direct features
+                if (user.AllowedFeatures.Contains(featureName))
+                {
+                    return true;
+                }
+
+                // 4. Check User's Group features
+                var userGroups = await _dbContext.UserGroups
+                    .Where(g => g.Users.Any(u => u.Id == user.Id))
+                    .ToListAsync();
+
+                if (userGroups.Any(g => g.AllowedFeatures.Contains(featureName)))
+                {
+                    return true;
+                }
             }
         }
         
         return false;
+    }
+
+    public async Task<List<string>> GetSubscribedFeaturesAsync()
+    {
+        var tenantId = _tenantProvider.GetTenantId();
+        if (tenantId == null)
+        {
+            return new List<string>();
+        }
+
+        var tenant = await _dbContext.Tenants
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(t => t.Id == tenantId);
+
+        if (tenant != null && tenant.SubscriptionId.HasValue)
+        {
+            var subscription = await _dbContext.Subscriptions
+                .FirstOrDefaultAsync(s => s.Id == tenant.SubscriptionId.Value);
+            if (subscription != null)
+            {
+                return subscription.Features;
+            }
+        }
+
+        return new List<string>();
+    }
+
+    public async Task<bool> IsFeatureSubscribedAsync(string featureName)
+    {
+        if (_tenantProvider.IsMasterTenant())
+        {
+            return true;
+        }
+
+        var subscribedFeatures = await GetSubscribedFeaturesAsync();
+        return subscribedFeatures.Contains(featureName);
     }
 }

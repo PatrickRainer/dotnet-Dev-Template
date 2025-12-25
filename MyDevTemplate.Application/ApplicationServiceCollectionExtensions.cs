@@ -8,6 +8,7 @@ using MyDevTemplate.Application.RegistrationServices;
 using MyDevTemplate.Application.RoleServices;
 using MyDevTemplate.Application.SubscriptionServices;
 using MyDevTemplate.Application.TenantServices;
+using MyDevTemplate.Application.UserGroupServices;
 using MyDevTemplate.Application.UserServices;
 
 namespace MyDevTemplate.Application;
@@ -17,6 +18,7 @@ public static class ApplicationServiceCollectionExtensions
     public static IServiceCollection AddUserService(this IServiceCollection services)
     {
         services.AddScoped<UserService>();
+        services.AddScoped<UserGroupService>();
         return services;
     }
     
@@ -25,6 +27,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         
         services.AddScoped<UserService>();
+        services.AddScoped<UserGroupService>();
         services.AddScoped<ApiKeyService>();
         services.AddScoped<RoleService>();
         services.AddScoped<TenantService>();

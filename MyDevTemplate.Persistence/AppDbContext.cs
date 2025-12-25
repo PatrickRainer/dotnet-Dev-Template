@@ -77,6 +77,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<UserRoot> Users { get; set; }
+    public DbSet<UserGroup> UserGroups { get; set; }
     public DbSet<RoleRoot> Roles { get; set; }
     public DbSet<ApiKeyRoot> ApiKeys { get; set; }
     public DbSet<TenantRoot> Tenants { get; set; }

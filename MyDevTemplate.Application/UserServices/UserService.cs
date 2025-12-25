@@ -13,11 +13,17 @@ public class UserService : ICrudService<UserRoot, Guid>
     readonly AppDbContext _dbContext;
     readonly ILogger<UserService>? _logger;
     readonly IValidator<UserRoot> _validator;
+    readonly IFeatureService _featureService;
 
-    public UserService(AppDbContext dbContext, IValidator<UserRoot> validator, ILogger<UserService>? logger = null)
+    public UserService(
+        AppDbContext dbContext, 
+        IValidator<UserRoot> validator, 
+        IFeatureService featureService,
+        ILogger<UserService>? logger = null)
     {
         _dbContext = dbContext;
         _validator = validator;
+        _featureService = featureService;
         _logger = logger;
     }
 
@@ -25,7 +31,9 @@ public class UserService : ICrudService<UserRoot, Guid>
     {
         try
         {
-            return await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
+            return await _dbContext.Users
+                .Include(u => u.Groups)
+                .SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
         catch (Exception e)
         {
@@ -38,7 +46,9 @@ public class UserService : ICrudService<UserRoot, Guid>
     {
         try
         {
-            return await _dbContext.Users.ToListAsync(cancellationToken);
+            return await _dbContext.Users
+                .Include(u => u.Groups)
+                .ToListAsync(cancellationToken);
         }
         catch (Exception e)
         {
@@ -52,7 +62,9 @@ public class UserService : ICrudService<UserRoot, Guid>
         try
         {
             var emailAddress = new EmailAddress(email);
-            return await _dbContext.Users.SingleOrDefaultAsync(u => u.Email == emailAddress, cancellationToken);
+            return await _dbContext.Users
+                .Include(u => u.Groups)
+                .SingleOrDefaultAsync(u => u.Email == emailAddress, cancellationToken);
         }
         catch (Exception e)
         {
@@ -86,7 +98,10 @@ public class UserService : ICrudService<UserRoot, Guid>
         try
         {
             await _validator.ValidateAndThrowAsync(user, cancellationToken);
-            _dbContext.Users.Update(user);
+            if (_dbContext.Entry(user).State == EntityState.Detached)
+            {
+                _dbContext.Users.Update(user);
+            }
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
         catch (ValidationException)
@@ -175,6 +190,56 @@ public class UserService : ICrudService<UserRoot, Guid>
         {
             _logger?.LogError(e, "Error upserting user from Entra with email {Email} and OID {Oid}", email, identityProviderId);
             throw;
+        }
+    }
+
+    public async Task AddFeatureToUserAsync(Guid userId, string feature, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByIdAsync(userId, cancellationToken);
+        if (user == null) throw new KeyNotFoundException($"User with id {userId} not found");
+
+        if (!await _featureService.IsFeatureSubscribedAsync(feature))
+        {
+            throw new InvalidOperationException($"Tenant is not subscribed to feature {feature}");
+        }
+
+        user.AddFeature(feature);
+
+        await UpdateAsync(user, cancellationToken);
+    }
+
+    public async Task RemoveFeatureFromUserAsync(Guid userId, string feature, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByIdAsync(userId, cancellationToken);
+        if (user == null) throw new KeyNotFoundException($"User with id {userId} not found");
+
+        user.RemoveFeature(feature);
+
+        await UpdateAsync(user, cancellationToken);
+    }
+
+    public async Task AddUserToGroupAsync(Guid userId, Guid groupId, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByIdAsync(userId, cancellationToken);
+        if (user == null) throw new KeyNotFoundException($"User with id {userId} not found");
+
+        var group = await _dbContext.UserGroups.SingleOrDefaultAsync(g => g.Id == groupId, cancellationToken);
+        if (group == null) throw new KeyNotFoundException($"UserGroup with id {groupId} not found");
+
+        user.AddToGroup(group);
+        await UpdateAsync(user, cancellationToken);
+    }
+
+    public async Task RemoveUserFromGroupAsync(Guid userId, Guid groupId, CancellationToken cancellationToken = default)
+    {
+        var user = await GetByIdAsync(userId, cancellationToken);
+        if (user == null) throw new KeyNotFoundException($"User with id {userId} not found");
+
+        var group = user.Groups.FirstOrDefault(g => g.Id == groupId);
+        if (group != null)
+        {
+            user.RemoveFromGroup(group);
+            await UpdateAsync(user, cancellationToken);
         }
     }
 }

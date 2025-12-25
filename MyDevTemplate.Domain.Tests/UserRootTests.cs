@@ -56,4 +56,47 @@ public class UserRootTests
         // Assert
         Assert.DoesNotContain(roleId, user.Roles);
     }
+
+    [Fact]
+    public void AddFeature_Should_Add_Feature()
+    {
+        // Arrange
+        var user = new UserRoot(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
+        var feature = "Feature1";
+
+        // Act
+        user.AddFeature(feature);
+
+        // Assert
+        Assert.Contains(feature, user.AllowedFeatures);
+    }
+
+    [Fact]
+    public void AddToGroup_Should_Add_Group_To_Collection()
+    {
+        // Arrange
+        var user = new UserRoot(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
+        var group = new UserGroup("Group1");
+
+        // Act
+        user.AddToGroup(group);
+
+        // Assert
+        Assert.Contains(group, user.Groups);
+    }
+
+    [Fact]
+    public void RemoveFromGroup_Should_Remove_Group_From_Collection()
+    {
+        // Arrange
+        var user = new UserRoot(new EmailAddress("test@example.com"), "John", "Doe", Guid.NewGuid().ToString());
+        var group = new UserGroup("Group1");
+        user.AddToGroup(group);
+
+        // Act
+        user.RemoveFromGroup(group);
+
+        // Assert
+        Assert.DoesNotContain(group, user.Groups);
+    }
 }

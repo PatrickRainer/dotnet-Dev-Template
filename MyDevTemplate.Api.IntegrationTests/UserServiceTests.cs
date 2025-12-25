@@ -157,14 +157,75 @@ public class UserServiceTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RemoveUserAsync_ShouldThrowException_WhenEmailIsInvalid()
+    public async Task AddFeatureToUserAsync_ShouldThrowException_WhenFeatureIsNotSubscribed()
     {
         // Arrange
-        using var scope = Factory.Services.CreateScope();
-        SetTenantContext(scope.ServiceProvider, TenantId);
-        var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+        Guid userId;
+        string email;
+        using (var scope = Factory.Services.CreateScope())
+        {
+            SetTenantContext(scope.ServiceProvider, TenantId);
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            email = $"feature.test.{Guid.NewGuid()}@example.com";
+            var user = new UserRoot(new EmailAddress(email), "First", "Last", "oid-f1");
+            userId = await userService.AddAsync(user);
+        }
+
+        var unsubscribedFeature = "NonExistentFeature_" + Guid.NewGuid();
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => userService.RemoveUserByEmailAsync("invalid-email"));
+        using (var scope = Factory.Services.CreateScope())
+        {
+            SetTenantContext(scope.ServiceProvider, TenantId);
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            await Assert.ThrowsAsync<InvalidOperationException>(() => 
+                userService.AddFeatureToUserAsync(userId, unsubscribedFeature));
+        }
+
+        // Cleanup
+        using (var scope = Factory.Services.CreateScope())
+        {
+            SetTenantContext(scope.ServiceProvider, TenantId);
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            await userService.RemoveUserByEmailAsync(email);
+        }
+    }
+
+    [Fact]
+    public async Task AddFeatureToUserAsync_ShouldSucceed_WhenMasterTenant()
+    {
+        // Arrange
+        Guid userId;
+        string email;
+        using (var scope = Factory.Services.CreateScope())
+        {
+            SetTenantContext(scope.ServiceProvider, TenantId, "MasterKeyUser");
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            email = $"feature.master.{Guid.NewGuid()}@example.com";
+            var user = new UserRoot(new EmailAddress(email), "First", "Last", "oid-f2");
+            userId = await userService.AddAsync(user);
+        }
+
+        var feature = "AnyFeature_" + Guid.NewGuid(); 
+
+        // Act
+        using (var scope = Factory.Services.CreateScope())
+        {
+            SetTenantContext(scope.ServiceProvider, TenantId, "MasterKeyUser");
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            await userService.AddFeatureToUserAsync(userId, feature);
+
+            // Assert
+            var updatedUser = await userService.GetByIdAsync(userId);
+            Assert.Contains(feature, updatedUser!.AllowedFeatures);
+        }
+
+        // Cleanup
+        using (var scope = Factory.Services.CreateScope())
+        {
+            SetTenantContext(scope.ServiceProvider, TenantId, "MasterKeyUser");
+            var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+            await userService.RemoveUserByEmailAsync(email);
+        }
     }
 }
