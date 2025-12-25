@@ -19,7 +19,6 @@ public class UserValidator : AbstractValidator<UserRoot>
             .MaximumLength(100);
 
         RuleFor(x => x.IdentityProviderId)
-            .NotEmpty()
             .MaximumLength(100);
     }
 }
