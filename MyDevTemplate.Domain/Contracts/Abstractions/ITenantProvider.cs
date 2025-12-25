@@ -4,4 +4,5 @@ public interface ITenantProvider
 {
     Guid? GetTenantId();
     bool IsMasterTenant();
+    Guid? GetMasterTenantId();
 }

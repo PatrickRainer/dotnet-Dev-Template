@@ -1,14 +1,17 @@
-﻿using MyDevTemplate.Domain.Contracts.Abstractions;
+﻿using Microsoft.Extensions.Configuration;
+using MyDevTemplate.Domain.Contracts.Abstractions;
 
 namespace MyDevTemplate.Api.Providers;
 
 public class HttpTenantProvider : ITenantProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IConfiguration _configuration;
 
-    public HttpTenantProvider(IHttpContextAccessor httpContextAccessor)
+    public HttpTenantProvider(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
     {
         _httpContextAccessor = httpContextAccessor;
+        _configuration = configuration;
     }
 
     public Guid? GetTenantId()
@@ -26,5 +29,16 @@ public class HttpTenantProvider : ITenantProvider
     public bool IsMasterTenant()
     {
         return _httpContextAccessor.HttpContext?.User?.Identity?.Name == "MasterKeyUser";
+    }
+
+    public Guid? GetMasterTenantId()
+    {
+        var masterTenantIdStr = _configuration["Authentication:TenantId"];
+        if (Guid.TryParse(masterTenantIdStr, out var masterTenantId))
+        {
+            return masterTenantId;
+        }
+
+        return null;
     }
 }

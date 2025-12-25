@@ -6,10 +6,12 @@ namespace MyDevTemplate.Blazor.Server.Infrastructure;
 public class BlazorTenantProvider : ITenantProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IConfiguration _configuration;
 
-    public BlazorTenantProvider(IHttpContextAccessor httpContextAccessor)
+    public BlazorTenantProvider(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
     {
         _httpContextAccessor = httpContextAccessor;
+        _configuration = configuration;
     }
 
     public Guid? GetTenantId()
@@ -26,7 +28,26 @@ public class BlazorTenantProvider : ITenantProvider
 
     public bool IsMasterTenant()
     {
-        // Adjust this logic if needed for Blazor
-        return _httpContextAccessor.HttpContext?.User?.Identity?.Name == "MasterKeyUser";
+        var tenantId = GetTenantId();
+        if (tenantId == null) return false;
+
+        var masterTenantId = GetMasterTenantId();
+        if (masterTenantId != null)
+        {
+            return tenantId == masterTenantId;
+        }
+
+        return false;
+    }
+
+    public Guid? GetMasterTenantId()
+    {
+        var masterTenantIdStr = _configuration["Authentication:TenantId"];
+        if (Guid.TryParse(masterTenantIdStr, out var masterTenantId))
+        {
+            return masterTenantId;
+        }
+
+        return null;
     }
 }
