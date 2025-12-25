@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
-using MyDevTemplate.Api.Controllers;
 using MyDevTemplate.Application.ApiKeyServices.Dtos;
 using MyDevTemplate.Application.UserServices.Dtos;
 using MyDevTemplate.Domain.Entities.UserAggregate;

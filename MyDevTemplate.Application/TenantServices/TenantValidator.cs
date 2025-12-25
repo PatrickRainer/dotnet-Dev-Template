@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using MyDevTemplate.Application.Common;
 using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 

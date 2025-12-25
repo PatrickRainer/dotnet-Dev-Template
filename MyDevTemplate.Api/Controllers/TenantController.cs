@@ -1,12 +1,10 @@
-﻿using FluentValidation;
-using Asp.Versioning;
+﻿using Asp.Versioning;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyDevTemplate.Application.TenantServices;
-using MyDevTemplate.Domain.Entities.Common;
-using MyDevTemplate.Domain.Entities.TenantAggregate;
-
 using MyDevTemplate.Application.TenantServices.Dtos;
+using MyDevTemplate.Domain.Entities.TenantAggregate;
 
 namespace MyDevTemplate.Api.Controllers;
 

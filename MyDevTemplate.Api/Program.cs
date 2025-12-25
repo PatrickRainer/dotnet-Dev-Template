@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using MyDevTemplate.Api.Authentication;
+using MyDevTemplate.Api.Providers;
 using MyDevTemplate.Application;
-using MyDevTemplate.Application.UserServices;
+using MyDevTemplate.Domain.Contracts.Abstractions;
 using MyDevTemplate.Persistence;
 using Serilog;
 using Serilog.Events;
@@ -96,14 +98,14 @@ try
     builder.Services.AddApiKeyAuthentication();
     
     builder.Services.AddHttpContextAccessor();
-    builder.Services.AddScoped<MyDevTemplate.Domain.Contracts.Abstractions.ITenantProvider, MyDevTemplate.Api.Providers.HttpTenantProvider>();
-    builder.Services.AddScoped<MyDevTemplate.Domain.Contracts.Abstractions.IUserProvider, MyDevTemplate.Api.Providers.HttpUserProvider>();
+    builder.Services.AddScoped<ITenantProvider, HttpTenantProvider>();
+    builder.Services.AddScoped<IUserProvider, HttpUserProvider>();
     
     builder.Services.AddAuthorization(options =>
     {
         options.AddPolicy("MasterTenant", policy => 
             policy.RequireAuthenticatedUser()
-                  .RequireClaim(System.Security.Claims.ClaimTypes.Name, "MasterKeyUser"));
+                  .RequireClaim(ClaimTypes.Name, "MasterKeyUser"));
     });
     
     builder.Services.AddApplicationServices();

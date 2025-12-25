@@ -1,5 +1,4 @@
 ﻿using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
-using Xunit;
 
 namespace MyDevTemplate.Domain.Tests;
 

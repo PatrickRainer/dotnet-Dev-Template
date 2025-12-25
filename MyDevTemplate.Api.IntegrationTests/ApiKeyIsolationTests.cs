@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using MyDevTemplate.Application.ApiKeyServices.Dtos;
 using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
-using Xunit;
 
 namespace MyDevTemplate.Api.IntegrationTests;
 

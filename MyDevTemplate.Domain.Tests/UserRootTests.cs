@@ -1,6 +1,5 @@
 ﻿using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.UserAggregate;
-using Xunit;
 
 namespace MyDevTemplate.Domain.Tests;
 

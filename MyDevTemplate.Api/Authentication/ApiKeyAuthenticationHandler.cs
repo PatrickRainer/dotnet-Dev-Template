@@ -3,7 +3,6 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using MyDevTemplate.Application.ApiKeyServices;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace MyDevTemplate.Api.Authentication;
 

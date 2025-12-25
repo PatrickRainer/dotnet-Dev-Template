@@ -1,5 +1,4 @@
 ﻿using MyDevTemplate.Domain.Entities.RoleAggregate;
-using Xunit;
 
 namespace MyDevTemplate.Domain.Tests;
 

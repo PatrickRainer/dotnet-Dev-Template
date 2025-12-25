@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Authorization
-
-<AuthorizeView>
+﻿<AuthorizeView>
     <Authorized>
         <MudText Typo="Typo.body1" Class="mr-4">Hello, @context.User.Identity?.Name!</MudText>
         <MudButton Variant="Variant.Text" Color="Color.Inherit" href="MicrosoftIdentity/Account/SignOut">Sign Out</MudButton>

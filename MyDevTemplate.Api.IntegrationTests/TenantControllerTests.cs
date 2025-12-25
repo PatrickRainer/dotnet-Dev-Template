@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
-using MyDevTemplate.Api.Controllers;
 using MyDevTemplate.Application.TenantServices.Dtos;
 using MyDevTemplate.Domain.Entities.TenantAggregate;
 

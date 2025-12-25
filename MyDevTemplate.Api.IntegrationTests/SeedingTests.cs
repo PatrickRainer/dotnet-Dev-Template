@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Persistence;
-using Xunit;
 
 namespace MyDevTemplate.Api.IntegrationTests;
 

@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MyDevTemplate.Application.UserServices;
 using MyDevTemplate.Domain.Entities.Common;
 using MyDevTemplate.Domain.Entities.UserAggregate;
-using MyDevTemplate.Persistence;
-using System.Security.Claims;
-using Xunit;
 
 namespace MyDevTemplate.Api.IntegrationTests;
 

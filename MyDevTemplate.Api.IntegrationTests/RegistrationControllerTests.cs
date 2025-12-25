@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using MyDevTemplate.Application.RegistrationServices.Dtos;
-using MyDevTemplate.Domain.Entities.TenantAggregate;
 
 namespace MyDevTemplate.Api.IntegrationTests;
 

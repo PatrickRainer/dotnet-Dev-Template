@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using MyDevTemplate.Domain.Contracts.Abstractions;
+﻿using MyDevTemplate.Domain.Contracts.Abstractions;
 
 namespace MyDevTemplate.Api.Providers;
 

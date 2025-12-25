@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using MyDevTemplate.Domain.Contracts.Abstractions;
+﻿using MyDevTemplate.Domain.Contracts.Abstractions;
 
 namespace MyDevTemplate.Blazor.Server.Infrastructure;
 

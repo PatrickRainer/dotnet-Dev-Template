@@ -1,14 +1,10 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using MyDevTemplate.Application.Common;
-using MyDevTemplate.Application.Common.Validations;
 using MyDevTemplate.Application.RegistrationServices;
 using MyDevTemplate.Application.RegistrationServices.Dtos;
 using MyDevTemplate.Application.SubscriptionServices;
-using MyDevTemplate.Application.TenantServices;
 using MyDevTemplate.Domain.Entities.SubscriptionAggregate;
-using MyDevTemplate.Domain.Entities.TenantAggregate;
 using Severity = MudBlazor.Severity;
 
 namespace MyDevTemplate.Blazor.Server.Components.Pages.Company.CompanyRegistration;
