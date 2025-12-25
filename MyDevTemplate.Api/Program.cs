@@ -118,6 +118,23 @@ try
     });
 
     var app = builder.Build();
+
+    // Seed the database
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        try
+        {
+            var context = services.GetRequiredService<AppDbContext>();
+            var configuration = services.GetRequiredService<IConfiguration>();
+            await DatabaseSeeder.SeedAsync(context, configuration);
+        }
+        catch (Exception ex)
+        {
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "An error occurred while seeding the database.");
+        }
+    }
     app.UseSerilogRequestLogging(options =>
     {
         // Custom message template
