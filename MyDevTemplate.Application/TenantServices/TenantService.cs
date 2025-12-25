@@ -117,6 +117,12 @@ public class TenantService : ICrudService<TenantRoot, Guid>
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         EnsureMasterTenant();
+
+        if (id == _tenantProvider.GetMasterTenantId())
+        {
+            throw new InvalidOperationException("The Master Tenant cannot be deleted.");
+        }
+
         try
         {
             var tenant = await _dbContext.Tenants

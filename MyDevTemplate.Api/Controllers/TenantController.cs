@@ -179,6 +179,7 @@ public class TenantController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteTenant(Guid id, CancellationToken cancellationToken)
@@ -201,6 +202,10 @@ public class TenantController : ControllerBase
         catch (UnauthorizedAccessException e)
         {
             return Forbid(e.Message);
+        }
+        catch (InvalidOperationException e)
+        {
+            return BadRequest(e.Message);
         }
         catch (Exception e)
         {

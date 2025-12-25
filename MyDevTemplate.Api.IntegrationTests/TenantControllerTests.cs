@@ -79,4 +79,14 @@ public class TenantControllerTests : IntegrationTestBase
         var getAfterDeleteResponse = await Client.GetAsync($"/api/v1/Tenant/{createdTenant.Id}");
         Assert.Equal(HttpStatusCode.NotFound, getAfterDeleteResponse.StatusCode);
     }
+
+    [Fact]
+    public async Task DeleteMasterTenant_ShouldReturnBadRequest()
+    {
+        // Act: Attempt to delete the master tenant using its ID
+        var response = await Client.DeleteAsync($"/api/v1/Tenant/{TenantId}");
+
+        // Assert:
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
 }
