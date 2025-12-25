@@ -10,6 +10,12 @@
         </MudNavGroup>
     </AuthorizeView>
 
+    <AuthorizeView Policy="TenantAdmin">
+        <MudNavGroup Title="Tenant Admin">
+            <MudNavLink Href="@UrlProvider.UserManagementPage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.People">Users</MudNavLink>
+        </MudNavGroup>
+    </AuthorizeView>
+
 </MudNavMenu>
 
 

@@ -1,0 +1,80 @@
+﻿@using MyDevTemplate.Blazor.Server.Infrastructure
+@attribute [Route(UrlProvider.UserManagementPage)]
+@attribute [Authorize(Policy = "TenantAdmin")]
+@rendermode InteractiveServer
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16">
+    <MudText Typo="Typo.h3" GutterBottom="true">User Management</MudText>
+    
+    <MudTable Items="@Users" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Users</MudText>
+            <MudSpacer />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenCreateDialog">Add User</MudButton>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>Email</MudTh>
+            <MudTh>First Name</MudTh>
+            <MudTh>Last Name</MudTh>
+            <MudTh>Identity Provider Id</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Email">@context.Email</MudTd>
+            <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+            <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+            <MudTd DataLabel="Identity Provider Id">@context.IdentityProviderId</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" OnClick="@(() => OpenEditDialog(context))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteUser(context))" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+<MudDialog @bind-Visible="_isDialogVisible" Options="_dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(Model.Id == Guid.Empty ? "Create User" : "Edit User")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="@Model" @ref="@_form" Validation="@(Validator.ValidateValue)" ValidationDelay="0">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="Model.Email"
+                                  For="@(() => Model.Email)"
+                                  Label="Email"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.FirstName"
+                                  For="@(() => Model.FirstName)"
+                                  Label="First Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="Model.LastName"
+                                  For="@(() => Model.LastName)"
+                                  Label="Last Name"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudTextField @bind-Value="Model.IdentityProviderId"
+                                  For="@(() => Model.IdentityProviderId)"
+                                  Label="Identity Provider Id (Optional)"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Normal"
+                                  HelperText="If left empty, it will be automatically mapped on first login" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="CloseDialog" Class="px-10">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Save</MudButton>
+    </DialogActions>
+</MudDialog>

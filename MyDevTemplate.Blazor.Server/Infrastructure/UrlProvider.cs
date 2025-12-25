@@ -9,4 +9,5 @@ public class UrlProvider
     public const string CompanyRegistrationPage = "/company/registration";
     public const string TenantManagementPage = "/company/tenants";
     public const string SubscriptionManagementPage = "/company/subscriptions";
+    public const string UserManagementPage = "/company/users";
 }
