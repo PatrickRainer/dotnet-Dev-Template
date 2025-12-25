@@ -75,7 +75,7 @@ public partial class CompanyRegistrationPage : ComponentBase
                     Snackbar.Add(error.ErrorMessage, Severity.Error);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Snackbar.Add("An unexpected error occurred", Severity.Error);
             }

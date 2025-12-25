@@ -45,9 +45,9 @@ public class TenantRoot : EntityBase
         return $"TenantId: {Id}, Tenant Name: {TenantName}";
     }
 
-    public void AddAddress(string street, string city, string zipCode, string country, string state)
+    public void AddAddress(string street, string city, string state, string country, string zipCode)
     {
-        Address = new Address(street, city, state,zipCode, country);
+        Address = new Address(street, city, state, country, zipCode);
     }
 }
 

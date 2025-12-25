@@ -38,9 +38,9 @@ public class RegistrationService : IRegistrationService
             newTenant.AddAddress(
                 registrationDto.Street, 
                 registrationDto.City, 
-                registrationDto.ZipCode, 
+                string.Empty,
                 registrationDto.Country, 
-                string.Empty);
+                registrationDto.ZipCode);
 
             // Validate the tenant entity
             await _tenantValidator.ValidateAndThrowAsync(newTenant, cancellationToken);

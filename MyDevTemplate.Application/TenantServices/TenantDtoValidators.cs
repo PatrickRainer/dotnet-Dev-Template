@@ -11,11 +11,11 @@ public class CreateTenantDtoValidator : AbstractValidator<CreateTenantDto>
         RuleFor(x => x.TenantName).NotEmpty().MaximumLength(200);
         RuleFor(x => x.CompanyName).ApplyCompanyNameRules();
         RuleFor(x => x.AdminEmail).NotEmpty().MaximumLength(256).EmailAddress();
-        RuleFor(x => x.Street).ApplyStreetRules()!.When(x => x.Street != null);
-        RuleFor(x => x.City).ApplyCityRules()!.When(x => x.City != null);
-        RuleFor(x => x.State).ApplyStateRules()!.When(x => x.State != null);
-        RuleFor(x => x.Country).ApplyCountryRules()!.When(x => x.Country != null);
-        RuleFor(x => x.ZipCode).ApplyZipCodeRules()!.When(x => x.ZipCode != null);
+        RuleFor(x => x.Street).ApplyStreetRules().When(x => x.Street != null);
+        RuleFor(x => x.City).ApplyCityRules().When(x => x.City != null);
+        RuleFor(x => x.State).ApplyStateRules().When(x => x.State != null);
+        RuleFor(x => x.Country).ApplyCountryRules().When(x => x.Country != null);
+        RuleFor(x => x.ZipCode).ApplyZipCodeRules().When(x => x.ZipCode != null);
     }
 }
 
@@ -25,10 +25,10 @@ public class UpdateTenantDtoValidator : AbstractValidator<UpdateTenantDto>
     {
         RuleFor(x => x.TenantName).NotEmpty().MaximumLength(200);
         RuleFor(x => x.CompanyName).ApplyCompanyNameRules();
-        RuleFor(x => x.Street).ApplyStreetRules()!.When(x => x.Street != null);
-        RuleFor(x => x.City).ApplyCityRules()!.When(x => x.City != null);
-        RuleFor(x => x.State).ApplyStateRules()!.When(x => x.State != null);
-        RuleFor(x => x.Country).ApplyCountryRules()!.When(x => x.Country != null);
-        RuleFor(x => x.ZipCode).ApplyZipCodeRules()!.When(x => x.ZipCode != null);
+        RuleFor(x => x.Street).ApplyStreetRules().When(x => x.Street != null);
+        RuleFor(x => x.City).ApplyCityRules().When(x => x.City != null);
+        RuleFor(x => x.State).ApplyStateRules().When(x => x.State != null);
+        RuleFor(x => x.Country).ApplyCountryRules().When(x => x.Country != null);
+        RuleFor(x => x.ZipCode).ApplyZipCodeRules().When(x => x.ZipCode != null);
     }
 }

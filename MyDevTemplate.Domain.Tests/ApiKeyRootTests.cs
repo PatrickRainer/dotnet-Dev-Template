@@ -70,9 +70,9 @@ public class ApiKeyRootTests
     [InlineData("key", "")]
     [InlineData(null, "label")]
     [InlineData("key", null)]
-    public void Constructor_Should_Throw_ArgumentException_For_Invalid_Inputs(string key, string label)
+    public void Constructor_Should_Throw_ArgumentException_For_Invalid_Inputs(string? key, string? label)
     {
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new ApiKeyRoot(key, label));
+        Assert.Throws<ArgumentException>(() => new ApiKeyRoot(key!, label!));
     }
 }

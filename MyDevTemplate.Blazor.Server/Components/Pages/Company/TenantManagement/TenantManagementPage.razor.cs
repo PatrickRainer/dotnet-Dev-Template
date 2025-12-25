@@ -114,7 +114,7 @@ public partial class TenantManagementPage
             if (Model.Id == Guid.Empty)
             {
                 var tenant = new TenantRoot(Model.TenantName, Model.CompanyName, Model.AdminEmail, Model.SubscriptionId);
-                tenant.AddAddress(Model.Street, Model.City, Model.ZipCode, Model.Country, Model.State);
+                tenant.AddAddress(Model.Street, Model.City, Model.State, Model.Country, Model.ZipCode);
                 await TenantService.AddAsync(tenant);
                 Snackbar.Add("Tenant created successfully", Severity.Success);
             }
@@ -127,7 +127,7 @@ public partial class TenantManagementPage
                     tenant.CompanyName = Model.CompanyName;
                     tenant.AdminEmail = Model.AdminEmail;
                     tenant.SubscriptionId = Model.SubscriptionId;
-                    tenant.AddAddress(Model.Street, Model.City, Model.ZipCode, Model.Country, Model.State);
+                    tenant.AddAddress(Model.Street, Model.City, Model.State, Model.Country, Model.ZipCode);
                     await TenantService.UpdateAsync(tenant);
                     Snackbar.Add("Tenant updated successfully", Severity.Success);
                 }

@@ -4,6 +4,7 @@
 ### Build/Configuration Instructions
 - **SDK Requirements**: .NET 9.0 SDK is required.
 - **Build**: Use `dotnet build` from the solution root.
+- **Zero Warnings**: Always aim for zero build warnings. When building the project, check for any warnings and fix them immediately to ensure code quality and prevent potential issues.
 - **Run API**: `dotnet run --project MyDevTemplate.Api`
 - **Run Blazor Server**: `dotnet run --project MyDevTemplate.Blazor.Server`
 - **Persistence**: `AppDbContext` is located in `MyDevTemplate.Persistence`.

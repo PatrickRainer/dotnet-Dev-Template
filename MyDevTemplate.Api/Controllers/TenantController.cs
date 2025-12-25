@@ -100,7 +100,12 @@ public class TenantController : ControllerBase
             
             var tenant = new TenantRoot(createTenantDto.TenantName, createTenantDto.CompanyName,
                 createTenantDto.AdminEmail, createTenantDto.SubscriptionId);
-            tenant.AddAddress(createTenantDto.Street ?? string.Empty, createTenantDto.City ?? string.Empty, createTenantDto.State, createTenantDto.Country, createTenantDto.ZipCode);
+            tenant.AddAddress(
+                createTenantDto.Street ?? string.Empty,
+                createTenantDto.City ?? string.Empty,
+                createTenantDto.State ?? string.Empty,
+                createTenantDto.Country ?? string.Empty,
+                createTenantDto.ZipCode ?? string.Empty);
 
             await _tenantService.AddAsync(tenant, cancellationToken);
 
