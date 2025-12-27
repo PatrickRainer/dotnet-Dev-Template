@@ -116,6 +116,11 @@ public class SubscriptionControllerTests : IntegrationTestBase
         // DELETE
         var deleteResponse = await tenantClient.DeleteAsync($"/api/v1/Subscription/{Guid.NewGuid()}");
         Assert.Equal(HttpStatusCode.Forbidden, deleteResponse.StatusCode);
+
+        // Cleanup
+        var allKeys = await Client.GetFromJsonAsync<IEnumerable<dynamic>>("/api/v1/ApiKey");
+        var keyId = allKeys!.First(k => k.GetProperty("key").GetString() == apiKey).GetProperty("id").GetGuid();
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyId}");
     }
 
     private async Task CreateApiKeyForTenant(Guid tenantId, string key)

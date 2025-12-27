@@ -40,6 +40,11 @@ public class TenantServiceSecurityTests : IntegrationTestBase
         
         var getByIdResponse = await tenantClient.GetAsync($"/api/v1/Tenant/{Guid.NewGuid()}");
         Assert.Equal(HttpStatusCode.Forbidden, getByIdResponse.StatusCode);
+
+        // Cleanup
+        var allKeys = await Client.GetFromJsonAsync<IEnumerable<dynamic>>("/api/v1/ApiKey");
+        var keyId = allKeys!.First(k => k.GetProperty("key").GetString() == apiKey).GetProperty("id").GetGuid();
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyId}");
     }
 
     private async Task CreateApiKeyForTenant(Guid tenantId, string key)

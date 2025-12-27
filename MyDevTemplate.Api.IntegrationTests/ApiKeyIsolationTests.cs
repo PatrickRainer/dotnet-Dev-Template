@@ -18,7 +18,7 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         // 1. Create a tenant and an API key for them using Master Key
         var tenantId = Guid.NewGuid();
         var initialKey = $"initial-key-{Guid.NewGuid()}";
-        await CreateApiKeyForTenant(tenantId, initialKey);
+        var initialKeyId = await CreateApiKeyForTenant(tenantId, initialKey);
 
         // 2. Use the tenant's API key to create a NEW API key
         var tenantClient = Factory.CreateClient();
@@ -56,6 +56,11 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         Assert.NotNull(maliciousRecord);
         Assert.Equal(tenantId, maliciousRecord.TenantId); // Should be the creator's tenant, not the one in DTO
         Assert.NotEqual(otherTenantId, maliciousRecord.TenantId);
+
+        // Cleanup
+        await Client.DeleteAsync($"/api/v1/ApiKey/{initialKeyId}");
+        await Client.DeleteAsync($"/api/v1/ApiKey/{newKeyId}");
+        await Client.DeleteAsync($"/api/v1/ApiKey/{maliciousKeyId}");
     }
 
     [Fact]
@@ -89,6 +94,12 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         Assert.NotNull(listB);
         Assert.Contains(listB, k => k.Key == apiKeyB);
         Assert.DoesNotContain(listB, k => k.Key == apiKeyA);
+
+        // Cleanup
+        var keyAId = listA!.First(k => k.Key == apiKeyA).Id;
+        var keyBId = listB!.First(k => k.Key == apiKeyB).Id;
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyAId}");
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyBId}");
     }
 
     [Fact]
@@ -104,8 +115,8 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         await CreateApiKeyForTenant(tenantBId, apiKeyB);
 
         // Get the ID of Tenant B's API key using Master Key
-        var listBResponse = await Client.GetFromJsonAsync<IEnumerable<ApiKeyRoot>>($"/api/v1/ApiKey");
-        var apiKeyBId = listBResponse!.First(k => k.Key == apiKeyB).Id;
+        var listAResponse = await Client.GetFromJsonAsync<IEnumerable<ApiKeyRoot>>($"/api/v1/ApiKey");
+        var apiKeyBId = listAResponse!.First(k => k.Key == apiKeyB).Id;
 
         // 2. Create client for Tenant A
         var clientA = Factory.CreateClient();
@@ -115,6 +126,11 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         // 3. Try to get Tenant B's key using Tenant A's client
         var response = await clientA.GetAsync($"/api/v1/ApiKey/{apiKeyBId}");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+        // Cleanup
+        var keyAId = listAResponse!.First(k => k.Key == apiKeyA).Id;
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyAId}");
+        await Client.DeleteAsync($"/api/v1/ApiKey/{apiKeyBId}");
     }
 
     [Fact]
@@ -143,6 +159,12 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         var response = await clientA.PutAsJsonAsync($"/api/v1/ApiKey/{apiKeyBId}", updateDto);
         
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+        // Cleanup
+        var allKeys = await Client.GetFromJsonAsync<IEnumerable<ApiKeyRoot>>($"/api/v1/ApiKey");
+        var keyAId = allKeys!.First(k => k.Key == apiKeyA).Id;
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyAId}");
+        await Client.DeleteAsync($"/api/v1/ApiKey/{apiKeyBId}");
     }
 
     [Fact]
@@ -170,12 +192,19 @@ public class ApiKeyIsolationTests : IntegrationTestBase
         var response = await clientA.DeleteAsync($"/api/v1/ApiKey/{apiKeyBId}");
         
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+
+        // Cleanup
+        var allKeys = await Client.GetFromJsonAsync<IEnumerable<ApiKeyRoot>>($"/api/v1/ApiKey");
+        var keyAId = allKeys!.First(k => k.Key == apiKeyA).Id;
+        await Client.DeleteAsync($"/api/v1/ApiKey/{keyAId}");
+        await Client.DeleteAsync($"/api/v1/ApiKey/{apiKeyBId}");
     }
 
-    private async Task CreateApiKeyForTenant(Guid tenantId, string key)
+    private async Task<Guid> CreateApiKeyForTenant(Guid tenantId, string key)
     {
         var dto = new AddApiKeyDto(key, $"Key for {tenantId}", DateTime.UtcNow.AddDays(1), tenantId.ToString());
         var response = await Client.PostAsJsonAsync("/api/v1/ApiKey", dto);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return await response.Content.ReadFromJsonAsync<Guid>();
     }
 }

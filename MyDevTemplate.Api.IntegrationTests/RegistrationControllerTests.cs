@@ -35,6 +35,10 @@ public class RegistrationControllerTests : IntegrationTestBase
         var result = await response.Content.ReadFromJsonAsync<RegistrationResponse>();
         Assert.NotNull(result);
         Assert.NotEqual(Guid.Empty, result.TenantId);
+
+        // Cleanup
+        var deleteResponse = await Client.DeleteAsync($"/api/v1/Tenant/{result.TenantId}");
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
     }
 
     [Fact]

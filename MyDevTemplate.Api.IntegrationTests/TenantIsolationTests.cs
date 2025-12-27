@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using MyDevTemplate.Application.ApiKeyServices.Dtos;
 using MyDevTemplate.Application.UserServices.Dtos;
+using MyDevTemplate.Domain.Entities.ApiKeyAggregate;
 using MyDevTemplate.Domain.Entities.UserAggregate;
 
 namespace MyDevTemplate.Api.IntegrationTests;
@@ -101,6 +102,8 @@ public class TenantIsolationTests : IntegrationTestBase
             // Cleanup (using Master Key)
             await Client.DeleteAsync($"/api/v1/User/email/{userAEmail}");
             await Client.DeleteAsync($"/api/v1/User/email/{userBEmail}");
+            await DeleteApiKeyByKey(apiKeyA);
+            await DeleteApiKeyByKey(apiKeyB);
         }
     }
 
@@ -116,17 +119,23 @@ public class TenantIsolationTests : IntegrationTestBase
         await CreateApiKeyForTenant(tenantAId, apiKeyA);
         await CreateApiKeyForTenant(tenantBId, apiKeyB);
 
+        var roleATitle = string.Empty;
+        var roleBTitle = string.Empty;
+        Guid roleAId = Guid.Empty;
+        Guid roleBId = Guid.Empty;
         try
         {
             var clientA = CreateTenantClient(tenantAId, apiKeyA);
             var clientB = CreateTenantClient(tenantBId, apiKeyB);
 
             // 2. Create roles in each tenant
-            var roleATitle = $"Role A {Guid.NewGuid()}";
-            await clientA.PostAsJsonAsync("/api/v1/Role", new { Title = roleATitle, Description = "Desc A" });
+            roleATitle = $"Role A {Guid.NewGuid()}";
+            var responseA = await clientA.PostAsJsonAsync("/api/v1/Role", new { Title = roleATitle, Description = "Desc A" });
+            roleAId = await responseA.Content.ReadFromJsonAsync<Guid>();
 
-            var roleBTitle = $"Role B {Guid.NewGuid()}";
-            await clientB.PostAsJsonAsync("/api/v1/Role", new { Title = roleBTitle, Description = "Desc B" });
+            roleBTitle = $"Role B {Guid.NewGuid()}";
+            var responseB = await clientB.PostAsJsonAsync("/api/v1/Role", new { Title = roleBTitle, Description = "Desc B" });
+            roleBId = await responseB.Content.ReadFromJsonAsync<Guid>();
 
             // 3. Verify Isolation
             var listA = await clientA.GetFromJsonAsync<IEnumerable<dynamic>>("/api/v1/Role");
@@ -144,7 +153,10 @@ public class TenantIsolationTests : IntegrationTestBase
         finally
         {
             // Master key cleanup would be needed here if we had a way to identify these roles easily
-            // For now, these are just test records in a likely in-memory or test DB.
+            if (roleAId != Guid.Empty) await Client.DeleteAsync($"/api/v1/Role/{roleAId}");
+            if (roleBId != Guid.Empty) await Client.DeleteAsync($"/api/v1/Role/{roleBId}");
+            await DeleteApiKeyByKey(apiKeyA);
+            await DeleteApiKeyByKey(apiKeyB);
         }
     }
 
@@ -191,6 +203,18 @@ public class TenantIsolationTests : IntegrationTestBase
         {
             await Client.DeleteAsync($"/api/v1/User/email/{userAEmail}");
             await Client.DeleteAsync($"/api/v1/User/email/{userBEmail}");
+            await DeleteApiKeyByKey(apiKeyA);
+            await DeleteApiKeyByKey(apiKeyB);
+        }
+    }
+
+    async Task DeleteApiKeyByKey(string key)
+    {
+        var allKeys = await Client.GetFromJsonAsync<IEnumerable<ApiKeyRoot>>("/api/v1/ApiKey");
+        var keyEntity = allKeys?.FirstOrDefault(k => k.Key == key);
+        if (keyEntity != null)
+        {
+            await Client.DeleteAsync($"/api/v1/ApiKey/{keyEntity.Id}");
         }
     }
 
