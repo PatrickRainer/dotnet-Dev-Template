@@ -14,7 +14,10 @@ public static class DatabaseSeeder
         var masterTenantIdStr = configuration["Authentication:TenantId"];
         if (!Guid.TryParse(masterTenantIdStr, out var masterTenantId))
         {
-            masterTenantId = Guid.Empty;
+            if (!Guid.TryParse(configuration.GetSection("MasterTenant")["Id"], out masterTenantId))
+            {
+                throw new Exception("Master Tenant Id not found in configuration");
+            }
         }
 
         var adminEmail = configuration["Authentication:AdminEmail"];
