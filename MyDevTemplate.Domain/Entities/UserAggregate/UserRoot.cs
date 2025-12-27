@@ -29,6 +29,8 @@ public class UserRoot : EntityBase
     public string IdentityProviderId { get; set; }
     public DateTime? LastLoginAtUtc { get; set; }
 
+    public bool IsAssignedToTenant => TenantId != Guid.Empty;
+
     // Navigation Properties
     readonly List<Guid> _roles = new();
     public IReadOnlyCollection<Guid> Roles => _roles.AsReadOnly();
