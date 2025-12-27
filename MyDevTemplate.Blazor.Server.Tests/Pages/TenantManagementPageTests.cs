@@ -22,7 +22,6 @@ public class TenantManagementPageTests : BlazorTestBase
             .ReturnsAsync(tenants);
         SubscriptionServiceMock.Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<SubscriptionRoot>());
-        TenantProviderMock.Setup(x => x.GetMasterTenantId()).Returns(Guid.NewGuid());
 
         // Act
         var cut = RenderComponent<TenantManagementPage>();

@@ -12,6 +12,8 @@ namespace MyDevTemplate.Blazor.Server.Tests;
 
 public abstract class BlazorTestBase : TestContext
 {
+    protected readonly Guid MasterTenantId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
     protected Mock<IUserService> UserServiceMock { get; } = new();
     protected Mock<ISubscriptionService> SubscriptionServiceMock { get; } = new();
     protected Mock<ITenantService> TenantServiceMock { get; } = new();
@@ -29,5 +31,10 @@ public abstract class BlazorTestBase : TestContext
 
         // Required for MudBlazor components that use JS Interop
         JSInterop.Mode = JSRuntimeMode.Loose;
+
+        // Default setup for TenantProvider
+        TenantProviderMock.Setup(x => x.GetMasterTenantId()).Returns(MasterTenantId);
+        TenantProviderMock.Setup(x => x.IsMasterTenant()).Returns(true);
+        TenantProviderMock.Setup(x => x.GetTenantId()).Returns(MasterTenantId);
     }
 }
